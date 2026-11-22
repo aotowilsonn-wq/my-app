@@ -3,400 +3,710 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VIPERR // AURA OVERDRIVE ∞</title>
+  <title>VIPERR OS v3.0 // HEAVY METAL RPG</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       --bg: #030304;
-      --surface: #0a0a0d;
-      --surface-2: #121217;
-      --border: #1f1f26;
+      --surface: #0a0a0e;
+      --surface-2: #121218;
+      --border: #1e1e26;
       --crimson: #ff002b;
+      --crimson-dark: #660011;
       --crimson-glow: rgba(255, 0, 43, 0.35);
-      --chrome: linear-gradient(135deg, #ffffff 0%, #8e8e98 50%, #ffffff 100%);
+      --chrome: linear-gradient(135deg, #ffffff 0%, #8a8a96 48%, #ffffff 100%);
       --text: #f5f5f7;
-      --muted: #5e5e6b;
+      --muted: #60606e;
+      --str: #ff3b30;
+      --crf: #bf5af2;
+      --mnd: #0a84ff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 50px; min-height: 100vh; overflow-x: hidden; transition: background 0.3s; }
-    body.glitch-red { background: #2a0007; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 90px; min-height: 100vh; overflow-x: hidden; transition: background 0.25s; }
+    body.red-flash { background: #380009; }
 
-    /* Бегущая строка сверху */
-    .ticker { width: 100%; background: var(--crimson); color: #000; font-size: 10px; font-weight: 900; letter-spacing: 2px; padding: 5px 0; text-transform: uppercase; overflow: hidden; white-space: nowrap; }
-    .ticker-inner { display: inline-block; animation: marquee 18s linear infinite; }
+    /* Бегущая строка */
+    .ticker { width: 100%; background: var(--crimson); color: #000; font-size: 9px; font-weight: 900; letter-spacing: 2px; padding: 4px 0; text-transform: uppercase; overflow: hidden; white-space: nowrap; position: sticky; top: 0; z-index: 50; }
+    .ticker-inner { display: inline-block; animation: marquee 22s linear infinite; }
     @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-    .container { max-width: 440px; margin: 0 auto; padding: 18px 16px; }
+    .container { max-width: 460px; margin: 0 auto; padding: 14px 14px 20px; }
+    .tab-view { display: none; animation: fadeIn 0.2s ease; }
+    .tab-view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Карточка статуса (Chrome & Obsidian) */
-    .hero-card { background: radial-gradient(circle at top right, #1a0509 0%, var(--surface) 65%); border: 1px solid var(--border); border-radius: 20px; padding: 22px 18px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.8); margin-bottom: 20px; }
-    .top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .rank-tag { font-size: 11px; font-weight: 900; letter-spacing: 1.5px; color: var(--crimson); text-transform: uppercase; border: 1px solid rgba(255,0,43,0.4); padding: 4px 10px; border-radius: 6px; background: rgba(255,0,43,0.08); }
-    .streak-tag { font-size: 12px; font-weight: 800; color: #d4d4dc; font-family: monospace; }
+    /* Верхняя карточка персонажа */
+    .hero-card { background: radial-gradient(circle at top right, #1d0409 0%, var(--surface) 70%); border: 1px solid var(--border); border-radius: 18px; padding: 18px 16px; margin-bottom: 16px; box-shadow: 0 12px 35px rgba(0,0,0,0.85); }
+    .hero-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 6px; flex-wrap: wrap; }
+    .rank-badge { font-size: 10px; font-weight: 900; letter-spacing: 1.2px; color: var(--crimson); border: 1px solid rgba(255,0,43,0.45); background: rgba(255,0,43,0.1); padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
+    .badges-right { display: flex; gap: 6px; align-items: center; }
+    .pill { font-family: monospace; font-size: 11px; font-weight: 800; background: var(--surface-2); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; color: #e5e5ea; }
+    .pill.mult { color: var(--crimson); border-color: rgba(255,0,43,0.3); }
+    .pill.shield { color: #30d158; border-color: rgba(48,209,88,0.3); }
 
-    .aura-val { font-size: 44px; font-weight: 900; letter-spacing: -1.5px; background: var(--chrome); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.05; }
-    .aura-sub { font-size: 10px; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; margin-top: 6px; font-weight: 700; }
+    .aura-num { font-size: 40px; font-weight: 900; letter-spacing: -1.5px; background: var(--chrome); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.05; }
+    .aura-caption { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; font-weight: 800; }
 
-    /* Прогресс бар до следующего ранга */
-    .progress-wrap { margin-top: 18px; }
-    .progress-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); font-family: monospace; margin-bottom: 6px; text-transform: uppercase; }
-    .progress-bar { width: 100%; height: 6px; background: #16161c; border-radius: 99px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--crimson); box-shadow: 0 0 12px var(--crimson); width: 0%; transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    .prog-wrap { margin-top: 14px; }
+    .prog-meta { display: flex; justify-content: space-between; font-family: monospace; font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+    .prog-track { width: 100%; height: 6px; background: #15151c; border-radius: 99px; overflow: hidden; }
+    .prog-fill { height: 100%; background: var(--crimson); box-shadow: 0 0 12px var(--crimson); transition: width 0.35s ease; }
 
-    /* Таймер Deep Focus */
-    .focus-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
-    .focus-left h4 { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
-    .focus-left span { font-size: 11px; color: var(--muted); }
-    .focus-timer { font-family: monospace; font-size: 20px; font-weight: 900; color: var(--text); margin-right: 10px; }
-    .btn-focus { background: var(--text); color: #000; border: none; padding: 8px 14px; border-radius: 8px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
-    .btn-focus.active { background: var(--crimson); color: #fff; box-shadow: 0 0 15px var(--crimson-glow); }
+    /* Таймер изоляции */
+    .focus-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
+    .focus-info h4 { font-size: 12px; font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; }
+    .focus-presets { display: flex; gap: 6px; margin-top: 6px; }
+    .preset-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 5px; cursor: pointer; }
+    .preset-btn.sel { color: var(--text); border-color: var(--crimson); }
+    .focus-controls { display: flex; align-items: center; gap: 10px; }
+    .timer-txt { font-family: monospace; font-size: 20px; font-weight: 900; }
+    .btn-exec { background: var(--text); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 900; letter-spacing: 1px; cursor: pointer; }
+    .btn-exec.run { background: var(--crimson); color: #fff; box-shadow: 0 0 14px var(--crimson-glow); }
 
-    /* Заголовки секций */
-    .sec-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .sec-title { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
-    .btn-add-toggle { background: transparent; border: 1px solid var(--border); color: var(--text); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+    /* Заголовки и кнопки */
+    .sec-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .sec-lbl { font-size: 11px; font-weight: 900; color: var(--muted); letter-spacing: 1.8px; text-transform: uppercase; }
+    .btn-mini { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); font-size: 10px; font-weight: 800; padding: 5px 10px; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
 
-    /* Форма добавления квеста */
-    .add-box { display: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 14px; gap: 8px; flex-direction: column; }
-    .add-box.open { display: flex; }
-    .add-box input, .add-box select { background: #070709; border: 1px solid #262630; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; outline: none; }
-    .btn-save-q { background: var(--crimson); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
+    /* Формы добавления */
+    .form-box { display: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 12px; flex-direction: column; gap: 8px; }
+    .form-box.open { display: flex; }
+    .form-box input, .form-box select { background: #060608; border: 1px solid #262630; color: #fff; padding: 9px 10px; border-radius: 8px; font-size: 13px; outline: none; }
+    .btn-crimson { background: var(--crimson); color: #fff; border: none; padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
 
-    /* Список квестов */
-    .quest-list { display: flex; flex-direction: column; gap: 10px; }
-    .q-item { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; }
-    .q-item.done { border-color: rgba(255,0,43,0.5); background: linear-gradient(90deg, rgba(255,0,43,0.08) 0%, var(--surface) 100%); }
-    .q-main { flex: 1; cursor: pointer; padding-right: 10px; }
-    .q-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-    .q-item.done .q-title { color: var(--muted); text-decoration: line-through; }
-    .q-desc { font-size: 12px; color: var(--muted); margin-top: 3px; }
-    .q-right { display: flex; align-items: center; gap: 8px; }
-    .q-pts { font-family: monospace; font-size: 12px; font-weight: 900; color: var(--crimson); background: rgba(255,0,43,0.1); padding: 5px 8px; border-radius: 6px; }
-    .q-item.done .q-pts { color: var(--muted); background: transparent; }
-    .q-del { background: transparent; border: none; color: #3a3a45; font-size: 16px; padding: 4px; cursor: pointer; }
+    /* Квесты */
+    .list-col { display: flex; flex-direction: column; gap: 9px; }
+    .card-item { background: var(--surface); border: 1px solid var(--border); border-radius: 13px; padding: 13px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+    .card-item.done { border-color: rgba(255,0,43,0.45); background: linear-gradient(90deg, rgba(255,0,43,0.09) 0%, var(--surface) 100%); }
+    .item-left { flex: 1; cursor: pointer; padding-right: 8px; }
+    .item-top { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .stat-chip { font-size: 9px; font-weight: 900; padding: 2px 5px; border-radius: 4px; text-transform: uppercase; }
+    .chip-STR { background: rgba(255,59,48,0.15); color: var(--str); }
+    .chip-CRF { background: rgba(191,90,242,0.15); color: var(--crf); }
+    .chip-MND { background: rgba(10,132,255,0.15); color: var(--mnd); }
+    .item-title { font-size: 14px; font-weight: 800; }
+    .card-item.done .item-title { text-decoration: line-through; color: var(--muted); }
+    .item-desc { font-size: 11px; color: var(--muted); }
+    .item-right { display: flex; align-items: center; gap: 8px; }
+    .pts-badge { font-family: monospace; font-size: 11px; font-weight: 900; color: var(--crimson); background: rgba(255,0,43,0.1); padding: 5px 7px; border-radius: 6px; white-space: nowrap; }
+    .card-item.done .pts-badge { color: var(--muted); background: transparent; }
+    .btn-del { background: transparent; border: none; color: #3c3c47; font-size: 16px; cursor: pointer; padding: 2px 4px; }
 
-    /* Блок Вердикта / Оракула */
-    .oracle-box { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--crimson); border-radius: 12px; padding: 14px 16px; }
-    .oracle-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .oracle-lbl { font-size: 10px; font-weight: 900; color: var(--crimson); letter-spacing: 1.5px; text-transform: uppercase; }
-    .btn-oracle { background: transparent; border: none; color: var(--muted); font-size: 11px; text-decoration: underline; cursor: pointer; }
-    .oracle-text { font-size: 13px; line-height: 1.45; color: #d8d8e0; font-weight: 500; }
+    /* Оракул и нижние кнопки терминала */
+    .oracle-card { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--crimson); border-radius: 10px; padding: 12px 14px; }
+    .oracle-head { display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; color: var(--crimson); margin-bottom: 4px; letter-spacing: 1px; }
+    .oracle-body { font-size: 12px; color: #d8d8e2; line-height: 1.4; }
 
-    /* Нижняя панель управления */
-    .bottom-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
-    .btn-next-day { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
-    .btn-relapse { background: rgba(255,0,43,0.08); border: 1px solid rgba(255,0,43,0.3); color: var(--crimson); padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
+    .day-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+    .btn-day { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 10px; font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; }
+    .btn-fail { background: rgba(255,0,43,0.08); border: 1px solid rgba(255,0,43,0.35); color: var(--crimson); padding: 12px; border-radius: 10px; font-size: 10px; font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; }
+
+    /* Вкладка STATS: Радар и Боссы */
+    .radar-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; margin-bottom: 18px; }
+    canvas#radarCanvas { max-width: 100%; height: auto; margin: 0 auto; display: block; }
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .stat-cell { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 6px; }
+    .stat-cell h5 { font-size: 10px; font-weight: 900; margin-bottom: 4px; }
+    .stat-cell p { font-family: monospace; font-size: 14px; font-weight: 900; }
+
+    .boss-card { background: linear-gradient(135deg, #160408 0%, var(--surface) 100%); border: 1px solid rgba(255,0,43,0.3); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+    .boss-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .boss-title { font-size: 14px; font-weight: 900; color: #fff; }
+    .boss-rew { font-family: monospace; font-size: 11px; font-weight: 900; color: var(--crimson); }
+    .boss-desc { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+    .boss-bar-wrap { display: flex; align-items: center; gap: 10px; }
+    .boss-track { flex: 1; height: 8px; background: #1a1a22; border-radius: 99px; overflow: hidden; }
+    .boss-fill { height: 100%; background: var(--crimson); transition: width 0.3s; }
+    .btn-boss-step { background: var(--text); color: #000; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; font-weight: 900; cursor: pointer; }
+
+    /* Вкладка MARKET */
+    .market-item { background: var(--surface); border: 1px solid var(--border); border-radius: 13px; padding: 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .btn-buy { background: var(--surface-2); border: 1px solid var(--crimson); color: var(--text); padding: 8px 12px; border-radius: 8px; font-family: monospace; font-size: 11px; font-weight: 900; cursor: pointer; }
+    .btn-buy:active { background: var(--crimson); }
+
+    /* Вкладка ARCHIVE: Heatmap & Backup */
+    .heatmap-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+    .heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 12px; }
+    .hm-cell { aspect-ratio: 1; border-radius: 5px; background: #131319; border: 1px solid #1f1f28; display: flex; align-items: center; justify-content: center; font-size: 9px; font-family: monospace; color: var(--muted); }
+    .hm-cell.lvl-1 { background: #4a000d; border-color: #800017; color: #fff; }
+    .hm-cell.lvl-2 { background: #99001a; border-color: #cc0022; color: #fff; }
+    .hm-cell.lvl-3 { background: var(--crimson); border-color: #ff4d6d; color: #000; font-weight: 900; box-shadow: 0 0 8px var(--crimson-glow); }
+
+    .backup-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+    .backup-box textarea { width: 100%; height: 70px; background: #060608; border: 1px solid #22222c; color: #8e8e98; font-family: monospace; font-size: 10px; padding: 8px; border-radius: 8px; margin: 8px 0; resize: none; }
+
+    /* Нижний док-бар навигации */
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10, 10, 14, 0.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 6px 20px; z-index: 100; }
+    .nav-btn { background: transparent; border: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+    .nav-btn.active { color: var(--crimson); }
+    .nav-icon { font-size: 16px; }
   </style>
 </head>
 <body>
 
   <div class="ticker">
     <div class="ticker-inner">
-      VIPERR PROTOCOL // NO VALIDATION // SILENCE IS POWER // HEAVY METAL DISCIPLINE // NO NPC MOVES // VIPERR PROTOCOL // NO VALIDATION // SILENCE IS POWER // HEAVY METAL DISCIPLINE // NO NPC MOVES //&nbsp;
+      VIPERR OS v3.0 // HEAVY METAL DISCIPLINE // NO NPC MOVES // SILENCE IS POWER // ZERO VALIDATION // VIPERR OS v3.0 // HEAVY METAL DISCIPLINE // NO NPC MOVES // SILENCE IS POWER // ZERO VALIDATION //&nbsp;
     </div>
   </div>
 
   <div class="container">
-    <!-- Главный статус -->
+    <!-- ГЛАВНАЯ КАРТОЧКА ПЕРСОНАЖА (Видна на всех вкладках) -->
     <div class="hero-card">
-      <div class="top-meta">
-        <div class="rank-tag" id="rankName">LVL 1 // NPC</div>
-        <div class="streak-tag" id="streakVal">STREAK: 1D</div>
-      </div>
-      <div class="aura-val" id="auraVal">1 000 000</div>
-      <div class="aura-sub">AURA OVERDRIVE RATING</div>
-
-      <div class="progress-wrap">
-        <div class="progress-labels">
-          <span id="progCur">PROGRESS</span>
-          <span id="progNext">NEXT: 2 500 000</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progFill"></div>
+      <div class="hero-top">
+        <div class="rank-badge" id="rankBadge">LVL 1 // SLEEPER</div>
+        <div class="badges-right">
+          <div class="pill shield" id="shieldBadge">🛡 0</div>
+          <div class="pill mult" id="multBadge">x1.0</div>
+          <div class="pill" id="streakBadge">🔥 1D</div>
         </div>
       </div>
-    </div>
+      <div class="aura-num" id="auraTotal">1 000 000</div>
+      <div class="aura-caption">AURA OVERDRIVE BALANCE</div>
 
-    <!-- Таймер глубокого фокуса -->
-    <div class="focus-panel">
-      <div class="focus-left">
-        <h4>DEEP ISOLATION</h4>
-        <span>25 мин без телефона (+350K)</span>
+      <div class="prog-wrap">
+        <div class="prog-meta">
+          <span id="progPct">0.0%</span>
+          <span id="progTarget">NEXT RANK: 2 500 000</span>
+        </div>
+        <div class="prog-track">
+          <div class="prog-fill" id="progFill"></div>
+        </div>
       </div>
-      <div style="display:flex; align-items:center;">
-        <div class="focus-timer" id="timerDisplay">25:00</div>
-        <button class="btn-focus" id="focusBtn" onclick="toggleFocus()">START</button>
+    </div>
+
+    <!-- ==================== ВКЛАДКА 1: TERMINAL ==================== -->
+    <div id="tab-terminal" class="tab-view active">
+      <div class="focus-card">
+        <div class="focus-info">
+          <h4>DEEP ISOLATION</h4>
+          <div class="focus-presets">
+            <button class="preset-btn" onclick="setFocusMins(15, this)">15M</button>
+            <button class="preset-btn sel" onclick="setFocusMins(25, this)">25M</button>
+            <button class="preset-btn" onclick="setFocusMins(45, this)">45M</button>
+          </div>
+        </div>
+        <div class="focus-controls">
+          <div class="timer-txt" id="timerTxt">25:00</div>
+          <button class="btn-exec" id="focusExecBtn" onclick="toggleFocus()">START</button>
+        </div>
+      </div>
+
+      <div class="sec-row">
+        <div class="sec-lbl">ЕЖЕДНЕВНЫЕ КОНТРАКТЫ</div>
+        <button class="btn-mini" onclick="toggleForm('questForm')">+ КОНТРАКТ</button>
+      </div>
+
+      <div class="form-box" id="questForm">
+        <input type="text" id="qTitleIn" placeholder="Название (напр. 100 отжиманий)">
+        <input type="text" id="qDescIn" placeholder="Детали выполнения">
+        <select id="qStatIn">
+          <option value="STR">Ветка: STRENGTH (Тело и режим)</option>
+          <option value="CRF">Ветка: CRAFT (Битмейкинг / Код / Учёба)</option>
+          <option value="MND">Ветка: MIND (Бункер / Фокус / Хладнокровие)</option>
+        </select>
+        <select id="qRewIn">
+          <option value="120000">+120 000 (База)</option>
+          <option value="200000" selected>+200 000 (Стандарт)</option>
+          <option value="350000">+350 000 (Хардкор)</option>
+        </select>
+        <button class="btn-crimson" onclick="createQuest()">ВШИТЬ В СИСТЕМУ</button>
+      </div>
+
+      <div class="list-col" id="questList"></div>
+
+      <div class="oracle-card">
+        <div class="oracle-head">
+          <span>CODEX // ТРУ АДАМ</span>
+          <span style="cursor:pointer; text-decoration:underline;" onclick="randQuote()">ОБНОВИТЬ</span>
+        </div>
+        <div class="oracle-body" id="oracleMsg">Твоё молчание стоит дороже, чем чужие оправдания. Закрой контракты.</div>
+      </div>
+
+      <div class="day-actions">
+        <button class="btn-day" onclick="finishDay()">ЗАКРЫТЬ ДЕНЬ (+СТРИК)</button>
+        <button class="btn-fail" onclick="relapse()">Я СОРВАЛСЯ (-500K)</button>
       </div>
     </div>
 
-    <!-- Секция квестов -->
-    <div class="sec-head">
-      <div class="sec-title">ЕЖЕДНЕВНЫЙ ПРОТОКОЛ</div>
-      <button class="btn-add-toggle" onclick="toggleAddForm()">+ ДОБАВИТЬ</button>
-    </div>
-
-    <div class="add-box" id="addBox">
-      <input type="text" id="newTitle" placeholder="Название (напр. 50 подтягиваний)">
-      <input type="text" id="newDesc" placeholder="Короткое описание">
-      <select id="newReward">
-        <option value="100000">+100 000 (Лёгкий квест)</option>
-        <option value="200000" selected>+200 000 (База титана)</option>
-        <option value="350000">+350 000 (Хардкор)</option>
-      </select>
-      <button class="btn-save-q" onclick="addQuest()">ВШИТЬ В ПРОТОКОЛ</button>
-    </div>
-
-    <div class="quest-list" id="questList"></div>
-
-    <!-- Оракул -->
-    <div class="oracle-box">
-      <div class="oracle-top">
-        <div class="oracle-lbl">CODEX // ТРУ АДАМ</div>
-        <button class="btn-oracle" onclick="nextQuote()">Новый сигнал</button>
+    <!-- ==================== ВКЛАДКА 2: STATS & BOSSES ==================== -->
+    <div id="tab-stats" class="tab-view">
+      <div class="sec-row"><div class="sec-lbl">МАТРИЦА АТРИБУТОВ</div></div>
+      <div class="radar-box">
+        <canvas id="radarCanvas" width="260" height="220"></canvas>
+        <div class="stat-grid">
+          <div class="stat-cell">
+            <h5 style="color:var(--str)">STRENGTH</h5>
+            <p id="valSTR">10</p>
+          </div>
+          <div class="stat-cell">
+            <h5 style="color:var(--crf)">CRAFT</h5>
+            <p id="valCRF">10</p>
+          </div>
+          <div class="stat-cell">
+            <h5 style="color:var(--mnd)">MIND</h5>
+            <p id="valMND">10</p>
+          </div>
+        </div>
       </div>
-      <div class="oracle-text" id="oracleText">Твоё молчание стоит дороже, чем их оправдания. Закрой квесты и забери своё.</div>
+
+      <div class="sec-row">
+        <div class="sec-lbl">НЕДЕЛЬНЫЕ БОСС-КОНТРАКТЫ</div>
+        <button class="btn-mini" onclick="toggleForm('bossForm')">+ БОСС</button>
+      </div>
+
+      <div class="form-box" id="bossForm">
+        <input type="text" id="bTitleIn" placeholder="Цель (напр. 500 подтягиваний за неделю)">
+        <input type="number" id="bTargetIn" placeholder="Сколько шагов/раз нужно (напр. 7 или 500)">
+        <button class="btn-crimson" onclick="createBoss()">СОЗДАТЬ БОССА (+2.5M)</button>
+      </div>
+
+      <div id="bossList"></div>
     </div>
 
-    <!-- Кнопки цикла -->
-    <div class="bottom-actions">
-      <button class="btn-next-day" onclick="completeDay()">ЗАКРЫТЬ ДЕНЬ (+1 СТРИК)</button>
-      <button class="btn-relapse" onclick="triggerRelapse()">Я СОРВАЛСЯ (-500K)</button>
+    <!-- ==================== ВКЛАДКА 3: BLACK MARKET ==================== -->
+    <div id="tab-market" class="tab-view">
+      <div class="sec-row">
+        <div class="sec-lbl">ЧЁРНЫЙ РЫНОК НАГРАД</div>
+        <button class="btn-mini" onclick="toggleForm('marketForm')">+ ТОВАР</button>
+      </div>
+
+      <div class="form-box" id="marketForm">
+        <input type="text" id="mTitleIn" placeholder="Награда (напр. 2 часа CS2 без запар)">
+        <input type="text" id="mDescIn" placeholder="Описание кайфа">
+        <input type="number" id="mPriceIn" placeholder="Цена в ауре (напр. 600000)">
+        <button class="btn-crimson" onclick="createMarketItem()">ВЫСТАВИТЬ НА РЫНОК</button>
+      </div>
+
+      <div id="marketList"></div>
+    </div>
+
+    <!-- ==================== ВКЛАДКА 4: ARCHIVE ==================== -->
+    <div id="tab-archive" class="tab-view">
+      <div class="sec-row"><div class="sec-lbl">КАЛЕНДАРЬ ДИСЦИПЛИНЫ (30 ДНЕЙ)</div></div>
+      <div class="heatmap-box">
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted);">
+          <span>Всего закрыто дней: <strong id="totalDaysTxt" style="color:#fff">0</strong></span>
+          <span>Рекорд стрика: <strong id="bestStreakTxt" style="color:var(--crimson)">1D</strong></span>
+        </div>
+        <div class="heatmap-grid" id="heatmapGrid"></div>
+      </div>
+
+      <div class="sec-row"><div class="sec-lbl">РЕЗЕРВНЫЙ КОД СЕЙВА</div></div>
+      <div class="backup-box">
+        <div style="font-size:11px; color:var(--muted);">Скопируй этот код, чтобы сохранить прогресс навсегда:</div>
+        <textarea id="saveDataArea" readonly></textarea>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <button class="btn-day" onclick="copySave()">КОПИРОВАТЬ СЕЙВ</button>
+          <button class="btn-day" onclick="importSave()">ЗАГРУЗИТЬ КОД</button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- НИЖНИЙ ДОК-БАР -->
+  <nav class="nav-bar">
+    <button class="nav-btn active" onclick="switchTab('terminal', this)">
+      <span class="nav-icon">⚡</span><span>TERMINAL</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('stats', this)">
+      <span class="nav-icon">🕸</span><span>STATS</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('market', this)">
+      <span class="nav-icon">🏴</span><span>MARKET</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('archive', this)">
+      <span class="nav-icon">📅</span><span>ARCHIVE</span>
+    </button>
+  </nav>
 
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#030304'); }
 
-    // Синтезатор тяжёлого звука (808 Bass / Metal Click / Relapse Siren)
+    // Звуковой движок (808 Sub + Metal Click + Siren)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(type) {
+    function sfx(type) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      const now = audioCtx.currentTime;
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      const t = audioCtx.currentTime;
 
-      if (type === 'quest') {
-        // Тяжёлый саб-удар 808
+      if (type === '808') {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(140, now);
-        osc.frequency.exponentialRampToValueAtTime(38, now + 0.35);
-        gain.gain.setValueAtTime(0.7, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-        osc.start(now);
-        osc.stop(now + 0.4);
-      } else if (type === 'relapse') {
-        // Мрачный гул провала
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(95, now);
-        osc.frequency.linearRampToValueAtTime(45, now + 0.6);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
-        osc.start(now);
-        osc.stop(now + 0.65);
-      } else {
-        // Металлический клик
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(36, t + 0.35);
+        gain.gain.setValueAtTime(0.75, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+        osc.start(t); osc.stop(t + 0.4);
+      } else if (type === 'buy') {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, now);
-        osc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-        osc.start(now);
-        osc.stop(now + 0.08);
+        osc.frequency.setValueAtTime(440, t);
+        osc.frequency.setValueAtTime(880, t + 0.08);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+        osc.start(t); osc.stop(t + 0.25);
+      } else if (type === 'fail') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, t);
+        osc.frequency.linearRampToValueAtTime(40, t + 0.65);
+        gain.gain.setValueAtTime(0.45, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.7);
+        osc.start(t); osc.stop(t + 0.7);
+      } else {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(700, t);
+        osc.frequency.exponentialRampToValueAtTime(140, t + 0.06);
+        gain.gain.setValueAtTime(0.18, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.06);
+        osc.start(t); osc.stop(t + 0.06);
       }
     }
 
-    // Хардкорные ранги на месяцы гринда
     const RANKS = [
-      { min: 0, max: 2500000, title: "LVL 1 // SLEEPER (NPC)" },
-      { min: 2500000, max: 6000000, title: "LVL 2 // COLD BLOODED" },
-      { min: 6000000, max: 14000000, title: "LVL 3 // SHADOW PHANTOM" },
-      { min: 14000000, max: 28000000, title: "LVL 4 // HEAVY METAL" },
-      { min: 28000000, max: 50000000, title: "LVL 5 // TRUE ADAM" },
-      { min: 50000000, max: 100000000, title: "LVL ∞ // VIPERR OVERLORD" }
+      { min: 0, max: 2500000, name: "LVL 1 // SLEEPER (NPC)" },
+      { min: 2500000, max: 6000000, name: "LVL 2 // COLD BLOODED" },
+      { min: 6000000, max: 14000000, name: "LVL 3 // SHADOW PHANTOM" },
+      { min: 14000000, max: 28000000, name: "LVL 4 // HEAVY METAL" },
+      { min: 28000000, max: 50000000, name: "LVL 5 // TRUE ADAM" },
+      { min: 50000000, max: 100000000, name: "LVL ∞ // VIPERR OVERLORD" }
     ];
 
     const QUOTES = [
-      "Ты не бесплатный Wi-Fi на вокзале. Отзываем лицензию на доступ к твоей голове.",
-      "Слабость — это когда эмоция садится за руль, а ты отдаёшь ей ключи и документы.",
+      "Ты — главный сервер, а не бесплатный Wi-Fi. Отзываем лицензию на доступ к твоей голове.",
+      "Слабость — это когда эмоция садится за руль, а ты отдаёшь ей ключи.",
       "Пока толпа ищет одобрение в чужих глазах, ты строишь бункер, который не пробить.",
       "Иногда самый жёсткий ход — вообще не делать ход. Закрывай сервер для цирка.",
       "Не ищи скрытый смысл там, где человек просто слился. Уважай своё время.",
-      "Сегодня ты не обязан побеждать весь мир. Просто не слей катку против своей лени."
+      "Дисциплина — это когда ты делаешь то, что сказал, даже когда настроение на нуле."
     ];
 
-    const defaultQuests = [
-      { id: 1, title: "ЖЕЛЕЗНЫЙ КАРКАС", desc: "Турник / отжимания до отказа (минимум 10 мин)", reward: 200000, done: false },
-      { id: 2, title: "HEAVY CRAFT", desc: "30 мин в FL Studio, коде или учёбе без соцсетей", reward: 250000, done: false },
-      { id: 3, title: "ТИШИНА В ЭФИРЕ", desc: "Ноль заходов в старые чаты и ноль оправданий", reward: 200000, done: false },
-      { id: 4, title: "РЕЖИМ ХИЩНИКА", desc: "Отбой до 00:30, подъём без скроллинга в кровати", reward: 150000, done: false }
-    ];
-
-    let state = JSON.parse(localStorage.getItem('viperr_aura_v2')) || {
+    let state = JSON.parse(localStorage.getItem('viperr_os_v3')) || {
       aura: 1000000,
       streak: 1,
-      quests: defaultQuests
+      bestStreak: 1,
+      shields: 0,
+      stats: { STR: 15, CRF: 15, MND: 15 },
+      history: Array(30).fill(0), // 0..3 интенсивность за 30 дней
+      quests: [
+        { id: 1, stat: 'STR', title: "ЖЕЛЕЗНЫЙ КАРКАС", desc: "Турник / отжимания до отказа (10 мин)", reward: 200000, done: false },
+        { id: 2, stat: 'CRF', title: "HEAVY CRAFT", desc: "30 мин в FL Studio, коде или учёбе", reward: 250000, done: false },
+        { id: 3, stat: 'MND', title: "ТИШИНА В ЭФИРЕ", desc: "Ноль заходов в токсичные чаты", reward: 200000, done: false },
+        { id: 4, stat: 'STR', title: "РЕЖИМ ХИЩНИКА", desc: "Отбой до 00:30 без залипания в экран", reward: 150000, done: false }
+      ],
+      bosses: [
+        { id: 101, title: "НЕДЕЛЯ БЕЗ ПОВОДКОВ", desc: "7 дней полной информационной чистоты", cur: 1, target: 7, reward: 2500000 },
+        { id: 102, title: "СТАЛЬНАЯ СПИНА", desc: "Сделать 300 подтягиваний суммарно", cur: 30, target: 300, reward: 2000000 }
+      ],
+      market: [
+        { id: 201, title: "🛡 ЩИТ ЗАМОРОЗКИ СТРИКА", desc: "Автоматически спасает стрик при одном срыве", price: 1200000, isShield: true },
+        { id: 202, title: "🎮 2 ЧАСА КАТКИ В CS2", desc: "Легальный чилл без угрызений совести", price: 600000, isShield: false },
+        { id: 203, title: "🍔 ЧИТ-МИЛ / ЛЮБОЙ КАЙФ", desc: "Заслуженная награда за жёсткий гринд", price: 500000, isShield: false }
+      ]
     };
 
     function save() {
-      localStorage.setItem('viperr_aura_v2', JSON.stringify(state));
+      localStorage.setItem('viperr_os_v3', JSON.stringify(state));
+      document.getElementById('saveDataArea').value = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+    }
+
+        function getMultiplier() {
+      if (state.streak >= 30) return 2.0;
+      if (state.streak >= 14) return 1.5;
+      if (state.streak >= 7) return 1.3;
+      if (state.streak >= 3) return 1.15;
+      return 1.0;
+    }
+
+    const RANKS = [
+      { min: 0, max: 2500000, title: "LVL 1 // SLEEPER" },
+      { min: 2500000, max: 6000000, title: "LVL 2 // COLD BLOODED" },
+      { min: 6000000, max: 15000000, title: "LVL 3 // SHADOW PHANTOM" },
+      { min: 15000000, max: 35000000, title: "LVL 4 // HEAVY METAL" },
+      { min: 35000000, max: 70000000, title: "LVL 5 // TRUE ADAM" },
+      { min: 70000000, max: 150000000, title: "LVL ∞ // VIPERR OVERLORD" }
+    ];
+
+    function switchTab(tabId, btn) {
+      playSound('click');
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('tab-' + tabId) || document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      if (btn) btn.classList.add('active');
+      render();
     }
 
     function render() {
-      document.getElementById('auraVal').innerText = state.aura.toLocaleString('ru-RU');
-      document.getElementById('streakVal').innerText = `STREAK: ${state.streak}D`;
+      const mult = getMultiplier();
+      if (document.getElementById('auraVal')) document.getElementById('auraVal').innerText = Math.floor(state.aura).toLocaleString('ru-RU');
+      if (document.getElementById('streakVal')) document.getElementById('streakVal').innerText = `${state.streak}D (x${mult.toFixed(1)})`;
+      if (document.getElementById('shieldCount')) document.getElementById('shieldCount').innerText = state.shields || 0;
 
-      // Расчёт ранга и прогресс-бара
-      let currentRank = RANKS[0];
-      for (let r of RANKS) {
-        if (state.aura >= r.min) currentRank = r;
-      }
-      document.getElementById('rankName').innerText = currentRank.title;
-      document.getElementById('progNext').innerText = `NEXT: ${currentRank.max.toLocaleString('ru-RU')}`;
-      
-      let pct = ((state.aura - currentRank.min) / (currentRank.max - currentRank.min)) * 100;
-      pct = Math.max(0, Math.min(100, pct));
-      document.getElementById('progFill').style.width = pct + '%';
-      document.getElementById('progCur').innerText = `PROGRESS: ${pct.toFixed(1)}%`;
+      // Ранг и прогресс
+      let curRank = RANKS[0];
+      for (let r of RANKS) if (state.aura >= r.min) curRank = r;
+      if (document.getElementById('rankName')) document.getElementById('rankName').innerText = curRank.title;
+      if (document.getElementById('progNext')) document.getElementById('progNext').innerText = `NEXT: ${curRank.max.toLocaleString('ru-RU')}`;
+      const pct = Math.max(0, Math.min(100, ((state.aura - curRank.min) / (curRank.max - curRank.min)) * 100));
+      if (document.getElementById('progFill')) document.getElementById('progFill').style.width = pct + '%';
 
       // Рендер квестов
-      const list = document.getElementById('questList');
-      list.innerHTML = '';
-      state.quests.forEach((q, idx) => {
-        const el = document.createElement('div');
-        el.className = `q-item ${q.done ? 'done' : ''}`;
-        el.innerHTML = `
-          <div class="q-main" onclick="toggleQuest(${idx})">
-            <div class="q-title">${q.done ? '◼' : '◻'} ${q.title}</div>
-            <div class="q-desc">${q.desc}</div>
-          </div>
-          <div class="q-right">
-            <div class="q-pts">+${q.reward / 1000}K</div>
-            <button class="q-del" onclick="deleteQuest(${idx})">×</button>
-          </div>
-        `;
-        list.appendChild(el);
-      });
+      const qList = document.getElementById('questList');
+      if (qList) {
+        qList.innerHTML = '';
+        state.quests.forEach((q, idx) => {
+          const pts = Math.floor((q.reward || 200000) * mult);
+          const div = document.createElement('div');
+          div.className = `q-item ${q.done ? 'done' : ''}`;
+          div.innerHTML = `
+            <div class="q-main" onclick="toggleQuest(${idx})">
+              <div class="q-title">${q.done ? '◼' : '◻'} [${q.stat || 'ALL'}] ${q.title}</div>
+              <div class="q-desc">${q.desc || ''}</div>
+            </div>
+            <div class="q-right">
+              <div class="q-pts">+${Math.round(pts / 1000)}K</div>
+              <button class="q-del" onclick="deleteQuest(${idx})">×</button>
+            </div>
+          `;
+          qList.appendChild(div);
+        });
+      }
+
+      // Рендер статов и SVG-паутинки
+      if (state.stats) {
+        const { STR = 10, CRF = 10, MND = 10 } = state.stats;
+        if (document.getElementById('valSTR')) document.getElementById('valSTR').innerText = STR;
+        if (document.getElementById('valCRF')) document.getElementById('valCRF').innerText = CRF;
+        if (document.getElementById('valMND')) document.getElementById('valMND').innerText = MND;
+
+        const poly = document.getElementById('radarPoly');
+        if (poly) {
+          const clamp = v => Math.min(100, Math.max(15, v));
+          const r1 = (clamp(STR) / 100) * 80;
+          const r2 = (clamp(CRF) / 100) * 80;
+          const r3 = (clamp(MND) / 100) * 80;
+          const p1 = `100,${100 - r1}`;
+          const p2 = `${100 + r2 * 0.866},${100 + r2 * 0.5}`;
+          const p3 = `${100 - r3 * 0.866},${100 + r3 * 0.5}`;
+          poly.setAttribute('points', `${p1} ${p2} ${p3}`);
+        }
+      }
+
+      // Рендер боссов
+      const bList = document.getElementById('bossList');
+      if (bList && state.bosses) {
+        bList.innerHTML = '';
+        state.bosses.forEach((b, idx) => {
+          const div = document.createElement('div');
+          div.className = `q-item ${b.done ? 'done' : ''}`;
+          div.onclick = () => toggleBoss(idx);
+          div.innerHTML = `
+            <div class="q-main">
+              <div class="q-title">${b.done ? '🏆' : '💀'} ${b.title}</div>
+              <div class="q-desc">${b.desc || 'Недельный контракт'}</div>
+            </div>
+            <div class="q-pts">+${Math.round((b.reward || 2000000) / 1000)}K</div>
+          `;
+          bList.appendChild(div);
+        });
+      }
+
+      // Рендер Чёрного Рынка
+      const mList = document.getElementById('marketList');
+      if (mList && state.market) {
+        mList.innerHTML = '';
+        state.market.forEach((m, idx) => {
+          const div = document.createElement('div');
+          div.className = 'q-item';
+          div.innerHTML = `
+            <div class="q-main">
+              <div class="q-title">${m.title}</div>
+              <div class="q-desc">${m.desc || ''}</div>
+            </div>
+            <button class="btn-focus" onclick="buyMarket(${idx})">${Math.round(m.cost / 1000)}K</button>
+          `;
+          mList.appendChild(div);
+        });
+      }
+
+      // Рендер Календаря (Heatmap 30 дней)
+      const hGrid = document.getElementById('heatmapGrid');
+      if (hGrid && state.history) {
+        hGrid.innerHTML = '';
+        state.history.forEach(lvl => {
+          const cell = document.createElement('div');
+          cell.className = 'heat-cell';
+          if (lvl === 1) cell.style.background = '#59000f';
+          if (lvl === 2) cell.style.background = '#ff002b';
+          if (lvl === -1) cell.style.background = '#2b2b36';
+          hGrid.appendChild(cell);
+        });
+      }
+
       save();
     }
 
     function toggleQuest(idx) {
       const q = state.quests[idx];
+      const mult = getMultiplier();
+      const pts = Math.floor((q.reward || 200000) * mult);
       if (!q.done) {
         q.done = true;
-        state.aura += q.reward;
-        playSound('quest');
+        state.aura += pts;
+        if (state.stats && q.stat) state.stats[q.stat] = (state.stats[q.stat] || 10) + 2;
+        if (typeof playSound === 'function') playSound('quest');
         if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
-        nextQuote();
       } else {
         q.done = false;
-        state.aura = Math.max(0, state.aura - q.reward);
-        playSound('click');
+        state.aura = Math.max(0, state.aura - pts);
+        if (state.stats && q.stat) state.stats[q.stat] = Math.max(0, (state.stats[q.stat] || 10) - 2);
+        if (typeof playSound === 'function') playSound('click');
       }
       render();
     }
 
+    function toggleBoss(idx) {
+      const b = state.bosses[idx];
+      if (!b.done) {
+        b.done = true;
+        state.aura += (b.reward || 2000000);
+        if (typeof playSound === 'function') playSound('quest');
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      }
+      render();
+    }
+
+    function buyMarket(idx) {
+      const item = state.market[idx];
+      if (state.aura < item.cost) {
+        alert("Недостаточно Ауры. Сначала закрой контракты.");
+        return;
+      }
+      state.aura -= item.cost;
+      if (item.type === 'shield' || item.id === 201) {
+        state.shields = (state.shields || 0) + 1;
+      }
+      if (typeof playSound === 'function') playSound('quest');
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      alert(`АКТИВИРОВАНО: ${item.title}`);
+      render();
+    }
+
     function toggleAddForm() {
-      playSound('click');
-      document.getElementById('addBox').classList.toggle('open');
+      const box = document.getElementById('addBox');
+      if (box) box.classList.toggle('open');
     }
 
     function addQuest() {
-      const title = document.getElementById('newTitle').value.trim().toUpperCase();
-      const desc = document.getElementById('newDesc').value.trim() || "Личный контракт без оправданий";
-      const reward = parseInt(document.getElementById('newReward').value);
+      const title = document.getElementById('newTitle')?.value.trim().toUpperCase();
+      const desc = document.getElementById('newDesc')?.value.trim() || "Личный контракт";
+      const stat = document.getElementById('newStat')?.value || 'STR';
+      const reward = parseInt(document.getElementById('newReward')?.value || '200000');
       if (!title) return;
-
-      state.quests.push({ id: Date.now(), title, desc, reward, done: false });
+      state.quests.push({ id: Date.now(), stat, title, desc, reward, done: false });
       document.getElementById('newTitle').value = '';
       document.getElementById('newDesc').value = '';
       document.getElementById('addBox').classList.remove('open');
-      playSound('click');
       render();
     }
 
     function deleteQuest(idx) {
-      playSound('click');
       state.quests.splice(idx, 1);
       render();
     }
 
     function completeDay() {
-      const completedCount = state.quests.filter(q => q.done).length;
-      if (completedCount === 0) {
-        alert("Ты не закрыл ни одного квеста. Пустой день в стрик не идёт.");
+      const doneCnt = state.quests.filter(q => q.done).length;
+      if (doneCnt === 0) {
+        alert("Закрой хотя бы один квест перед завершением цикла.");
         return;
       }
       state.streak += 1;
-      // Бонус если закрыты ВСЕ квесты дня
-      if (completedCount === state.quests.length) {
-        state.aura += 250000;
+      if (state.history) {
+        state.history.shift();
+        state.history.push(doneCnt === state.quests.length ? 2 : 1);
       }
+      if (doneCnt === state.quests.length) state.aura += 300000;
       state.quests.forEach(q => q.done = false);
-      playSound('quest');
-      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      if (typeof playSound === 'function') playSound('quest');
       render();
     }
 
     function triggerRelapse() {
-      playSound('relapse');
-      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+      if (state.shields > 0) {
+        state.shields -= 1;
+        alert("ЩИТ ЗАМОРОЗКИ СРАБОТАЛ! Стрик и Аура спасены, щит сгорел.");
+        render();
+        return;
+      }
+      if (typeof playSound === 'function') playSound('relapse');
       document.body.classList.add('glitch-red');
       setTimeout(() => document.body.classList.remove('glitch-red'), 400);
-
       state.aura = Math.max(0, state.aura - 500000);
       state.streak = 0;
-      document.getElementById('oracleText').innerText = "СРЫВ ЗАФИКСИРОВАН. -500 000 АУРЫ. Стрик обнулён. Не ной — вставай и начинай заново.";
+      if (state.history) {
+        state.history.shift();
+        state.history.push(-1);
+      }
       render();
     }
 
-    function nextQuote() {
-      const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-      document.getElementById('oracleText').innerText = q;
+    function copyBackup() {
+      const area = document.getElementById('saveDataArea');
+      if (area) {
+        area.select();
+        navigator.clipboard?.writeText(area.value);
+        alert("Код сохранения скопирован в буфер обмена.");
+      }
     }
 
-    // Таймер Deep Isolation (25 минут)
-    let focusInterval = null;
+    function restoreBackup() {
+      const raw = document.getElementById('saveDataArea')?.value.trim();
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed.aura === 'number') {
+          state = parsed;
+          render();
+          alert("Сейв успешно загружен.");
+        }
+      } catch (e) {
+        alert("Ошибка: неверный формат кода сохранения.");
+      }
+    }
+
+    // Таймер фокуса
+    let focusInt = null;
     let timeLeft = 25 * 60;
     function toggleFocus() {
       const btn = document.getElementById('focusBtn');
-      if (focusInterval) {
-        clearInterval(focusInterval);
-        focusInterval = null;
+      const disp = document.getElementById('timerDisplay');
+      if (focusInt) {
+        clearInterval(focusInt);
+        focusInt = null;
         timeLeft = 25 * 60;
-        btn.innerText = "START";
-        btn.classList.remove('active');
-        updateTimerText();
-        playSound('click');
+        if (btn) { btn.innerText = "START"; btn.classList.remove('active'); }
+        if (disp) disp.innerText = "25:00";
       } else {
-        playSound('quest');
-        btn.innerText = "ABORT";
-        btn.classList.add('active');
-        focusInterval = setInterval(() => {
+        if (btn) { btn.innerText = "ABORT"; btn.classList.add('active'); }
+        focusInt = setInterval(() => {
           timeLeft--;
-          updateTimerText();
+          const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+          const s = (timeLeft % 60).toString().padStart(2, '0');
+          if (disp) disp.innerText = `${m}:${s}`;
           if (timeLeft <= 0) {
-            clearInterval(focusInterval);
-            focusInterval = null;
+            clearInterval(focusInt);
+            focusInt = null;
             timeLeft = 25 * 60;
-            btn.innerText = "START";
-            btn.classList.remove('active');
+            if (btn) { btn.innerText = "START"; btn.classList.remove('active'); }
+            if (disp) disp.innerText = "25:00";
             state.aura += 350000;
-            playSound('quest');
-            if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            document.getElementById('oracleText').innerText = "25 МИНУТ ЧИСТОЙ ИЗОЛЯЦИИ ПРОЙДЕНЫ. +350 000 АУРЫ В КОПИЛКУ.";
+            if (state.stats) state.stats.MND = (state.stats.MND || 10) + 3;
             render();
           }
         }, 1000);
       }
-    }
-
-    function updateTimerText() {
-      const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-      const s = (timeLeft % 60).toString().padStart(2, '0');
-      document.getElementById('timerDisplay').innerText = `${m}:${s}`;
     }
 
     render();
