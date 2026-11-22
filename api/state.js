@@ -6,7 +6,16 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY' });
   }
 
-  const rawKey = req.method === 'GET' ? req.query.key : req.body?.key;
+  let parsedBody = req.body;
+  if (typeof parsedBody === 'string' && parsedBody.trim()) {
+    try {
+      parsedBody = JSON.parse(parsedBody);
+    } catch {
+      parsedBody = null;
+    }
+  }
+
+  const rawKey = req.method === 'GET' ? req.query?.key : parsedBody?.key;
   const profileKey = String(rawKey || 'winter_arc_default')
     .replace(/[^a-zA-Z0-9_-]/g, '_')
     .slice(0, 120);
@@ -17,20 +26,24 @@ export default async function handler(req, res) {
     'Content-Type': 'application/json'
   };
 
+  if (serviceKey.startsWith('eyJ')) {
+    headers.Authorization = `Bearer ${serviceKey}`;
+  }
+
   try {
     if (req.method === 'GET') {
       const url = `${baseUrl}/rest/v1/winter_arc_profiles?profile_key=eq.${encodeURIComponent(profileKey)}&select=profile_key,state_json,updated_at`;
       const response = await fetch(url, { headers });
+      const text = await response.text();
       if (!response.ok) {
-        const errText = await response.text();
-        return res.status(response.status).json({ error: errText });
+        return res.status(response.status).json({ error: text });
       }
-      const rows = await response.json();
+      const rows = text ? JSON.parse(text) : [];
       return res.status(200).json({ record: rows[0] || null });
     }
 
     if (req.method === 'POST') {
-      const stateObj = req.body?.state;
+      const stateObj = parsedBody?.state;
       if (!stateObj || typeof stateObj !== 'object') {
         return res.status(400).json({ error: 'Invalid state object' });
       }
@@ -53,11 +66,11 @@ export default async function handler(req, res) {
         body: JSON.stringify(payload)
       });
 
+      const text = await response.text();
       if (!response.ok) {
-        const errText = await response.text();
-        return res.status(response.status).json({ error: errText });
+        return res.status(response.status).json({ error: text });
       }
-      const rows = await response.json();
+      const rows = text ? JSON.parse(text) : [];
       return res.status(200).json({ ok: true, record: rows[0] || null });
     }
 
