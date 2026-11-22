@@ -3,251 +3,504 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VIPERR OS v6.0</title>
+  <title>VIPERR OS // WINTER ARC</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    :root { --bg:#030304; --s1:#0a0a0d; --s2:#131319; --bd:#1e1e26; --red:#ff002b; --txt:#f4f4f6; --mut:#636370; }
-    * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif; user-select:none; -webkit-tap-highlight-color:transparent; }
-    body { background:var(--bg); color:var(--txt); padding-bottom:86px; min-height:100vh; overflow-x:hidden; transition:background .25s; }
-    body.red-flash { background:#2b0008; }
-    .ticker { background:var(--red); color:#000; font-size:10px; font-weight:900; letter-spacing:2px; padding:5px 0; overflow:hidden; white-space:nowrap; }
-    .ticker span { display:inline-block; animation:mq 16s linear infinite; }
-    @keyframes mq { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-    .wrap { max-width:440px; margin:0 auto; padding:14px 16px; }
-    .tab { display:none; } .tab.active { display:block; }
-    .card { background:radial-gradient(circle at top right,#1b0409 0%,var(--s1) 65%); border:1px solid var(--bd); border-radius:18px; padding:16px; margin-bottom:14px; }
-    .meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:6px; }
-    .badge { font-size:10px; font-weight:900; letter-spacing:1.2px; color:var(--red); border:1px solid rgba(255,0,43,.4); padding:4px 9px; border-radius:6px; background:rgba(255,0,43,.08); }
-    .pills { display:flex; gap:5px; font-family:monospace; font-size:11px; font-weight:800; }
-    .pill { background:var(--s2); border:1px solid var(--bd); padding:4px 7px; border-radius:6px; }
-    .aura { font-size:40px; font-weight:900; letter-spacing:-1.5px; background:linear-gradient(135deg,#fff 0%,#8c8c96 50%,#fff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.05; }
-    .sub { font-size:10px; color:var(--mut); letter-spacing:1.8px; margin-top:4px; font-weight:700; display:flex; justify-content:space-between; }
-    .p-lbl { display:flex; justify-content:space-between; font-size:10px; color:var(--mut); font-family:monospace; margin:12px 0 5px; }
-    .p-bar { height:6px; background:#15151b; border-radius:99px; overflow:hidden; }
-    .p-fill { height:100%; background:var(--red); box-shadow:0 0 10px var(--red); width:0%; transition:width .35s; }
-    .penalty-box { background:rgba(255,0,43,.14); border:1px solid var(--red); border-radius:14px; padding:13px; margin-bottom:14px; display:none; }
-    .penalty-box.on { display:block; }
-    .drop-btn { width:100%; background:linear-gradient(90deg,#ff002b 0%,#9e001b 100%); color:#fff; border:none; border-radius:13px; padding:13px; font-size:12px; font-weight:900; letter-spacing:1.2px; margin-bottom:14px; cursor:pointer; box-shadow:0 6px 20px rgba(255,0,43,.25); display:flex; justify-content:space-between; align-items:center; }
-    .drop-btn.claimed { background:var(--s1); border:1px solid var(--bd); color:var(--mut); box-shadow:none; }
-    .box { background:var(--s1); border:1px solid var(--bd); border-radius:15px; padding:13px; margin-bottom:14px; }
-    .row { display:flex; justify-content:space-between; align-items:center; }
-    .t-opts { display:flex; gap:6px; margin-top:7px; }
-    .t-opt { background:var(--s2); border:1px solid var(--bd); color:var(--mut); font-size:11px; font-weight:800; padding:4px 9px; border-radius:6px; cursor:pointer; }
-    .t-opt.on { border-color:var(--red); color:#fff; }
-    .timer { font-family:monospace; font-size:20px; font-weight:900; margin-right:10px; }
-    .btn { background:#fff; color:#000; border:none; padding:8px 13px; border-radius:8px; font-size:11px; font-weight:900; letter-spacing:1px; cursor:pointer; }
-    .btn.red { background:var(--red); color:#fff; }
-    .btn.ghost { background:var(--s2); color:#fff; border:1px solid var(--bd); }
-    .btn.sm { padding:5px 9px; font-size:10px; }
-    .sec { display:flex; justify-content:space-between; align-items:center; margin:14px 0 9px; }
-    .sec h3 { font-size:11px; color:var(--mut); letter-spacing:2px; font-weight:800; }
-    .form { display:none; flex-direction:column; gap:8px; background:var(--s2); border:1px solid var(--bd); border-radius:14px; padding:12px; margin-bottom:12px; }
-    .form.open { display:flex; }
-    .form input,.form select,textarea { background:#060608; border:1px solid #262630; color:#fff; padding:10px; border-radius:8px; font-size:13px; outline:none; width:100%; }
-    .list { display:flex; flex-direction:column; gap:8px; }
-    .item { background:var(--s1); border:1px solid var(--bd); border-radius:13px; padding:12px; display:flex; justify-content:space-between; align-items:center; }
-    .item.daily-spec { border-color:rgba(255,255,255,.22); background:linear-gradient(90deg,rgba(255,255,255,.04) 0%,var(--s1) 100%); }
-    .item.done { border-color:rgba(255,0,43,.45); background:linear-gradient(90deg,rgba(255,0,43,.08) 0%,var(--s1) 100%); }
-    .item.done .it-t { text-decoration:line-through; color:var(--mut); }
-    .it-main { flex:1; cursor:pointer; padding-right:8px; }
-    .it-t { font-size:13.5px; font-weight:800; }
-    .it-d { font-size:11px; color:var(--mut); margin-top:3px; }
-    .pts { font-family:monospace; font-size:11px; font-weight:900; color:var(--red); background:rgba(255,0,43,.1); padding:4px 7px; border-radius:6px; white-space:nowrap; }
-    .del { background:none; border:none; color:#454552; font-size:18px; padding:2px 6px; cursor:pointer; margin-left:4px; }
-    .oracle { background:var(--s1); border:1px solid var(--bd); border-left:3px solid var(--red); border-radius:12px; padding:12px; margin-top:14px; }
-    .oracle p { font-size:12.5px; line-height:1.4; color:#d8d8e0; margin-top:5px; }
-    .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; margin-top:10px; }
-    .stat-box { background:var(--s2); border:1px solid var(--bd); border-radius:10px; padding:9px 6px; }
-    .stat-box b { font-size:19px; color:var(--red); display:block; font-family:monospace; }
-    .stat-box span { font-size:9px; color:var(--mut); font-weight:800; letter-spacing:1px; }
-    .boss { background:var(--s1); border:1px solid var(--bd); border-radius:14px; padding:13px; }
-    .boss.dead { border-color:rgba(255,0,43,.5); opacity:.7; }
-    .b-btns { display:flex; gap:6px; margin-top:10px; }
-    .cal-head { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; text-align:center; font-size:10px; font-weight:800; color:var(--mut); margin:10px 0 6px; }
-    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
-    .cal-day { aspect-ratio:1; border-radius:7px; background:#121218; border:1px solid #1d1d26; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; font-family:monospace; color:#5a5a68; }
-    .cal-day.empty { background:transparent; border:none; }
-    .cal-day.part { background:#59000f; border-color:#8a0018; color:#fff; }
-    .cal-day.full { background:#ff002b; border-color:#ff4d6d; color:#fff; box-shadow:0 0 8px rgba(255,0,43,.4); }
-    .cal-day.fail { background:#23232c; border-color:#3a3a48; color:#888; text-decoration:line-through; }
-    .cal-day.today { outline:2px solid #fff; outline-offset:-2px; color:#fff; }
-    .ach-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
-    .ach { background:var(--s1); border:1px solid var(--bd); border-radius:12px; padding:11px; opacity:.42; }
-    .ach.open { opacity:1; border-color:rgba(255,0,43,.5); background:linear-gradient(135deg,rgba(255,0,43,.09) 0%,var(--s1) 100%); }
-    .ach b { font-size:12px; display:block; margin-bottom:3px; }
-    .ach span { font-size:10.5px; color:var(--mut); display:block; line-height:1.3; }
-    .nav { position:fixed; bottom:0; left:0; right:0; background:rgba(8,8,11,.96); border-top:1px solid var(--bd); display:grid; grid-template-columns:repeat(4,1fr); padding:8px 0 18px; backdrop-filter:blur(12px); z-index:99; }
-    .nav button { background:none; border:none; color:var(--mut); font-size:10px; font-weight:800; letter-spacing:1px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; }
-    .nav button.active { color:var(--red); }
-    .nav button i { font-style:normal; font-size:16px; }
+    :root {
+      --bg: #eef5fb;
+      --s1: rgba(255, 255, 255, 0.88);
+      --s2: #e3eff9;
+      --bd: #c6dcef;
+      --ice: #0284c7;
+      --ice-soft: rgba(2, 132, 199, 0.11);
+      --warn: #d97706;
+      --bad: #dc2626;
+      --txt: #0f172a;
+      --mut: #5b6b82;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: linear-gradient(180deg, #f6faff 0%, #e7f2fb 55%, #dbeaf7 100%);
+      color: var(--txt);
+      padding-bottom: 88px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.25s ease;
+    }
+    body.red-flash { background: #fee2e2; }
+
+    #snowCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--bd);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--mut);
+      gap: 8px;
+    }
+    .topbar b { color: var(--ice); font-family: monospace; }
+
+    .wrap { position: relative; z-index: 2; max-width: 440px; margin: 0 auto; padding: 14px 16px; }
+    .tab { display: none; }
+    .tab.active { display: block; }
+
+    .card {
+      background: var(--s1);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--bd);
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+    .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 6px; }
+    .badge {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--ice);
+      border: 1px solid rgba(2, 132, 199, 0.3);
+      padding: 4px 9px;
+      border-radius: 7px;
+      background: var(--ice-soft);
+    }
+    .pills { display: flex; gap: 5px; font-family: monospace; font-size: 11px; font-weight: 800; }
+    .pill {
+      background: var(--s2);
+      border: 1px solid var(--bd);
+      padding: 4px 7px;
+      border-radius: 7px;
+      color: var(--txt);
+    }
+    .aura {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -1.2px;
+      color: var(--txt);
+      line-height: 1.08;
+    }
+    .sub {
+      font-size: 11px;
+      color: var(--mut);
+      margin-top: 4px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+    }
+    .p-lbl {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--mut);
+      font-family: monospace;
+      margin: 10px 0 5px;
+    }
+    .p-bar { height: 6px; background: var(--s2); border-radius: 99px; overflow: hidden; }
+    .p-fill { height: 100%; background: var(--ice); width: 0%; transition: width 0.35s ease; }
+
+    .penalty-box {
+      background: rgba(220, 38, 38, 0.09);
+      border: 1px solid rgba(220, 38, 38, 0.45);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .penalty-box.on { display: block; }
+
+    .box {
+      background: var(--s1);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--bd);
+      border-radius: 15px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+    }
+    .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .t-opts { display: flex; gap: 5px; flex-wrap: wrap; }
+    .t-opt {
+      background: var(--s2);
+      border: 1px solid var(--bd);
+      color: var(--mut);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 9px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    .t-opt.on { border-color: var(--ice); background: var(--ice-soft); color: var(--ice); }
+
+    .btn {
+      background: var(--txt);
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+    }
+    .btn.ice { background: var(--ice); color: #fff; }
+    .btn.red { background: var(--bad); color: #fff; }
+    .btn.ghost { background: var(--s2); color: var(--txt); border: 1px solid var(--bd); }
+    .btn.sm { padding: 5px 9px; font-size: 10px; }
+
+    .sec { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 8px; }
+    .sec h3 { font-size: 11px; color: var(--mut); letter-spacing: 1.5px; font-weight: 900; }
+
+    .form {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--s1);
+      border: 1px solid var(--bd);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .form.open { display: flex; }
+    .form input, .form select, textarea {
+      background: #fff;
+      border: 1px solid var(--bd);
+      color: var(--txt);
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      width: 100%;
+    }
+
+    .list { display: flex; flex-direction: column; gap: 8px; }
+    .item {
+      background: var(--s1);
+      border: 1px solid var(--bd);
+      border-radius: 13px;
+      padding: 11px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+    }
+    .item.daily-spec { border-color: rgba(2, 132, 199, 0.35); background: rgba(240, 249, 255, 0.95); }
+    .item.done { border-color: rgba(2, 132, 199, 0.55); background: rgba(224, 242, 254, 0.72); }
+    .item.done .it-t { text-decoration: line-through; color: var(--mut); }
+    .it-main { flex: 1; cursor: pointer; padding-right: 8px; }
+    .it-t { font-size: 13px; font-weight: 800; color: var(--txt); }
+    .it-d { font-size: 11px; color: var(--mut); margin-top: 2px; line-height: 1.35; }
+    .pts {
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--ice);
+      background: var(--ice-soft);
+      padding: 4px 7px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .del { background: none; border: none; color: var(--mut); font-size: 18px; padding: 2px 6px; cursor: pointer; margin-left: 4px; }
+
+    .choice-grid { display: flex; flex-direction: column; gap: 7px; }
+    .choice-btn {
+      text-align: left;
+      background: var(--s1);
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .choice-btn:hover { border-color: var(--ice); }
+
+    .buffer-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .buf-chip {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--bd);
+      background: var(--s2);
+      color: var(--mut);
+      cursor: pointer;
+    }
+    .buf-chip.on { background: var(--ice); color: #fff; border-color: var(--ice); }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; margin-top: 10px; }
+    .stat-box { background: var(--s2); border: 1px solid var(--bd); border-radius: 10px; padding: 9px 6px; }
+    .stat-box b { font-size: 18px; color: var(--ice); display: block; font-family: monospace; }
+    .stat-box span { font-size: 9px; color: var(--mut); font-weight: 800; letter-spacing: 0.8px; }
+
+    .boss { background: var(--s1); border: 1px solid var(--bd); border-radius: 14px; padding: 13px; }
+    .boss.dead { border-color: var(--ice); opacity: 0.78; }
+    .b-btns { display: flex; gap: 6px; margin-top: 10px; align-items: center; }
+
+    .cal-head { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 10px; font-weight: 800; color: var(--mut); margin: 10px 0 6px; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+    .cal-day {
+      aspect-ratio: 1;
+      border-radius: 7px;
+      background: var(--s2);
+      border: 1px solid var(--bd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      font-family: monospace;
+      color: var(--mut);
+    }
+    .cal-day.empty { background: transparent; border: none; }
+    .cal-day.part { background: #bae6fd; border-color: #7dd3fc; color: #0369a1; }
+    .cal-day.full { background: var(--ice); border-color: var(--ice); color: #fff; }
+    .cal-day.fail { background: #fee2e2; border-color: #fca5a5; color: var(--bad); text-decoration: line-through; }
+    .cal-day.today { outline: 2px solid var(--txt); outline-offset: -2px; color: var(--txt); }
+
+    .ach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .ach { background: var(--s1); border: 1px solid var(--bd); border-radius: 12px; padding: 11px; opacity: 0.48; }
+    .ach.open { opacity: 1; border-color: var(--ice); background: rgba(240, 249, 255, 0.95); }
+    .ach b { font-size: 12px; display: block; margin-bottom: 3px; }
+    .ach span { font-size: 10.5px; color: var(--mut); display: block; line-height: 1.3; }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.92);
+      border-top: 1px solid var(--bd);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 8px 0 18px;
+      backdrop-filter: blur(12px);
+      z-index: 99;
+    }
+    .nav button {
+      background: none;
+      border: none;
+      color: var(--mut);
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+    }
+    .nav button.active { color: var(--ice); }
+    .nav button i { font-style: normal; font-size: 15px; }
   </style>
 </head>
 <body>
-  <div class="ticker"><span>TOTAL AUTONOMY v6.0 // PENALTY LOCK SYSTEM // VIPERR PROTOCOL // NO NPC MOVES // SILENCE IS POWER //&nbsp;</span></div>
+  <canvas id="snowCanvas"></canvas>
+
+  <div class="topbar">
+    <span>❄️ WINTER ARC // ДЕНЬ <b id="arcDay">1</b></span>
+    <span>ДО 16.12: <b id="daysLeft">--</b> ДН.</span>
+    <span>СОН: <b id="topSleep">6.5ч</b></span>
+  </div>
 
   <div class="wrap">
     <!-- TAB 1: TERMINAL -->
     <div id="t-term" class="tab active">
       <div class="card">
         <div class="meta">
-          <div class="badge" id="rankName">LVL 1 // SLEEPER</div>
+          <div class="badge" id="rankName">LVL 1 // WINTER INITIATE</div>
           <div class="pills">
             <div class="pill">🛡 <span id="shCnt">0</span></div>
-            <div class="pill" style="color:var(--red)" id="multVal">x1.0</div>
-            <div class="pill">🔥 <span id="strVal">1D</span></div>
+            <div class="pill" style="color:var(--ice)" id="multVal">x1.0</div>
+            <div class="pill">❄️ <span id="strVal">1D</span></div>
           </div>
         </div>
         <div class="aura" id="auraVal">1 000 000</div>
         <div class="sub">
           <span id="dateSub">CYCLE // TODAY</span>
-          <span id="cloudStatus" style="color:var(--red)">☁️ CLOUD</span>
+          <span id="cloudStatus" style="color:var(--ice)">☁️ CLOUD</span>
         </div>
         <div class="p-lbl"><span id="pPct">0.0%</span><span id="pNext">NEXT: 2 500 000</span></div>
         <div class="p-bar"><div class="p-fill" id="pFill"></div></div>
       </div>
 
-      <!-- Penalty Lock Box -->
       <div class="penalty-box" id="penaltyBox">
         <div class="row">
           <div>
-            <div style="font-size:12px;font-weight:900;color:var(--red);letter-spacing:1px">⚠️ PENALTY LOCK (МНОЖИТЕЛЬ x0.5)</div>
-            <div style="font-size:11px;color:#ddd;margin-top:3px">Искупление: 100 отжиманий + 45 мин без телефона</div>
+            <div style="font-size:12px;font-weight:900;color:var(--bad)">⚠️ PENALTY LOCK (МНОЖИТЕЛЬ x0.5)</div>
+            <div style="font-size:11px;color:var(--txt);margin-top:2px">Искупление: 80 отжиманий + 40 мин без телефона</div>
           </div>
           <button class="btn red sm" onclick="clearPenalty()">ИСКУПИТЬ</button>
         </div>
       </div>
 
-      <!-- Energy Calibration -->
-      <div class="box row" id="energyBox" style="padding:10px 13px">
+      <div class="box row">
         <span style="font-size:11px;font-weight:800;color:var(--mut)">ЭНЕРГИЯ ДНЯ:</span>
-        <div style="display:flex;gap:5px">
+        <div style="display:flex;gap:5px" id="energyBox">
           <button class="t-opt" onclick="setEnergy('LOW',this)">LOW</button>
           <button class="t-opt" onclick="setEnergy('MID',this)">MID</button>
           <button class="t-opt" onclick="setEnergy('PEAK',this)">PEAK</button>
         </div>
       </div>
 
-      <button class="drop-btn" id="dropBtn" onclick="claimDrop()">
-        <span>🎁 DAILY SUPPLY DROP (ЗАБРАТЬ НАГРАДУ)</span>
-        <span>+LOOT</span>
-      </button>
-
-      <div class="box row">
-        <div>
-          <div style="font-size:13px;font-weight:900;letter-spacing:.5px">DEEP ISOLATION</div>
-          <div class="t-opts">
-            <button class="t-opt" onclick="setMins(15,this)">15M</button>
-            <button class="t-opt on" onclick="setMins(25,this)">25M</button>
-            <button class="t-opt" onclick="setMins(45,this)">45M</button>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center">
-          <div class="timer" id="tDisp">25:00</div>
-          <button class="btn" id="fBtn" onclick="toggleFocus()">START</button>
-        </div>
-      </div>
+      <div class="sec"><h3>❄️ ЗИМНИЙ ВЫЗОВ НА ВЫБОР</h3></div>
+      <div id="challengeArea" style="margin-bottom:12px"></div>
 
       <div class="sec"><h3>⚡ КОНТРАКТ ДНЯ (АВТО-РОТАЦИЯ)</h3></div>
-      <div class="list" id="dailySpecBox" style="margin-bottom:14px"></div>
+      <div class="list" id="dailySpecBox" style="margin-bottom:12px"></div>
 
       <div class="sec">
-        <h3>ЛИЧНЫЙ ПРОТОКОЛ</h3>
-        <button class="btn ghost sm" onclick="toggleForm('addForm')">+ КОНТРАКТ</button>
+        <h3>ДЕТАЛЬНЫЙ ПРОТОКОЛ</h3>
+        <button class="btn ghost sm" onclick="toggleForm('addForm')">+ ПУНКТ</button>
       </div>
 
       <div class="form" id="addForm">
-        <input id="inTitle" placeholder="Название (напр. 50 подтягиваний)">
-        <input id="inDesc" placeholder="Описание (необязательно)">
+        <input id="inTitle" placeholder="Задача (напр. Повторить физику 25 мин)">
+        <input id="inDesc" placeholder="Уточнение или критерий готовности">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <select id="inStat">
             <option value="STR">STR (Тело)</option>
-            <option value="CRF">CRF (Скилл/Учёба)</option>
-            <option value="MND">MND (Разум)</option>
+            <option value="CRF">CRF (Навык/Учёба)</option>
+            <option value="MND">MND (Разум/Общение)</option>
           </select>
           <select id="inPts">
-            <option value="150000">+150K (База)</option>
-            <option value="250000" selected>+250K (Сложно)</option>
-            <option value="400000">+400K (Хардкор)</option>
+            <option value="120000">+120K (Быстро)</option>
+            <option value="200000" selected>+200K (Основа)</option>
+            <option value="320000">+320K (Плотно)</option>
           </select>
         </div>
-        <button class="btn red" onclick="addQuest()">ВШИТЬ В ПРОТОКОЛ</button>
+        <button class="btn ice" onclick="addQuest()">ДОБАВИТЬ В СПИСОК</button>
       </div>
 
       <div class="list" id="qList"></div>
 
-      <div class="oracle">
-        <div class="row">
-          <span style="font-size:10px;font-weight:900;color:var(--red);letter-spacing:1.5px">CODEX // ТРУ АДАМ</span>
-          <button onclick="newQuote()" style="background:none;border:none;color:var(--red);font-size:10px;font-weight:800;text-decoration:underline;cursor:pointer">ОБНОВИТЬ</button>
+      <div class="box" style="margin-top:12px">
+        <div style="font-size:11px;font-weight:900;color:var(--ice);letter-spacing:0.8px">🧭 БУФЕР СВОБОДНОГО ВРЕМЕНИ</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:2px">Закрыл базу и пошёл в ПК/отдых — отметь статус и лимит экрана:</div>
+        <div class="buffer-tags" id="bufChips">
+          <button class="buf-chip" onclick="setBuffer('BASE_DONE',this)">✓ База закрыта</button>
+          <button class="buf-chip" onclick="setBuffer('CALM_REST',this)">❄️ Осознанный отдых</button>
+          <button class="buf-chip" onclick="setBuffer('STOP_2300',this)">🌙 Стоп-экран 23:00</button>
+          <button class="buf-chip" onclick="setBuffer('STOP_2330',this)">🌙 Стоп-экран 23:30</button>
         </div>
-        <p id="qText">Сброс контрактов идёт автоматически в 00:00. Твоя задача — закрывать день без пустых клеток.</p>
       </div>
 
-      <button class="btn" style="width:100%;margin-top:14px;background:rgba(255,0,43,.1);border:1px solid rgba(255,0,43,.35);color:var(--red);padding:13px" onclick="relapse()">ЗАФИКСИРОВАТЬ СРЫВ (-500K / PENALTY)</button>
+      <button class="btn" style="width:100%;margin-top:6px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.35);color:var(--bad);padding:12px" onclick="relapse()">ЗАФИКСИРОВАТЬ СРЫВ (-400K / PENALTY)</button>
     </div>
 
-    <!-- TAB 2: BOSSES & STATS -->
+    <!-- TAB 2: SLEEP GATE -->
+    <div id="t-sleep" class="tab">
+      <div class="card">
+        <div class="badge" style="display:inline-block;margin-bottom:6px">🌙 НОЧНОЙ ШЛЮЗ // СОН</div>
+        <div style="font-size:12.5px;color:var(--mut)">Настрой время отбоя и подъёма. Если недосып (&lt;6.5ч) или поздний заход в терминал после отбоя — включается штраф.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+          <div>
+            <div style="font-size:10px;font-weight:800;color:var(--mut);margin-bottom:4px">ОТБОЙ</div>
+            <input id="sleepBed" type="time" value="00:15" onchange="updateSleepPlan()" style="background:#fff;border:1px solid var(--bd);color:var(--txt);padding:8px;border-radius:8px;width:100%;font-family:monospace">
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:800;color:var(--mut);margin-bottom:4px">ПОДЪЁМ</div>
+            <input id="sleepWake" type="time" value="07:00" onchange="updateSleepPlan()" style="background:#fff;border:1px solid var(--bd);color:var(--txt);padding:8px;border-radius:8px;width:100%;font-family:monospace">
+          </div>
+        </div>
+        <div class="p-lbl" style="margin-top:12px">
+          <span id="sleepSummary">Длительность: 6ч 45м</span>
+          <span id="sleepVerdict" style="color:var(--ice)">НОРМА</span>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn ice" onclick="logSleepCheck()">ЗАФИКСИРОВАТЬ РЕЖИМ СНА</button>
+          <button class="btn ghost sm" onclick="simulateLateCheck()">ТЕСТ ПОЗДНЕГО ЗАХОДА</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-size:11px;font-weight:900;color:var(--mut);letter-spacing:1px">ПРАВИЛА ШЛЮЗА</div>
+        <div class="it-d" style="margin-top:6px">
+          • Меньше <b>6ч 30м</b> сна при фиксации режима — штраф <b>-150K Ауры</b>.<br>
+          • Заход в терминал позже времени отбоя (до 05:00) — штраф <b>-100K Ауры</b>.<br>
+          • Сон <b>7ч–9ч</b> и вовремя — бонус <b>+150K Ауры</b> и <b>+2 MND</b>.
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: BOSSES & STATS -->
     <div id="t-stats" class="tab">
       <div class="sec" style="margin-top:0">
-        <h3>💀 ДОЛГОСРОЧНЫЕ ЦЕЛИ (БОССЫ)</h3>
+        <h3>💀 ЦЕЛИ И БОССЫ</h3>
         <button class="btn ghost sm" onclick="toggleForm('bossForm')">+ БОСС</button>
       </div>
 
       <div class="form" id="bossForm">
-        <input id="bTitle" placeholder="Цель (напр. 1000 подтягиваний)">
+        <input id="bTitle" placeholder="Цель (напр. 20 спокойных разговоров)">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <input id="bMax" type="number" placeholder="Сколько всего (напр. 1000)">
-          <input id="bStep" type="number" placeholder="Шаг кнопки (напр. 10)">
+          <input id="bMax" type="number" placeholder="Всего (напр. 20)">
+          <input id="bStep" type="number" placeholder="Шаг (напр. 1)">
         </div>
-        <button class="btn red" onclick="addBoss()">СОЗДАТЬ БОССА</button>
+        <button class="btn ice" onclick="addBoss()">СОЗДАТЬ БОССА</button>
       </div>
 
-      <div class="list" id="bossList" style="margin-bottom:14px"></div>
+      <div class="list" id="bossList" style="margin-bottom:12px"></div>
 
       <div class="card" style="text-align:center">
-        <div class="badge" style="display:inline-block;margin-bottom:8px">АТРИБУТЫ ТИТАНА</div>
-        <svg viewBox="0 0 200 200" width="190" height="190" style="display:block;margin:0 auto">
-          <polygon points="100,20 169,140 31,140" fill="none" stroke="#22222b" stroke-width="1"/>
-          <polygon points="100,50 143,125 57,125" fill="none" stroke="#1a1a22" stroke-width="1"/>
-          <polygon id="rPoly" points="100,80 117,110 83,110" fill="rgba(255,0,43,0.28)" stroke="#ff002b" stroke-width="2"/>
-          <text x="100" y="13" fill="#8e8e98" font-size="10" font-weight="bold" text-anchor="middle">STR (ТЕЛО)</text>
-          <text x="176" y="154" fill="#8e8e98" font-size="10" font-weight="bold" text-anchor="middle">CRF (СКИЛЛ)</text>
-          <text x="24" y="154" fill="#8e8e98" font-size="10" font-weight="bold" text-anchor="middle">MND (РАЗУМ)</text>
+        <div class="badge" style="display:inline-block;margin-bottom:8px">АТРИБУТЫ WINTER ARC</div>
+        <svg viewBox="0 0 200 200" width="180" height="180" style="display:block;margin:0 auto">
+          <polygon points="100,20 169,140 31,140" fill="none" stroke="#c6dcef" stroke-width="1.2"/>
+          <polygon points="100,50 143,125 57,125" fill="none" stroke="#dbeaf7" stroke-width="1.2"/>
+          <polygon id="rPoly" points="100,80 117,110 83,110" fill="rgba(2,132,199,0.22)" stroke="#0284c7" stroke-width="2"/>
+          <text x="100" y="13" fill="#475569" font-size="10" font-weight="bold" text-anchor="middle">STR (ТЕЛО)</text>
+          <text x="176" y="154" fill="#475569" font-size="10" font-weight="bold" text-anchor="middle">CRF (НАВЫК)</text>
+          <text x="24" y="154" fill="#475569" font-size="10" font-weight="bold" text-anchor="middle">MND (РАЗУМ/СОЦ)</text>
         </svg>
         <div class="stat-grid">
-          <div class="stat-box"><b id="sSTR">10</b><span>STRENGTH</span></div>
-          <div class="stat-box"><b id="sCRF">10</b><span>CRAFT</span></div>
-          <div class="stat-box"><b id="sMND">10</b><span>MINDSET</span></div>
+          <div class="stat-box"><b id="sSTR">14</b><span>STRENGTH</span></div>
+          <div class="stat-box"><b id="sCRF">12</b><span>CRAFT</span></div>
+          <div class="stat-box"><b id="sMND">16</b><span>MINDSET</span></div>
         </div>
       </div>
 
-      <div class="sec"><h3>ТРОФЕИ И ДОСТИЖЕНИЯ</h3></div>
+      <div class="sec"><h3>ТРОФЕИ</h3></div>
       <div class="ach-grid" id="achGrid"></div>
     </div>
 
-    <!-- TAB 3: BLACK MARKET -->
+    <!-- TAB 4: MARKET -->
     <div id="t-mkt" class="tab">
       <div class="card">
         <div class="row">
           <div>
-            <div class="badge" style="display:inline-block;margin-bottom:6px">BLACK MARKET</div>
-            <div style="font-size:12px;color:var(--mut)">Покупай защиту стрика и свои награды.</div>
+            <div class="badge" style="display:inline-block;margin-bottom:5px">BLACK MARKET</div>
+            <div style="font-size:12px;color:var(--mut)">Щиты стрика и твои реальные награды.</div>
           </div>
           <button class="btn ghost sm" onclick="toggleForm('mktForm')">+ НАГРАДА</button>
         </div>
       </div>
 
       <div class="form" id="mktForm">
-        <input id="mTitle" placeholder="Твоя награда (напр. Купить скин / Выходной)">
-        <input id="mDesc" placeholder="Условие или описание">
-        <input id="mCost" type="number" placeholder="Цена в Ауре (напр. 1500000)">
-        <button class="btn red" onclick="addMarket()">ДОБАВИТЬ В МАГАЗИН</button>
+        <input id="mTitle" placeholder="Награда (напр. Катка в CS2 / Вкусняшка)">
+        <input id="mDesc" placeholder="Условие или примечание">
+        <input id="mCost" type="number" placeholder="Цена в Ауре (напр. 1000000)">
+        <button class="btn ice" onclick="addMarket()">ДОБАВИТЬ</button>
       </div>
 
       <div class="list" id="mList"></div>
     </div>
 
-    <!-- TAB 4: CALENDAR & CLOUD -->
+    <!-- TAB 5: CALENDAR & CLOUD -->
     <div id="t-arch" class="tab">
       <div class="card">
         <div class="row">
@@ -256,34 +509,33 @@
         </div>
         <div class="cal-head"><div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div></div>
         <div class="cal-grid" id="calGrid"></div>
-        <div style="display:flex;gap:12px;margin-top:12px;font-size:10px;color:var(--mut);justify-content:center">
-          <span>🟥 100% дня</span><span>🟫 Частично</span><span>⬜ Сегодня</span>
-        </div>
       </div>
+
       <div class="box">
         <div class="row" style="margin-bottom:8px">
-          <span style="font-size:11px;font-weight:800;color:var(--mut);letter-spacing:1.2px">TELEGRAM CLOUD + РЕЗЕРВНЫЙ СЕЙВ</span>
-          <button class="btn ghost sm" onclick="forceCloudLoad()">ОБНОВИТЬ ИЗ ОБЛАКА</button>
+          <span style="font-size:11px;font-weight:800;color:var(--mut)">CLOUD + РЕЗЕРВНЫЙ СЕЙВ</span>
+          <button class="btn ghost sm" onclick="forceCloudLoad()">ОБНОВИТЬ</button>
         </div>
         <textarea id="bkArea" rows="3" readonly></textarea>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
           <button class="btn ghost" onclick="copyBk()">КОПИРОВАТЬ</button>
-          <button class="btn red" onclick="loadBk()">ВОССТАНОВИТЬ</button>
+          <button class="btn ice" onclick="loadBk()">ВОССТАНОВИТЬ</button>
         </div>
       </div>
     </div>
   </div>
 
   <nav class="nav">
-    <button class="active" onclick="go('t-term',this)"><i>⚡</i>TERMINAL</button>
+    <button class="active" onclick="go('t-term',this)"><i>❄️</i>ARC</button>
+    <button onclick="go('t-sleep',this)"><i>🌙</i>SLEEP</button>
     <button onclick="go('t-stats',this)"><i>💀</i>BOSSES</button>
     <button onclick="go('t-mkt',this)"><i>🏴</i>MARKET</button>
-    <button onclick="go('t-arch',this)"><i>📅</i>CALENDAR</button>
+    <button onclick="go('t-arch',this)"><i>📅</i>LOG</button>
   </nav>
 
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#030304'); }
+    if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#eef5fb'); }
 
     const actx = new (window.AudioContext || window.webkitAudioContext)();
     function beep(t) {
@@ -292,45 +544,86 @@
         const o = actx.createOscillator(), g = actx.createGain(), n = actx.currentTime;
         o.connect(g); g.connect(actx.destination);
         if (t === 'ok') {
-          o.type = 'triangle'; o.frequency.setValueAtTime(145, n); o.frequency.exponentialRampToValueAtTime(36, n + .32);
-          g.gain.setValueAtTime(.65, n); g.gain.exponentialRampToValueAtTime(.01, n + .35);
-          o.start(n); o.stop(n + .35);
+          o.type = 'triangle'; o.frequency.setValueAtTime(520, n); o.frequency.exponentialRampToValueAtTime(780, n + 0.16);
+          g.gain.setValueAtTime(0.25, n); g.gain.exponentialRampToValueAtTime(0.01, n + 0.18);
+          o.start(n); o.stop(n + 0.18);
         } else if (t === 'bad') {
-          o.type = 'sawtooth'; o.frequency.setValueAtTime(90, n); o.frequency.linearRampToValueAtTime(42, n + .55);
-          g.gain.setValueAtTime(.4, n); g.gain.exponentialRampToValueAtTime(.01, n + .6);
-          o.start(n); o.stop(n + .6);
+          o.type = 'sawtooth'; o.frequency.setValueAtTime(140, n); o.frequency.linearRampToValueAtTime(65, n + 0.35);
+          g.gain.setValueAtTime(0.28, n); g.gain.exponentialRampToValueAtTime(0.01, n + 0.38);
+          o.start(n); o.stop(n + 0.38);
         } else {
-          o.type = 'sine'; o.frequency.setValueAtTime(520, n); o.frequency.exponentialRampToValueAtTime(120, n + .07);
-          g.gain.setValueAtTime(.2, n); g.gain.exponentialRampToValueAtTime(.01, n + .07);
-          o.start(n); o.stop(n + .07);
+          o.type = 'sine'; o.frequency.setValueAtTime(640, n); o.frequency.exponentialRampToValueAtTime(320, n + 0.06);
+          g.gain.setValueAtTime(0.14, n); g.gain.exponentialRampToValueAtTime(0.01, n + 0.06);
+          o.start(n); o.stop(n + 0.06);
         }
-      } catch(e) {}
+      } catch (e) {}
     }
 
+    function vibrate(kind = 'light') {
+      try {
+        if (tg?.HapticFeedback) {
+          if (kind === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
+          else if (kind === 'success') tg.HapticFeedback.notificationOccurred('success');
+          else if (kind === 'error') tg.HapticFeedback.notificationOccurred('error');
+          else tg.HapticFeedback.impactOccurred('light');
+        }
+      } catch (e) {}
+    }
+
+    // Лёгкий снежок Winter Arc
+    const canvas = document.getElementById('snowCanvas');
+    const ctx = canvas.getContext('2d');
+    let flakes = [];
+    function initSnow() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const count = Math.min(42, Math.floor(canvas.width / 10));
+      flakes = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: 1.2 + Math.random() * 2.2,
+        sp: 0.35 + Math.random() * 0.75,
+        dr: -0.25 + Math.random() * 0.5
+      }));
+    }
+    function drawSnow() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      for (const f of flakes) {
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fill();
+        f.y += f.sp;
+        f.x += f.dr;
+        if (f.y > canvas.height) { f.y = -5; f.x = Math.random() * canvas.width; }
+        if (f.x > canvas.width) f.x = 0;
+        if (f.x < 0) f.x = canvas.width;
+      }
+      requestAnimationFrame(drawSnow);
+    }
+    window.addEventListener('resize', initSnow);
+    initSnow();
+    drawSnow();
+
     const RANKS = [
-      { min:0, max:2500000, n:"LVL 1 // SLEEPER" },
-      { min:2500000, max:6000000, n:"LVL 2 // COLD BLOODED" },
-      { min:6000000, max:15000000, n:"LVL 3 // SHADOW PHANTOM" },
-      { min:15000000, max:35000000, n:"LVL 4 // HEAVY METAL" },
-      { min:35000000, max:70000000, n:"LVL 5 // TRUE ADAM" },
-      { min:70000000, max:150000000, n:"LVL ∞ // VIPERR OVERLORD" }
+      { min: 0, max: 2500000, n: "LVL 1 // WINTER INITIATE" },
+      { min: 2500000, max: 6000000, n: "LVL 2 // FROST WALKER" },
+      { min: 6000000, max: 15000000, n: "LVL 3 // ICE DISCIPLINE" },
+      { min: 15000000, max: 35000000, n: "LVL 4 // WHITE WOLF" },
+      { min: 35000000, max: 70000000, n: "LVL 5 // SOVEREIGN" }
     ];
 
     const DAILY_POOL = [
-      { stat:'STR', t:"ЛЕДЯНОЙ КОНТРАСТ", d:"Закончить душ 60 секундами холодной воды", p:350000 },
-      { stat:'CRF', t:"ЧАС В ТИШИНЕ", d:"60 мин работы или учёбы без фонового шума и соцсетей", p:400000 },
-      { stat:'STR', t:"СОТКА ЗА ДЕНЬ", d:"100 приседаний или 50 отжиманий подходами за день", p:350000 },
-      { stat:'MND', t:"ЦИФРОВОЙ ДЕТОКС", d:"Ни одного захода в TikTok / Shorts до вечера", p:450000 },
-      { stat:'CRF', t:"ЧИСТОЕ ПРОСТРАНСТВО", d:"Навести порядок на столе и закрыть все висящие мелочи", p:300000 },
-      { stat:'MND', t:"ЖЕЛЕЗНЫЙ СТОИК", d:"Ноль жалоб и ноль импульсивных реакций за день", p:350000 }
+      { stat: 'STR', t: "ХОЛОДНЫЙ ФИНИШ", d: "30–60 сек прохладной воды в конце душа", p: 250000 },
+      { stat: 'CRF', t: "ЧИСТЫЙ ФОКУС", d: "40 мин учёбы/дела без отвлечений на ленту", p: 280000 },
+      { stat: 'MND', t: "СПОКОЙНЫЙ ОТКЛИК", d: "Без резкости и лишних эмоций в диалогах сегодня", p: 250000 },
+      { stat: 'STR', t: "КАРКАС ДНЯ", d: "Подходы на турник или отжимания в течение дня", p: 240000 }
     ];
 
-    const QUOTES = [
-      "Ты не бесплатный Wi-Fi на вокзале. Отзываем лицензию на доступ к твоей голове.",
-      "Слабость — это когда эмоция садится за руль, а ты отдаёшь ей ключи и документы.",
-      "Пока толпа ищет одобрение в чужих глазах, ты строишь фундамент, который не пробить.",
-      "Иногда самый жёсткий ход — вообще не делать ход. Закрывай сервер для цирка.",
-      "Дисциплина — это выбор между тем, что хочется сейчас, и тем, кем ты станешь через год."
+    const WINTER_CHOICES = [
+      { id: 'c1', stat: 'STR', t: "Пойти в бассейн / сделать силовой сет", p: 220000 },
+      { id: 'c2', stat: 'CRF', t: "Закрыть сложный учебный/рабочий блок до вечера", p: 220000 },
+      { id: 'c3', stat: 'MND', t: "Сделать 1 спокойный шаг в общении без давления", p: 220000 }
     ];
 
     function todayKey() {
@@ -340,47 +633,52 @@
 
     const DEF = {
       aura: 1000000, streak: 1, shields: 0, totalDone: 0, updatedAt: 0,
-      penalty: false, energy: '',
-      lastDate: todayKey(), dropClaimed: false,
+      penalty: false, energy: '', bufferTags: [],
+      lastDate: todayKey(),
+      chosenChallengeId: '', challengeDone: false,
+      sleepBed: '00:15', sleepWake: '07:00', sleepHours: 6.75, sleepLoggedToday: false,
       stats: { STR: 14, CRF: 12, MND: 16 },
       calLog: {},
       dailySpec: { ...DAILY_POOL[0], done: false },
       bosses: [
-        { id:1, t:"1000 ПОДТЯГИВАНИЙ", cur:0, max:1000, step:10, reward:1500000, done:false },
-        { id:2, t:"30 ДНЕЙ ЖЕЛЕЗНОГО РЕЖИМА", cur:1, max:30, step:1, reward:2000000, done:false }
+        { id: 1, t: "БАССЕЙН (8 СЕАНСОВ ДО 16.12)", cur: 0, max: 8, step: 1, reward: 1500000, done: false },
+        { id: 2, t: "1000 ПОДТЯГИВАНИЙ", cur: 0, max: 1000, step: 10, reward: 1500000, done: false }
       ],
       quests: [
-        { id:1, stat:'STR', t:"ЖЕЛЕЗНЫЙ КАРКАС", d:"Турник / отжимания до отказа (10+ мин)", p:200000, done:false },
-        { id:2, stat:'CRF', t:"DEEP WORK", d:"30 мин кода, учёбы или проекта без телефона", p:250000, done:false },
-        { id:3, stat:'MND', t:"ТИШИНА В ЭФИРЕ", d:"Ноль залипания в пустые чаты и ноль оправданий", p:250000, done:false },
-        { id:4, stat:'STR', t:"РЕЖИМ ХИЩНИКА", d:"Отбой до 00:30, подъём без перестановки будильника", p:150000, done:false }
+        { id: 1, stat: 'STR', t: "ТУРНИК / ОТЖИМАНИЯ", d: "Подходы до хорошего рабочего утомления", p: 180000, done: false },
+        { id: 2, stat: 'CRF', t: "УЧЁБА / ПРОЕКТ", d: "Деловой блок без лишних вкладок и чатов", p: 220000, done: false },
+        { id: 3, stat: 'MND', t: "КОММУНИКАЦИЯ БЕЗ СУЕТЫ", d: "Короткий живой контакт или честный ответ без спешки", p: 200000, done: false },
+        { id: 4, stat: 'CRF', t: "ПОРЯДОК НА СТОЛЕ И В ФАЙЛАХ", d: "Убрать лишнее, чтобы завтра стартовать чисто", p: 140000, done: false }
       ],
       market: [
-        { id:201, t:"🛡 ЩИТ ЗАМОРОЗКИ СТРИКА", d:"Автоматически спасёт стрик при пропуске дня или срыве", c:1200000, sys:true },
-        { id:202, t:"🎮 2 ЧАСА КАТКИ В CS2", d:"Легальный чит-тайм без угрызений совести", c:750000, sys:false },
-        { id:203, t:"🍔 ЧИТ-МИЛ / ЭНЕРГЕТИК", d:"Награда за закрытую серию контрактов", c:500000, sys:false },
-        { id:204, t:"⚡ БУСТ СТАТОВ (+5 ALL)", d:"Мгновенная прокачка всех трёх атрибутов на +5", c:2000000, sys:true }
+        { id: 201, t: "🛡 ЩИТ ЗАМОРОЗКИ СТРИКА", d: "Спасёт стрик и множитель при срыве или пропуске", c: 1200000, sys: true },
+        { id: 202, t: "🎮 КАТКА В CS2", d: "Осознанный отдых после закрытых дел", c: 650000, sys: false },
+        { id: 203, t: "🍫 ВКУСНЯШКА / НАПИТОК", d: "Награда за собранный день", c: 450000, sys: false }
       ]
     };
 
-    let st = JSON.parse(localStorage.getItem('viperr_v6')) || JSON.parse(localStorage.getItem('viperr_v5')) || DEF;
+    let st = JSON.parse(localStorage.getItem('viperr_winter_v1')) || JSON.parse(localStorage.getItem('viperr_v6')) || DEF;
     if (!st.bosses) st.bosses = DEF.bosses;
+    if (!Array.isArray(st.bufferTags)) st.bufferTags = [];
+    if (!st.bosses.some(b => b.t.includes('БАССЕЙН'))) {
+      st.bosses.unshift({ id: Date.now(), t: "БАССЕЙН (8 СЕАНСОВ ДО 16.12)", cur: 0, max: 8, step: 1, reward: 1500000, done: false });
+    }
 
     function saveState() {
       st.updatedAt = Date.now();
       const raw = JSON.stringify(st);
-      localStorage.setItem('viperr_v6', raw);
+      localStorage.setItem('viperr_winter_v1', raw);
       document.getElementById('bkArea').value = raw;
       if (tg?.CloudStorage) {
-        tg.CloudStorage.setItem('viperr_save_v6', raw, (err) => {
+        tg.CloudStorage.setItem('viperr_winter_save', raw, (err) => {
           document.getElementById('cloudStatus').innerText = err ? '⚠️ LOCAL' : '☁️ SYNCED';
         });
       }
     }
 
     function forceCloudLoad(silent = false) {
-      if (!tg?.CloudStorage) { if (!silent) alert('CloudStorage доступен внутри Telegram.'); return; }
-      tg.CloudStorage.getItem('viperr_save_v6', (err, val) => {
+      if (!tg?.CloudStorage) { if (!silent) alert('Облако доступно внутри Telegram.'); return; }
+      tg.CloudStorage.getItem('viperr_winter_save', (err, val) => {
         if (!err && val) {
           try {
             const cloud = JSON.parse(val);
@@ -388,9 +686,9 @@
               st = cloud;
               autoSyncDay();
               render(false);
-              if (!silent) alert('Прогресс загружен из облака Telegram!');
+              if (!silent) alert('Сейв обновлён из облака.');
             }
-          } catch(e) {}
+          } catch (e) {}
         }
       });
     }
@@ -408,18 +706,94 @@
         st.quests.forEach(q => q.done = false);
         const rnd = DAILY_POOL[Math.floor(Math.random() * DAILY_POOL.length)];
         st.dailySpec = { ...rnd, done: false };
-        st.dropClaimed = false;
+        st.chosenChallengeId = '';
+        st.challengeDone = false;
         st.energy = '';
+        st.bufferTags = [];
+        st.sleepLoggedToday = false;
         st.lastDate = tk;
       }
+      checkLateNightEntry();
       updateTodayCal();
+    }
+
+    function timeToMins(str) {
+      const [h, m] = (str || '00:00').split(':').map(Number);
+      return (h || 0) * 60 + (m || 0);
+    }
+
+    function calcSleepHours(bedStr, wakeStr) {
+      let bed = timeToMins(bedStr);
+      let wake = timeToMins(wakeStr);
+      if (wake <= bed) wake += 24 * 60;
+      return (wake - bed) / 60;
+    }
+
+    function checkLateNightEntry() {
+      const now = new Date();
+      const curMins = now.getHours() * 60 + now.getMinutes();
+      const bedMins = timeToMins(st.sleepBed || '00:15');
+      // Если текущее время в ночном окне после отбоя (до 05:00) и отбой задан вечером/ночью
+      if (bedMins >= 18 * 60 && curMins >= bedMins && curMins < 23 * 60 + 59) {
+        if (!st.lateWarnedToday) {
+          st.lateWarnedToday = todayKey();
+          st.aura = Math.max(0, st.aura - 100000);
+          st.penalty = true;
+          beep('bad');
+          vibrate('error');
+        }
+      }
+    }
+
+    function updateSleepPlan() {
+      st.sleepBed = document.getElementById('sleepBed').value || '00:15';
+      st.sleepWake = document.getElementById('sleepWake').value || '07:00';
+      const hrs = calcSleepHours(st.sleepBed, st.sleepWake);
+      st.sleepHours = hrs;
+      const whole = Math.floor(hrs);
+      const mins = Math.round((hrs - whole) * 60);
+      document.getElementById('sleepSummary').innerText = `Длительность: ${whole}ч ${mins}м`;
+      const vEl = document.getElementById('sleepVerdict');
+      if (hrs < 6.5) { vEl.innerText = 'НЕДОСЫП (ШТРАФ)'; vEl.style.color = 'var(--bad)'; }
+      else if (hrs <= 9.5) { vEl.innerText = 'ОПТИМУМ'; vEl.style.color = 'var(--ice)'; }
+      else { vEl.innerText = 'ПЕРЕБОР'; vEl.style.color = 'var(--warn)'; }
+      saveState();
+      renderTopBar();
+    }
+
+    function logSleepCheck() {
+      updateSleepPlan();
+      const hrs = st.sleepHours;
+      if (hrs < 6.5) {
+        st.aura = Math.max(0, st.aura - 150000);
+        st.penalty = true;
+        beep('bad'); vibrate('error');
+        alert('🌙 Зафиксирован недосып (<6.5ч): -150K Ауры и активирован PENALTY LOCK.');
+      } else {
+        if (!st.sleepLoggedToday) {
+          st.sleepLoggedToday = true;
+          st.aura += 150000;
+          st.stats.MND += 2;
+        }
+        beep('ok'); vibrate('success');
+        alert('❄️ Режим сна зафиксирован: +150K Ауры и +2 MND.');
+      }
+      render();
+    }
+
+    function simulateLateCheck() {
+      st.aura = Math.max(0, st.aura - 100000);
+      st.penalty = true;
+      beep('bad'); vibrate('error');
+      alert('🌙 Фиксация позднего захода: -100K Ауры и включён PENALTY LOCK.');
+      render();
     }
 
     function updateTodayCal() {
       const tk = todayKey();
       if (st.calLog[tk] === -1) return;
-      const doneCnt = st.quests.filter(q => q.done).length + (st.dailySpec.done ? 1 : 0);
-      const totalCnt = st.quests.length + 1;
+      const doneCnt = st.quests.filter(q => q.done).length + (st.dailySpec.done ? 1 : 0) + (st.challengeDone ? 1 : 0);
+      const totalCnt = st.quests.length + 2;
       if (doneCnt === 0) st.calLog[tk] = 0;
       else if (doneCnt >= totalCnt) st.calLog[tk] = 2;
       else st.calLog[tk] = 1;
@@ -435,7 +809,7 @@
     }
 
     function go(id, el) {
-      beep('click');
+      beep('click'); vibrate('light');
       document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
       document.querySelectorAll('.nav button').forEach(x => x.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -443,8 +817,20 @@
       render(false);
     }
 
+    function renderTopBar() {
+      const startArc = new Date('2026-11-22T00:00:00');
+      const endPass = new Date('2026-12-16T23:59:59');
+      const now = new Date();
+      const arcDay = Math.max(1, Math.floor((now - startArc) / 86400000) + 1);
+      const daysLeft = Math.max(0, Math.ceil((endPass - now) / 86400000));
+      document.getElementById('arcDay').innerText = arcDay;
+      document.getElementById('daysLeft').innerText = daysLeft;
+      document.getElementById('topSleep').innerText = (st.sleepHours || 6.75).toFixed(1) + 'ч';
+    }
+
     function render(doSave = true) {
       updateTodayCal();
+      renderTopBar();
       const m = mult();
       document.getElementById('auraVal').innerText = Math.floor(st.aura).toLocaleString('ru-RU');
       document.getElementById('strVal').innerText = st.streak + 'D';
@@ -452,38 +838,52 @@
       document.getElementById('shCnt').innerText = st.shields;
       document.getElementById('dateSub').innerText = 'CYCLE // ' + st.lastDate;
 
-      // Penalty UI
-      const pb = document.getElementById('penaltyBox');
-      if (st.penalty) pb.classList.add('on');
-      else pb.classList.remove('on');
+      document.getElementById('penaltyBox').classList.toggle('on', !!st.penalty);
 
-      // Energy UI
       document.querySelectorAll('#energyBox .t-opt').forEach(b => {
         b.classList.toggle('on', b.innerText === st.energy);
       });
 
+      document.querySelectorAll('#bufChips .buf-chip').forEach(b => {
+        const key = b.getAttribute('onclick').match(/'([^']+)'/)[1];
+        b.classList.toggle('on', st.bufferTags.includes(key));
+      });
+
       let rk = RANKS[0];
-      for (let r of RANKS) if (st.aura >= r.min) rk = r;
+      for (const r of RANKS) if (st.aura >= r.min) rk = r;
       document.getElementById('rankName').innerText = rk.n;
       document.getElementById('pNext').innerText = 'NEXT: ' + rk.max.toLocaleString('ru-RU');
       const pct = Math.max(0, Math.min(100, ((st.aura - rk.min) / (rk.max - rk.min)) * 100));
       document.getElementById('pFill').style.width = pct + '%';
       document.getElementById('pPct').innerText = pct.toFixed(1) + '%';
 
-      const db = document.getElementById('dropBtn');
-      if (st.dropClaimed) {
-        db.className = 'drop-btn claimed';
-        db.innerHTML = '<span>✓ ДНЕВНОЙ ДРОП ЗАБРАН (ЖДИ 00:00)</span><span>CLAIMED</span>';
+      // Зимний вызов на выбор
+      const chArea = document.getElementById('challengeArea');
+      if (!st.chosenChallengeId) {
+        chArea.innerHTML = `<div class="choice-grid">` + WINTER_CHOICES.map(c => `
+          <button class="choice-btn" onclick="pickChallenge('${c.id}')">
+            <div><div class="it-t">[${c.stat}] ${c.t}</div></div>
+            <span class="pts">+${Math.round((c.p * m)/1000)}K</span>
+          </button>
+        `).join('') + `</div>`;
       } else {
-        db.className = 'drop-btn';
-        db.innerHTML = '<span>🎁 DAILY SUPPLY DROP (ЗАБРАТЬ НАГРАДУ)</span><span>+LOOT</span>';
+        const ch = WINTER_CHOICES.find(x => x.id === st.chosenChallengeId) || WINTER_CHOICES[0];
+        const pts = Math.floor(ch.p * m);
+        chArea.innerHTML = `
+          <div class="item ${st.challengeDone ? 'done' : ''}" onclick="togChallenge()">
+            <div class="it-main">
+              <div class="it-t">${st.challengeDone ? '◼' : '◻'} [${ch.stat}] ${ch.t}</div>
+              <div class="it-d">Выбранный вызов на сегодня</div>
+            </div>
+            <div class="pts">+${Math.round(pts/1000)}K</div>
+          </div>`;
       }
 
       const ds = st.dailySpec, dsPts = Math.floor(ds.p * m);
       document.getElementById('dailySpecBox').innerHTML = `
         <div class="item daily-spec ${ds.done ? 'done' : ''}" onclick="togSpec()">
           <div class="it-main">
-            <div class="it-t">${ds.done?'◼':'⚡'} [${ds.stat}] ${ds.t}</div>
+            <div class="it-t">${ds.done ? '◼' : '⚡'} [${ds.stat}] ${ds.t}</div>
             <div class="it-d">${ds.d}</div>
           </div>
           <div class="pts">+${Math.round(dsPts/1000)}K</div>
@@ -494,7 +894,7 @@
         const pts = Math.floor(q.p * m);
         const d = document.createElement('div');
         d.className = 'item' + (q.done ? ' done' : '');
-        d.innerHTML = `<div class="it-main" onclick="togQ(${i})"><div class="it-t">${q.done?'◼':'◻'} [${q.stat}] ${q.t}</div><div class="it-d">${q.d}</div></div><div style="display:flex;align-items:center"><div class="pts">+${Math.round(pts/1000)}K</div><button class="del" onclick="delQ(${i})">×</button></div>`;
+        d.innerHTML = `<div class="it-main" onclick="togQ(${i})"><div class="it-t">${q.done ? '◼' : '◻'} [${q.stat}] ${q.t}</div><div class="it-d">${q.d}</div></div><div style="display:flex;align-items:center"><div class="pts">+${Math.round(pts/1000)}K</div><button class="del" onclick="delQ(${i})">×</button></div>`;
         ql.appendChild(d);
       });
 
@@ -502,17 +902,17 @@
       st.bosses.forEach((b, i) => {
         const bpct = Math.min(100, (b.cur / b.max) * 100);
         bl.innerHTML += `
-          <div class="boss ${b.done?'dead':''}">
+          <div class="boss ${b.done ? 'dead' : ''}">
             <div class="row">
-              <div class="it-t">${b.done?'💀 [ПОВЕРЖЕН] ':'🔥 '}${b.t}</div>
+              <div class="it-t">${b.done ? '🏆 [ЗАКРЫТО] ' : '❄️ '}${b.t}</div>
               <button class="del" onclick="delBoss(${i})">×</button>
             </div>
             <div class="p-lbl"><span>ПРОГРЕСС: ${b.cur} / ${b.max}</span><span>${bpct.toFixed(0)}%</span></div>
             <div class="p-bar"><div class="p-fill" style="width:${bpct}%"></div></div>
             ${!b.done ? `<div class="b-btns">
               <button class="btn ghost sm" onclick="hitBoss(${i},1)">+1</button>
-              <button class="btn red sm" onclick="hitBoss(${i},${b.step})">+${b.step}</button>
-              <span style="margin-left:auto;font-size:10px;color:var(--mut);align-self:center">НАГРАДА: +${Math.round(b.reward/1000)}K</span>
+              <button class="btn ice sm" onclick="hitBoss(${i},${b.step})">+${b.step}</button>
+              <span style="margin-left:auto;font-size:10px;color:var(--mut)">НАГРАДА: +${Math.round(b.reward/1000)}K</span>
             </div>` : ''}
           </div>`;
       });
@@ -523,27 +923,27 @@
       document.getElementById('sMND').innerText = MND;
       const cl = v => Math.min(100, Math.max(15, v));
       const r1 = (cl(STR)/100)*78, r2 = (cl(CRF)/100)*78, r3 = (cl(MND)/100)*78;
-      document.getElementById('rPoly').setAttribute('points', `100,${100-r1} ${100+r2*.866},${100+r2*.5} ${100-r3*.866},${100+r3*.5}`);
+      document.getElementById('rPoly').setAttribute('points', `100,${100-r1} ${100+r2*0.866},${100+r2*0.5} ${100-r3*0.866},${100+r3*0.5}`);
 
       const achs = [
-        { t:"🩸 ПЕРВАЯ КРОВЬ", d:"Закрыть первый контракт", ok: st.totalDone >= 1 },
-        { t:"🔥 НЕДЕЛЯ СТАЛИ", d:"Держать стрик 7 дней подряд", ok: st.streak >= 7 },
-        { t:"💀 УБИЙЦА БОССОВ", d:"Добить хотя бы одну большую цель", ok: st.bosses.some(b => b.done) },
-        { t:"🦍 ТИТАН ТЕЛА", d:"Прокачать STR до 40", ok: STR >= 40 },
-        { t:"🧠 ХОЛОДНЫЙ РАЗУМ", d:"Прокачать MND до 40", ok: MND >= 40 },
-        { t:"👑 VIPERR GOD", d:"Достичь 25 000 000 Ауры", ok: st.aura >= 25000000 }
+        { t: "❄️ ПЕРВЫЙ ШАГ", d: "Закрыть первый пункт протокола", ok: st.totalDone >= 1 },
+        { t: "🧊 НЕДЕЛЯ ЛЬДА", d: "Держать серию 7 дней подряд", ok: st.streak >= 7 },
+        { t: "🏊 БАССЕЙН 8/8", d: "Закрыть цель по абонементу", ok: st.bosses.some(b => b.t.includes('БАССЕЙН') && b.done) },
+        { t: "🗣️ УВЕРЕННЫЙ ГОЛОС", d: "Прокачать MND до 30", ok: MND >= 30 }
       ];
       const ag = document.getElementById('achGrid'); ag.innerHTML = '';
-      achs.forEach(a => ag.innerHTML += `<div class="ach ${a.ok?'open':''}"><b>${a.t}</b><span>${a.d}</span></div>`);
+      achs.forEach(a => ag.innerHTML += `<div class="ach ${a.ok ? 'open' : ''}"><b>${a.t}</b><span>${a.d}</span></div>`);
 
       const ml = document.getElementById('mList'); ml.innerHTML = '';
       st.market.forEach((it, i) => {
         const d = document.createElement('div');
         d.className = 'item';
-        d.innerHTML = `<div class="it-main"><div class="it-t">${it.t}</div><div class="it-d">${it.d}</div></div><div style="display:flex;align-items:center"><button class="btn" onclick="buy(${i})">${Math.round(it.c/1000)}K</button>${!it.sys?`<button class="del" onclick="delMkt(${i})">×</button>`:''}</div>`;
+        d.innerHTML = `<div class="it-main"><div class="it-t">${it.t}</div><div class="it-d">${it.d}</div></div><div style="display:flex;align-items:center"><button class="btn ice" onclick="buy(${i})">${Math.round(it.c/1000)}K</button>${!it.sys ? `<button class="del" onclick="delMkt(${i})">×</button>` : ''}</div>`;
         ml.appendChild(d);
       });
 
+      document.getElementById('sleepBed').value = st.sleepBed || '00:15';
+      document.getElementById('sleepWake').value = st.sleepWake || '07:00';
       renderCalendar();
       if (doSave) saveState();
       else document.getElementById('bkArea').value = JSON.stringify(st);
@@ -572,49 +972,72 @@
       document.getElementById('calStats').innerText = `ИДЕАЛЬНЫХ ДНЕЙ: ${perfectCount}`;
     }
 
+    function pickChallenge(id) {
+      st.chosenChallengeId = id;
+      beep('click'); vibrate('light');
+      render();
+    }
+
+    function togChallenge() {
+      const ch = WINTER_CHOICES.find(x => x.id === st.chosenChallengeId);
+      if (!ch) return;
+      const pts = Math.floor(ch.p * mult());
+      if (!st.challengeDone) {
+        st.challengeDone = true; st.aura += pts; st.stats[ch.stat] += 2; st.totalDone += 1;
+        beep('ok'); vibrate('heavy');
+      } else {
+        st.challengeDone = false; st.aura = Math.max(0, st.aura - pts); st.stats[ch.stat] = Math.max(1, st.stats[ch.stat] - 2);
+        beep('click'); vibrate('light');
+      }
+      render();
+    }
+
     function setEnergy(lvl) {
       if (st.energy === lvl) return;
       const firstTime = !st.energy;
       st.energy = lvl;
-      if (firstTime) st.aura += 50000;
-      beep('click');
-      if (lvl === 'LOW') document.getElementById('qText').innerText = 'Низкий заряд — не повод сливать день. Сделай хотя бы базу на минималках.';
-      if (lvl === 'MID') document.getElementById('qText').innerText = 'Рабочий режим. Закрывай контракты по очереди без лишнего шума.';
-      if (lvl === 'PEAK') document.getElementById('qText').innerText = 'Пиковая форма. Сегодня идеальный день, чтобы пробить полоску Босса.';
+      if (firstTime) st.aura += 40000;
+      beep('click'); vibrate('light');
+      render();
+    }
+
+    function setBuffer(tag) {
+      const idx = st.bufferTags.indexOf(tag);
+      if (idx >= 0) st.bufferTags.splice(idx, 1);
+      else st.bufferTags.push(tag);
+      beep('click'); vibrate('light');
       render();
     }
 
     function clearPenalty() {
-      if (!confirm('Подтверждаешь, что выполнил 100 отжиманий и отработал 45 минут без телефона?')) return;
+      if (!confirm('Подтверждаешь, что сделал 80 отжиманий и 40 минут без телефона?')) return;
       st.penalty = false;
-      beep('ok');
-      alert('🔓 PENALTY LOCK СНЯТ. Множитель восстановлен.');
-      render();
-    }
-
-    function claimDrop() {
-      if (st.dropClaimed) return;
-      st.dropClaimed = true;
-      const roll = Math.random();
-      beep('ok');
-      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      if (roll < 0.2) { st.shields += 1; alert('🎁 ДРОП: +1 ЩИТ ЗАМОРОЗКИ СТРИКА!'); }
-      else if (roll < 0.6) { st.aura += 250000; alert('🎁 ДРОП: +250 000 АУРЫ!'); }
-      else { st.aura += 150000; st.stats.STR += 2; st.stats.CRF += 2; st.stats.MND += 2; alert('🎁 ДРОП: +150 000 АУРЫ И +2 КО ВСЕМ СТАТАМ!'); }
+      beep('ok'); vibrate('success');
+      alert('❄️ PENALTY LOCK снят.');
       render();
     }
 
     function togSpec() {
       const ds = st.dailySpec, pts = Math.floor(ds.p * mult());
-      if (!ds.done) { ds.done = true; st.aura += pts; st.stats[ds.stat] += 3; st.totalDone += 1; beep('ok'); if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy'); }
-      else { ds.done = false; st.aura = Math.max(0, st.aura - pts); st.stats[ds.stat] = Math.max(1, st.stats[ds.stat] - 3); beep('click'); }
+      if (!ds.done) {
+        ds.done = true; st.aura += pts; st.stats[ds.stat] += 2; st.totalDone += 1;
+        beep('ok'); vibrate('heavy');
+      } else {
+        ds.done = false; st.aura = Math.max(0, st.aura - pts); st.stats[ds.stat] = Math.max(1, st.stats[ds.stat] - 2);
+        beep('click'); vibrate('light');
+      }
       render();
     }
 
     function togQ(i) {
       const q = st.quests[i], pts = Math.floor(q.p * mult());
-      if (!q.done) { q.done = true; st.aura += pts; st.stats[q.stat] += 2; st.totalDone += 1; beep('ok'); if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy'); newQuote(); }
-      else { q.done = false; st.aura = Math.max(0, st.aura - pts); st.stats[q.stat] = Math.max(1, st.stats[q.stat] - 2); beep('click'); }
+      if (!q.done) {
+        q.done = true; st.aura += pts; st.stats[q.stat] += 2; st.totalDone += 1;
+        beep('ok'); vibrate('heavy');
+      } else {
+        q.done = false; st.aura = Math.max(0, st.aura - pts); st.stats[q.stat] = Math.max(1, st.stats[q.stat] - 2);
+        beep('click'); vibrate('light');
+      }
       render();
     }
 
@@ -623,21 +1046,21 @@
       const max = parseInt(document.getElementById('bMax').value);
       const step = parseInt(document.getElementById('bStep').value) || 1;
       if (!t || !max || max <= 0) return;
-      st.bosses.push({ id:Date.now(), t, cur:0, max, step, reward:1500000, done:false });
+      st.bosses.push({ id: Date.now(), t, cur: 0, max, step, reward: 1500000, done: false });
       document.getElementById('bTitle').value = ''; document.getElementById('bMax').value = ''; document.getElementById('bStep').value = '';
       document.getElementById('bossForm').classList.remove('open');
-      beep('click'); render();
+      beep('click'); vibrate('light'); render();
     }
 
     function hitBoss(i, amt) {
       const b = st.bosses[i];
       if (b.done) return;
       b.cur = Math.min(b.max, b.cur + amt);
-      beep('click');
+      beep('click'); vibrate('light');
       if (b.cur >= b.max) {
-        b.done = true; st.aura += b.reward; st.stats.STR += 5; st.stats.MND += 5;
-        beep('ok');
-        alert(`💀 БОСС ПОВЕРЖЕН: ${b.t}!\nПолучено +${(b.reward/1000000).toFixed(1)}M Ауры и +5 к статам.`);
+        b.done = true; st.aura += b.reward; st.stats.STR += 4; st.stats.MND += 4;
+        beep('ok'); vibrate('success');
+        alert(`🏆 Цель закрыта: ${b.t}! +${(b.reward/1000000).toFixed(1)}M Ауры.`);
       }
       render();
     }
@@ -648,7 +1071,7 @@
       const c = parseInt(document.getElementById('mCost').value);
       if (!t || !c || c <= 0) return;
       const d = document.getElementById('mDesc').value.trim() || 'Личная награда';
-      st.market.push({ id:Date.now(), t, d, c, sys:false });
+      st.market.push({ id: Date.now(), t, d, c, sys: false });
       document.getElementById('mTitle').value = ''; document.getElementById('mDesc').value = ''; document.getElementById('mCost').value = '';
       document.getElementById('mktForm').classList.remove('open');
       beep('click'); render();
@@ -660,18 +1083,19 @@
       if (st.aura < it.c) { alert('Недостаточно Ауры.'); return; }
       st.aura -= it.c;
       if (it.id === 201) st.shields += 1;
-      if (it.id === 204) { st.stats.STR += 5; st.stats.CRF += 5; st.stats.MND += 5; }
-      beep('ok'); alert('АКТИВИРОВАНО: ' + it.t); render();
+      beep('ok'); vibrate('success');
+      alert('АКТИВИРОВАНО: ' + it.t);
+      render();
     }
 
     function toggleForm(id) { beep('click'); document.getElementById(id).classList.toggle('open'); }
     function addQuest() {
       const t = document.getElementById('inTitle').value.trim().toUpperCase();
       if (!t) return;
-      const d = document.getElementById('inDesc').value.trim() || 'Личный контракт';
+      const d = document.getElementById('inDesc').value.trim() || 'Пункт протокола';
       const stat = document.getElementById('inStat').value;
       const p = parseInt(document.getElementById('inPts').value);
-      st.quests.push({ id:Date.now(), stat, t, d, p, done:false });
+      st.quests.push({ id: Date.now(), stat, t, d, p, done: false });
       document.getElementById('inTitle').value = ''; document.getElementById('inDesc').value = '';
       document.getElementById('addForm').classList.remove('open');
       beep('click'); render();
@@ -679,54 +1103,30 @@
     function delQ(i) { beep('click'); st.quests.splice(i, 1); render(); }
 
     function relapse() {
-      if (st.shields > 0) { st.shields -= 1; beep('ok'); alert('🛡 ЩИТ ЗАМОРОЗКИ СРАБОТАЛ! Стрик, Аура и множитель спасены.'); render(); return; }
-      beep('bad');
-      document.body.classList.add('red-flash'); setTimeout(() => document.body.classList.remove('red-flash'), 400);
-      st.aura = Math.max(0, st.aura - 500000); st.streak = 0; st.calLog[todayKey()] = -1; st.penalty = true;
-      document.getElementById('qText').innerText = 'СРЫВ ЗАФИКСИРОВАН. Активирован PENALTY LOCK (x0.5). Пройди искупление.';
-      render();
-    }
-
-    function newQuote() { document.getElementById('qText').innerText = QUOTES[Math.floor(Math.random()*QUOTES.length)]; }
-
-    let baseMins = 25, left = 25 * 60, fInt = null;
-    function setMins(m, el) {
-      if (fInt) return;
-      beep('click'); baseMins = m; left = m * 60;
-      document.querySelectorAll('.t-opt').forEach(b => b.classList.remove('on'));
-      el.classList.add('on');
-      document.getElementById('tDisp').innerText = (m < 10 ? '0' : '') + m + ':00';
-    }
-    function toggleFocus() {
-      const btn = document.getElementById('fBtn');
-      if (fInt) {
-        clearInterval(fInt); fInt = null; left = baseMins * 60;
-        btn.innerText = 'START'; btn.classList.remove('red');
-        document.getElementById('tDisp').innerText = baseMins + ':00'; beep('click');
-      } else {
-        beep('ok'); btn.innerText = 'ABORT'; btn.classList.add('red');
-        fInt = setInterval(() => {
-          left--;
-          const mm = String(Math.floor(left/60)).padStart(2,'0'), ss = String(left%60).padStart(2,'0');
-          document.getElementById('tDisp').innerText = mm + ':' + ss;
-          if (left <= 0) {
-            clearInterval(fInt); fInt = null; left = baseMins * 60;
-            btn.innerText = 'START'; btn.classList.remove('red');
-            document.getElementById('tDisp').innerText = baseMins + ':00';
-            st.aura += baseMins * 14000; st.stats.MND += 3; beep('ok'); render();
-          }
-        }, 1000);
+      if (st.shields > 0) {
+        st.shields -= 1; beep('ok'); vibrate('success');
+        alert('🛡 ЩИТ ЗАМОРОЗКИ сработал — серия и множитель спасены.');
+        render(); return;
       }
+      beep('bad'); vibrate('error');
+      document.body.classList.add('red-flash');
+      setTimeout(() => document.body.classList.remove('red-flash'), 400);
+      st.aura = Math.max(0, st.aura - 400000);
+      st.streak = 0;
+      st.calLog[todayKey()] = -1;
+      st.penalty = true;
+      render();
     }
 
     function copyBk() { const a = document.getElementById('bkArea'); a.select(); navigator.clipboard?.writeText(a.value); alert('Код сейва скопирован.'); }
     function loadBk() {
       const v = prompt('Вставь код сохранения:');
       if (!v) return;
-      try { const p = JSON.parse(v); if (typeof p.aura === 'number') { st = p; render(); alert('Сейв загружен.'); } } catch(e) { alert('Неверный код.'); }
+      try { const p = JSON.parse(v); if (typeof p.aura === 'number') { st = p; render(); alert('Сейв загружен.'); } } catch (e) { alert('Неверный код.'); }
     }
 
     autoSyncDay();
+    updateSleepPlan();
     render(false);
     forceCloudLoad(true);
   </script>
