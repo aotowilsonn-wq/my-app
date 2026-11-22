@@ -1,2266 +1,1220 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINTER ARC — Personal OS</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f4f7f6',
-                            100: '#e3eae7',
-                            400: '#38bdf8',
-                            500: '#0284c7',
-                            900: '#0f172a',
-                            amber: '#f59e0b',
-                            emerald: '#10b981',
-                            crimson: '#ef4444',
-                            violet: '#8b5cf6'
-                        }
-                    },
-                    fontFamily: {
-                        mono: ['JetBrains Mono', 'Courier New', 'monospace'],
-                        display: ['Space Grotesk', 'Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --bg-primary: #090b10;
-            --bg-card: #121620;
-            --border-color: #232a3b;
-            --accent-main: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.15);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>WINTER ARC // OS</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --panel: #121824;
+      --panel-2: #182132;
+      --ink: #f1f5f9;
+      --muted: #8b9bb4;
+      --line: #263248;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.14);
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      --r: 12px;
+    }
 
-        body.theme-polar {
-            --bg-primary: #f1f5f9;
-            --bg-card: #ffffff;
-            --border-color: #cbd5e1;
-            --accent-main: #0284c7;
-            --accent-glow: rgba(2, 132, 199, 0.12);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-        }
+    body[data-theme="editorial"] {
+      --bg: #f4f6f9;
+      --panel: #ffffff;
+      --panel-2: #eef2f7;
+      --ink: #0f172a;
+      --muted: #55657d;
+      --line: #d6dfeb;
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.1);
+    }
 
-        body.theme-amber {
-            --bg-primary: #0c0a09;
-            --bg-card: #1c1917;
-            --border-color: #44403c;
-            --accent-main: #f59e0b;
-            --accent-glow: rgba(245, 158, 11, 0.15);
-            --text-main: #fafaf9;
-            --text-muted: #a8a29e;
-        }
+    body[data-theme="amber"] {
+      --bg: #110e0a;
+      --panel: #1a1510;
+      --panel-2: #241d16;
+      --ink: #faf5ee;
+      --muted: #a89985;
+      --line: #362b20;
+      --accent: #f59e0b;
+      --accent-soft: rgba(245, 158, 11, 0.14);
+    }
 
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            font-family: 'Space Grotesk', sans-serif;
-            overflow-x: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      min-height: 100vh;
+      padding-bottom: 76px;
+      line-height: 1.4;
+    }
 
-        .mono-font { font-family: 'JetBrains Mono', monospace; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .brand-badge {
+      background: var(--accent);
+      color: #071019;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 900;
+    }
+    .status-pill {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--ok);
+      white-space: nowrap;
+    }
 
-        .brutal-border {
-            border: 1px solid var(--border-color);
-        }
+    .subnav {
+      position: sticky;
+      top: 45px;
+      z-index: 25;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      padding: 8px 12px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .subnav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      background: var(--panel);
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tab-btn.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
 
-        .brutal-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 20px -2px var(--accent-glow);
-            transition: transform 0.15s ease, border-color 0.15s ease;
-        }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 14px;
+    }
 
-        .brutal-card:hover {
-            border-color: var(--accent-main);
-        }
+    .page { display: none; }
+    .page.active { display: block; }
 
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-primary); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-color); }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent-main); }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 600px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+    }
 
-        /* Canvas background overlay */
-        #particleCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.35;
-        }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 13px;
+      margin-bottom: 10px;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+    }
+    .big-num {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-weight: 900;
+    }
+    .muted { color: var(--muted); font-size: 12px; }
+    .mono { font-family: var(--mono); }
 
-        /* Scanline effect for cyber/brutalist atmosphere */
-        .scanline {
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0, 0, 0, 0.25) 50%,
-                rgba(0, 0, 0, 0.25)
-            );
-            background-size: 100% 4px;
-        }
+    .meter {
+      height: 6px;
+      background: var(--panel-2);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .meter > i {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+    .meter.ok > i { background: var(--ok); }
 
-        /* Glass pill badges */
-        .badge-pill {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.2rem 0.6rem;
-            font-size: 0.7rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            border-radius: 2px;
-            border: 1px solid var(--border-color);
-        }
+    .row-item {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+    .row-item.done .item-title {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1.5px solid var(--accent);
+      background: transparent;
+      color: #071019;
+      font-weight: 900;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .row-item.done .check {
+      background: var(--accent);
+    }
+    .item-main { flex: 1; min-width: 0; cursor: pointer; }
+    .item-title { font-size: 13px; font-weight: 700; word-break: break-word; }
+    .item-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .item-side { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
-        .badge-common { border-color: #6b7280; color: #9ca3af; background: rgba(107, 114, 128, 0.1); }
-        .badge-uncommon { border-color: #10b981; color: #34d399; background: rgba(16, 185, 129, 0.1); }
-        .badge-rare { border-color: #3b82f6; color: #60a5fa; background: rgba(59, 130, 246, 0.1); }
-        .badge-epic { border-color: #8b5cf6; color: #a78bfa; background: rgba(139, 92, 246, 0.15); }
-        .badge-legendary { border-color: #f59e0b; color: #fbbf24; background: rgba(245, 158, 11, 0.15); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
-        .badge-unique { border-color: #ec4899; color: #f472b6; background: rgba(236, 72, 153, 0.2); box-shadow: 0 0 12px rgba(236, 72, 153, 0.3); }
+    .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      white-space: nowrap;
+    }
 
-        .active-tab {
-            background-color: var(--accent-main) !important;
-            color: #000000 !important;
-            font-weight: 800 !important;
-        }
+    .btn {
+      background: var(--panel-2);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn.primary {
+      background: var(--accent);
+      color: #071019;
+      border-color: var(--accent);
+    }
+    .btn.ok {
+      background: var(--ok);
+      color: #05130e;
+      border-color: var(--ok);
+    }
+    .btn.danger {
+      background: transparent;
+      color: var(--bad);
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+    .btn.sm { padding: 5px 8px; font-size: 10px; }
 
-        /* Pulse glow animation */
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.02); }
-        }
-        .animate-pulse-glow { animation: pulseGlow 3s infinite ease-in-out; }
-    </style>
+    .form-box {
+      display: none;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .form-box.open { display: grid; gap: 8px; }
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      font-family: var(--sans);
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      background: var(--panel-2);
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .chip.on {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .stat-box {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px;
+      text-align: center;
+    }
+    .stat-box b { display: block; font-family: var(--mono); font-size: 16px; color: var(--accent); }
+    .stat-box span { font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+
+    .log-box {
+      max-height: 170px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .log-row {
+      background: var(--panel-2);
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 11.5px;
+    }
+    .log-row b { font-family: var(--mono); font-size: 10px; color: var(--accent); margin-right: 6px; }
+
+    .dock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: var(--panel);
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 7px 6px 14px;
+    }
+    .dock button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 4px 2px;
+    }
+    .dock button.active { color: var(--accent); }
+  </style>
 </head>
-<body class="relative min-h-screen custom-scrollbar selection:bg-sky-500 selection:text-black">
-
-    <!-- Background Particle Canvas -->
-    <canvas id="particleCanvas"></canvas>
-
-    <!-- App Container -->
-    <div id="app" class="relative z-10 flex flex-col md:flex-row min-h-screen">
-        
-        <!-- Sidebar Navigation (Desktop) & Top Header (Mobile) -->
-        <aside class="w-full md:w-64 brutal-border bg-black/40 backdrop-blur-md p-4 flex flex-col justify-between shrink-0 sticky top-0 md:h-screen z-30">
-            <div>
-                <!-- Brand Header -->
-                <div class="flex items-center justify-between pb-4 border-b border-neutral-800">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 bg-sky-500/20 border border-sky-400 flex items-center justify-center font-extrabold text-sky-400 mono-font text-lg shadow-[0_0_12px_rgba(56,189,248,0.3)]">
-                            WA
-                        </div>
-                        <div>
-                            <h1 class="font-black tracking-widest text-sm uppercase text-neutral-100 leading-none">WINTER ARC</h1>
-                            <span class="text-[10px] mono-font text-sky-400 tracking-wider">PERSONAL OS v4.0</span>
-                        </div>
-                    </div>
-                    <!-- Sync Indicator -->
-                    <div id="syncStatusBadge" class="flex items-center space-x-1 text-[10px] mono-font px-2 py-0.5 border border-emerald-500/40 bg-emerald-950/30 text-emerald-400 cursor-pointer" onclick="app.manualSyncState()" title="Кликните для синхронизации">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                        <span id="syncStatusText">ONLINE</span>
-                    </div>
-                </div>
-
-                <!-- Telemetry Snapshot -->
-                <div class="my-4 p-3 brutal-border bg-neutral-900/60 mono-font text-xs space-y-2">
-                    <div class="flex justify-between items-center text-neutral-400">
-                        <span>LVL <strong id="sidebarLevel" class="text-sky-400 font-bold">1</strong></span>
-                        <span id="sidebarTitle" class="text-[10px] px-1.5 py-0.5 border border-neutral-700 bg-neutral-800 text-neutral-300">INITIATE</span>
-                    </div>
-                    <!-- XP Bar -->
-                    <div class="w-full bg-neutral-950 h-2 brutal-border relative overflow-hidden">
-                        <div id="sidebarXpBar" class="bg-sky-400 h-full transition-all duration-300" style="width: 25%;"></div>
-                    </div>
-                    <div class="flex justify-between text-[10px] text-neutral-500">
-                        <span id="sidebarXpText">250 / 1000 XP</span>
-                        <span id="sidebarCurrencyText" class="text-amber-400 font-bold">⚡ 120 Shards</span>
-                    </div>
-                </div>
-
-                <!-- Main Navigation Links -->
-                <nav class="space-y-1 text-xs mono-font" id="navContainer">
-                    <button onclick="app.navigate('command')" data-tab="command" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-terminal mr-2.5 text-sky-400"></i>01. COMMAND CENTER</span>
-                        <span class="text-[9px] text-neutral-600">[HUB]</span>
-                    </button>
-                    <button onclick="app.navigate('daily')" data-tab="daily" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-calendar-check mr-2.5 text-emerald-400"></i>02. DAILY ENGINE</span>
-                        <span id="dailyCounterBadge" class="text-[9px] px-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">0/0</span>
-                    </button>
-                    <button onclick="app.navigate('bosses')" data-tab="bosses" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-[#ffffff] fa-dragon mr-2.5 text-rose-500"></i>03. GOALS & BOSSES</span>
-                        <span class="text-[9px] text-neutral-600">[ACT]</span>
-                    </button>
-                    <button onclick="app.navigate('profile')" data-tab="profile" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-id-card mr-2.5 text-violet-400"></i>04. IDENTITY & PROFILE</span>
-                        <span class="text-[9px] text-neutral-600">[CARD]</span>
-                    </button>
-                    <button onclick="app.navigate('inventory')" data-tab="inventory" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-box-archive mr-2.5 text-amber-400"></i>05. INVENTORY & VAULT</span>
-                        <span id="inventoryBadge" class="text-[9px] text-neutral-500">0 ITEMS</span>
-                    </button>
-                    <button onclick="app.navigate('shop')" data-tab="shop" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-store mr-2.5 text-yellow-400"></i>06. SYSTEM SHOP</span>
-                        <span class="text-[9px] text-neutral-600">[STORE]</span>
-                    </button>
-                    <button onclick="app.navigate('achievements')" data-tab="achievements" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-trophy mr-2.5 text-amber-300"></i>07. ACHIEVEMENTS</span>
-                        <span id="achieveBadge" class="text-[9px] text-neutral-500">0/12</span>
-                    </button>
-                    <button onclick="app.navigate('ai')" data-tab="ai" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-brain mr-2.5 text-cyan-400"></i>08. AI ADVISOR</span>
-                        <span class="text-[9px] text-cyan-400 animate-pulse">● LOCAL</span>
-                    </button>
-                    <button onclick="app.navigate('lore')" data-tab="lore" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-book-skull mr-2.5 text-purple-400"></i>09. WINTER LORE</span>
-                        <span class="text-[9px] text-neutral-600">[CANON]</span>
-                    </button>
-                    <button onclick="app.navigate('stats')" data-tab="stats" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-chart-line mr-2.5 text-indigo-400"></i>10. TELEMETRY & STATS</span>
-                        <span class="text-[9px] text-neutral-600">[DATA]</span>
-                    </button>
-                    <button onclick="app.navigate('settings')" data-tab="settings" class="nav-btn w-full text-left px-3 py-2 flex items-center justify-between border border-transparent hover:border-neutral-700 text-neutral-300 hover:text-white transition">
-                        <span><i class="fa-solid fa-sliders mr-2.5 text-neutral-400"></i>11. SYSTEM SETTINGS</span>
-                        <span class="text-[9px] text-neutral-600">[CFG]</span>
-                    </button>
-                </nav>
-            </div>
-
-            <!-- Recovery & Quick Control Footer -->
-            <div class="mt-6 pt-4 border-t border-neutral-800 space-y-2">
-                <button onclick="app.triggerRecoveryModal()" class="w-full text-center py-2 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 text-xs mono-font transition flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-kit-medical"></i>
-                    <span>RECOVERY PROTOCOL</span>
-                </button>
-                <div class="flex justify-between text-[10px] text-neutral-500 mono-font pt-1">
-                    <span>MODE: SINGLE-PLAYER</span>
-                    <span>KEY: SYSTEM_OK</span>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Workspace Area -->
-        <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full custom-scrollbar pb-24 md:pb-8">
-            
-            <!-- Global Event Banner (Dynamic) -->
-            <div id="worldEventBanner" class="hidden mb-6 p-4 brutal-card border-amber-500/50 bg-amber-950/20 relative overflow-hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div class="flex items-start space-x-3">
-                        <div class="text-2xl text-amber-400 pt-1"><i class="fa-solid fa-bolt"></i></div>
-                        <div>
-                            <div class="flex items-center space-x-2">
-                                <span class="badge-pill badge-legendary">SLOT EVENT</span>
-                                <h3 id="eventTitle" class="font-bold text-amber-200 uppercase text-sm"></h3>
-                            </div>
-                            <p id="eventDesc" class="text-xs text-neutral-300 mt-1 max-w-2xl"></p>
-                        </div>
-                    </div>
-                    <div id="eventActions" class="flex items-center space-x-2 shrink-0">
-                        <!-- Dynamic choices inserted via JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECTION 01: COMMAND CENTER -->
-            <section id="sec-command" class="view-section space-y-6">
-                <!-- Banner Header -->
-                <div class="brutal-card p-6 relative overflow-hidden bg-gradient-to-r from-neutral-900 via-neutral-900/90 to-sky-950/30">
-                    <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 relative z-10">
-                        <div>
-                            <div class="flex items-center space-x-3 mb-2">
-                                <span class="badge-pill badge-unique" id="userEquippedTitle">PROJECT ARCHITECT</span>
-                                <span class="text-xs mono-font text-neutral-400" id="currentDateStr">--</span>
-                            </div>
-                            <h2 class="text-2xl md:text-4xl font-black tracking-tight text-white uppercase">COMMAND CENTER</h2>
-                            <p class="text-xs md:text-sm text-neutral-400 mt-1 max-w-xl">
-                                Добро пожаловать в персональную операционную систему WINTER ARC. Ваша ежедневная арена развития, задач и достижений.
-                            </p>
-                        </div>
-                        <!-- Quick Core Stats Block -->
-                        <div class="grid grid-cols-3 gap-3 mono-font text-center bg-black/50 p-3 brutal-border">
-                            <div class="p-2 border-r border-neutral-800">
-                                <div class="text-[10px] text-neutral-400">DISCIPLINE</div>
-                                <div id="statDiscipline" class="text-lg font-black text-sky-400">10</div>
-                            </div>
-                            <div class="p-2 border-r border-neutral-800">
-                                <div class="text-[10px] text-neutral-400">FOCUS</div>
-                                <div id="statFocus" class="text-lg font-black text-emerald-400">10</div>
-                            </div>
-                            <div class="p-2">
-                                <div class="text-[10px] text-neutral-400">INDEP.</div>
-                                <div id="statIndep" class="text-lg font-black text-amber-400">10</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Grid Layout: Today's Priorities & Active Boss -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Left 2 Cols: Main Focus Tasks & AI Recommendation Strip -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- AI Tactical Recommendation Strip -->
-                        <div class="brutal-card p-4 border-cyan-500/30 bg-cyan-950/10 flex items-start space-x-3">
-                            <div class="text-cyan-400 text-xl pt-0.5"><i class="fa-solid fa-robot"></i></div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-center mb-1">
-                                    <span class="text-xs font-bold text-cyan-300 uppercase tracking-wider">AI Tactical Directive</span>
-                                    <button onclick="app.generateAiDirective()" class="text-[10px] mono-font text-cyan-400 hover:underline">Обновить</button>
-                                </div>
-                                <p id="aiTacticalText" class="text-xs text-neutral-300 leading-relaxed">
-                                    Сфокусируйтесь на завершении задач высшего приоритета. Дисциплина растет при регулярном выполнении основных направлений.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Today's Core Tasks Preview -->
-                        <div class="brutal-card p-5 space-y-4">
-                            <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
-                                <div class="flex items-center space-x-2">
-                                    <h3 class="font-bold text-sm tracking-wide text-neutral-100">ГЛАВНЫЙ ПЛАН НА СЕГОДНЯ</h3>
-                                    <span id="commandTaskProgress" class="badge-pill badge-rare">0 / 0 DONE</span>
-                                </div>
-                                <button onclick="app.navigate('daily')" class="text-xs mono-font text-sky-400 hover:text-sky-300">Все задачи &rarr;</button>
-                            </div>
-                            <div id="commandTasksList" class="space-y-2">
-                                <!-- Tasks render dynamically -->
-                            </div>
-                        </div>
-
-                        <!-- Vector Activity Overview -->
-                        <div class="brutal-card p-5">
-                            <h3 class="font-bold text-sm tracking-wide text-neutral-100 border-b border-neutral-800 pb-3 mb-4">АКТИВНЫЕ НАПРАВЛЕНИЯ РАЗВИТИЯ</h3>
-                            <div id="commandVectorsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                <!-- Vectors rendered dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Col: Active Boss Campaign & Telemetry Widget -->
-                    <div class="space-y-6">
-                        <!-- Boss Mission Card -->
-                        <div class="brutal-card p-5 border-rose-500/40 bg-neutral-900/90 relative">
-                            <div class="flex justify-between items-center mb-3 border-b border-neutral-800 pb-2">
-                                <span class="badge-pill badge-legendary">ACTIVE BOSS MISSION</span>
-                                <button onclick="app.navigate('bosses')" class="text-[10px] mono-font text-rose-400">Детали</button>
-                            </div>
-                            <div id="activeBossWidget" class="space-y-4">
-                                <!-- Boss details rendered via JS -->
-                            </div>
-                        </div>
-
-                        <!-- Quick Statistics Snapshot -->
-                        <div class="brutal-card p-5 space-y-3 mono-font text-xs">
-                            <h3 class="font-bold text-sm tracking-wide text-neutral-100 border-b border-neutral-800 pb-2">TELEMETRY STATS</h3>
-                            <div class="flex justify-between text-neutral-400">
-                                <span>Выполнено задач:</span>
-                                <strong id="telemetryTasksDone" class="text-white">0</strong>
-                            </div>
-                            <div class="flex justify-between text-neutral-400">
-                                <span>Часы активности:</span>
-                                <strong id="telemetryHoursLogged" class="text-emerald-400">0.0 ч</strong>
-                            </div>
-                            <div class="flex justify-between text-neutral-400">
-                                <span>Завершено боссов:</span>
-                                <strong id="telemetryBossesDefeated" class="text-rose-400">0</strong>
-                            </div>
-                            <div class="flex justify-between text-neutral-400">
-                                <span>Реликвии (Tokens):</span>
-                                <strong id="telemetryRelics" class="text-violet-400">0</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 02: DAILY ENGINE -->
-            <section id="sec-daily" class="view-section space-y-6 hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 brutal-card p-5">
-                    <div>
-                        <h2 class="text-2xl font-black text-white uppercase tracking-tight">DAILY ENGINE</h2>
-                        <p class="text-xs text-neutral-400">Управление реальным днем, векторами и измеримым результатом.</p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="app.openTaskModal()" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-black font-extrabold text-xs mono-font transition flex items-center space-x-2">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>НОВАЯ ЗАДАЧА</span>
-                        </button>
-                        <button onclick="app.generateSmartDayPlan()" class="px-4 py-2 border border-emerald-500/50 bg-emerald-950/30 text-emerald-300 hover:bg-emerald-900/50 font-bold text-xs mono-font transition flex items-center space-x-2">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                            <span>AI ПЛАН ДНЯ</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Tiers Filter & Search Bar -->
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div class="flex space-x-2 text-xs mono-font w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-                        <button onclick="app.filterTasksTier('ALL')" class="tier-tab-btn px-3 py-1.5 brutal-border active-tab" data-tier="ALL">ВСЕ ЗАДАЧИ</button>
-                        <button onclick="app.filterTasksTier('CORE')" class="tier-tab-btn px-3 py-1.5 brutal-border bg-neutral-900 text-neutral-400 hover:text-white" data-tier="CORE">CORE (ОСНОВНЫЕ)</button>
-                        <button onclick="app.filterTasksTier('EXTENDED')" class="tier-tab-btn px-3 py-1.5 brutal-border bg-neutral-900 text-neutral-400 hover:text-white" data-tier="EXTENDED">EXTENDED (ДОП)</button>
-                        <button onclick="app.filterTasksTier('FREE')" class="tier-tab-btn px-3 py-1.5 brutal-border bg-neutral-900 text-neutral-400 hover:text-white" data-tier="FREE">FREE ACTION</button>
-                    </div>
-                    <!-- Vector selector filter -->
-                    <select id="dailyVectorFilter" onchange="app.renderDailyEngine()" class="bg-neutral-900 brutal-border px-3 py-1.5 text-xs text-neutral-200 mono-font w-full sm:w-48">
-                        <option value="ALL">Все Векторы</option>
-                        <!-- Dynamic vector list -->
-                    </select>
-                </div>
-
-                <!-- Tasks List -->
-                <div id="dailyTaskList" class="space-y-3">
-                    <!-- Dynamic rendering -->
-                </div>
-
-                <!-- Vector Manager & Log Session Notes -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                    <!-- Vector List Manager -->
-                    <div class="brutal-card p-5 space-y-3">
-                        <div class="flex justify-between items-center border-b border-neutral-800 pb-2">
-                            <h3 class="font-bold text-sm text-neutral-100">УПРАВЛЕНИЕ ВЕКТОРАМИ</h3>
-                            <button onclick="app.openVectorModal()" class="text-xs text-sky-400 font-bold mono-font">+ ДОБАВИТЬ</button>
-                        </div>
-                        <div id="dailyVectorsManager" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
-                            <!-- Vectors manager items -->
-                        </div>
-                    </div>
-
-                    <!-- Daily Notes & Outcome Log -->
-                    <div class="brutal-card p-5 space-y-3 flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-bold text-sm text-neutral-100 border-b border-neutral-800 pb-2 mb-3">ДНЕВНОЙ ОТЧЕТ И ИТОГИ</h3>
-                            <textarea id="dailyNotesInput" rows="4" class="w-full bg-neutral-950 brutal-border p-3 text-xs text-neutral-200 focus:outline-none focus:border-sky-500 font-mono resize-none" placeholder="Зафиксируйте инсайты, выводы или результаты сегодняшнего дня..."></textarea>
-                        </div>
-                        <div class="flex justify-between items-center pt-2">
-                            <span class="text-[10px] text-neutral-500 mono-font">Автосохранение в локальный стек</span>
-                            <button onclick="app.saveDailyNotes()" class="px-4 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-white font-bold text-xs mono-font border border-neutral-600 transition">
-                                СОХРАНИТЬ ЗАМЕТКУ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 03: GOALS & BOSS MISSIONS -->
-            <section id="sec-bosses" class="view-section space-y-6 hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 brutal-card p-5">
-                    <div>
-                        <h2 class="text-2xl font-black text-white uppercase tracking-tight">GOALS & BOSS MISSIONS</h2>
-                        <p class="text-xs text-neutral-400">Масштабные цели и эпические кампании развития.</p>
-                    </div>
-                    <button onclick="app.openBossModal()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs mono-font transition flex items-center space-x-2">
-                        <i class="fa-solid fa-skull"></i>
-                        <span>СОЗДАТЬ БОССА</span>
-                    </button>
-                </div>
-
-                <!-- Boss Missions Deck -->
-                <div id="bossMissionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Boss cards dynamically rendered -->
-                </div>
-
-                <!-- Long Term Goals Section -->
-                <div class="brutal-card p-5 space-y-4">
-                    <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
-                        <h3 class="font-bold text-sm text-neutral-100">ДОЛГОСРОЧНЫЕ СТРАТЕГИЧЕСКИЕ ЦЕЛИ</h3>
-                        <button onclick="app.openGoalModal()" class="text-xs text-sky-400 font-bold mono-font">+ НОВАЯ ЦЕЛЬ</button>
-                    </div>
-                    <div id="longTermGoalsContainer" class="space-y-3">
-                        <!-- Long term goals list -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 04: PROFILE & IDENTITY -->
-            <section id="sec-profile" class="view-section space-y-6 hidden">
-                <div class="brutal-card p-6 border-violet-500/30 bg-neutral-900/80 space-y-6">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                        <div class="flex items-center space-x-4">
-                            <!-- Custom Frame Avatar Box -->
-                            <div id="profileAvatarBox" class="w-20 h-20 brutal-border bg-neutral-950 flex items-center justify-center text-3xl font-black text-violet-400 relative">
-                                <span id="profileAvatarInitials">WA</span>
-                                <div id="profileAvatarBadge" class="absolute -bottom-2 -right-2 text-[9px] px-1 bg-violet-600 text-white font-bold mono-font">LVL 1</div>
-                            </div>
-                            <div>
-                                <div class="flex items-center space-x-2">
-                                    <h2 id="profileUsername" class="text-2xl font-black text-white">OPERATOR_01</h2>
-                                    <span id="profileTitleBadge" class="badge-pill badge-epic">INITIATE</span>
-                                </div>
-                                <p id="profileBio" class="text-xs text-neutral-400 mt-1 max-w-md">Персональный цифровой профиль развития WINTER ARC.</p>
-                            </div>
-                        </div>
-                        <button onclick="app.copyProfileCardSummary()" class="px-4 py-2 border border-violet-500 bg-violet-950/40 hover:bg-violet-900/60 text-violet-300 font-bold text-xs mono-font transition flex items-center space-x-2">
-                            <i class="fa-solid fa-share-nodes"></i>
-                            <span>ЭКСПОРТИРОВАТЬ PROFILE CARD</span>
-                        </button>
-                    </div>
-
-                    <!-- Customizer Deck -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-b border-neutral-800 py-4 mono-font text-xs">
-                        <div>
-                            <label class="text-[10px] text-neutral-500 block mb-1">ОСНОВНОЙ ТИТУЛ</label>
-                            <select id="profileTitleSelect" onchange="app.equipTitle(this.value)" class="w-full bg-neutral-950 brutal-border p-2 text-neutral-200">
-                                <!-- Titles dynamically loaded -->
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-neutral-500 block mb-1">ВИЗУАЛЬНАЯ РАМКА</label>
-                            <select id="profileFrameSelect" onchange="app.equipFrame(this.value)" class="w-full bg-neutral-950 brutal-border p-2 text-neutral-200">
-                                <!-- Frames dynamically loaded -->
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-neutral-500 block mb-1">ЗНАЧОК СТАТУСА</label>
-                            <select id="profileBadgeSelect" onchange="app.equipBadge(this.value)" class="w-full bg-neutral-950 brutal-border p-2 text-neutral-200">
-                                <!-- Badges loaded -->
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Profile Stats & Achievements Timeline -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="space-y-3">
-                            <h3 class="font-bold text-xs mono-font text-neutral-300 uppercase tracking-wider">ХАРАКТЕРИСТИКИ ЭГО</h3>
-                            <div class="space-y-2 mono-font text-xs">
-                                <div>
-                                    <div class="flex justify-between text-neutral-400 mb-1">
-                                        <span>DISCIPLINE (Последовательность)</span>
-                                        <span id="profDispVal" class="text-sky-400 font-bold">10</span>
-                                    </div>
-                                    <div class="w-full bg-neutral-950 h-2 brutal-border"><div id="profDispBar" class="bg-sky-400 h-full" style="width: 20%;"></div></div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-neutral-400 mb-1">
-                                        <span>FOCUS (Работа без отвлечений)</span>
-                                        <span id="profFocusVal" class="text-emerald-400 font-bold">10</span>
-                                    </div>
-                                    <div class="w-full bg-neutral-950 h-2 brutal-border"><div id="profFocusBar" class="bg-emerald-400 h-full" style="width: 20%;"></div></div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-neutral-400 mb-1">
-                                        <span>INDEPENDENCE (Самостоятельность)</span>
-                                        <span id="profIndepVal" class="text-amber-400 font-bold">10</span>
-                                    </div>
-                                    <div class="w-full bg-neutral-950 h-2 brutal-border"><div id="profIndepBar" class="bg-amber-400 h-full" style="width: 20%;"></div></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Equiped Badges Showcase -->
-                        <div class="space-y-3">
-                            <h3 class="font-bold text-xs mono-font text-neutral-300 uppercase tracking-wider">ЭКИПИРОВАННАЯ КОЛЛЕКЦИЯ</h3>
-                            <div id="profileEquippedShowcase" class="grid grid-cols-2 gap-2">
-                                <!-- Rendered JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 05: INVENTORY -->
-            <section id="sec-inventory" class="view-section space-y-6 hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 brutal-card p-5">
-                    <div>
-                        <h2 class="text-2xl font-black text-white uppercase tracking-tight">INVENTORY & VAULT</h2>
-                        <p class="text-xs text-neutral-400">Хранилище редких артефактов, титулов, рамок и знаков отличия.</p>
-                    </div>
-                    <div class="flex items-center space-x-2 text-xs mono-font">
-                        <select id="inventoryRarityFilter" onchange="app.renderInventory()" class="bg-neutral-900 brutal-border px-3 py-1.5 text-neutral-200">
-                            <option value="ALL">Все Редкости</option>
-                            <option value="COMMON">Common</option>
-                            <option value="UNCOMMON">Uncommon</option>
-                            <option value="RARE">Rare</option>
-                            <option value="EPIC">Epic</option>
-                            <option value="LEGENDARY">Legendary</option>
-                            <option value="UNIQUE">Unique</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Inventory Grid -->
-                <div id="inventoryItemsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <!-- Items dynamically rendered -->
-                </div>
-            </section>
-
-            <!-- SECTION 06: SYSTEM SHOP -->
-            <section id="sec-shop" class="view-section space-y-6 hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 brutal-card p-5 border-yellow-500/30 bg-neutral-900/80">
-                    <div>
-                        <h2 class="text-2xl font-black text-white uppercase tracking-tight">SYSTEM SHOP</h2>
-                        <p class="text-xs text-neutral-400">Приобретайте предметные улучшения, титулы и бусты за забронированные Shards и Relic Tokens.</p>
-                    </div>
-                    <div class="flex items-center space-x-4 mono-font text-xs">
-                        <div class="px-3 py-1.5 bg-neutral-950 brutal-border text-amber-400 font-bold">
-                            ⚡ <span id="shopShardsVal">0</span> SHARDS
-                        </div>
-                        <div class="px-3 py-1.5 bg-neutral-950 brutal-border text-violet-400 font-bold">
-                            🔮 <span id="shopRelicsVal">0</span> RELIC TOKENS
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Shop Items Grid -->
-                <div id="shopCatalogGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    <!-- Shop cards rendered via JS -->
-                </div>
-            </section>
-
-            <!-- SECTION 07: ACHIEVEMENTS -->
-            <section id="sec-achievements" class="view-section space-y-6 hidden">
-                <div class="brutal-card p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-black text-white uppercase tracking-tight">ACHIEVEMENTS & HISTORY</h2>
-                        <p class="text-xs text-neutral-400">Постоянная летопись вашего реального прогресса и разблокированных рубежей.</p>
-                    </div>
-                    <div class="text-xs mono-font text-amber-400 font-bold">
-                        UNLOCKED: <span id="achieveUnlockedCount">0</span> / <span id="achieveTotalCount">12</span>
-                    </div>
-                </div>
-
-                <!-- Achievements Grid -->
-                <div id="achievementsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Achievements rendered via JS -->
-                </div>
-
-                <!-- Permanent History Timeline -->
-                <div class="brutal-card p-5 space-y-4">
-                    <h3 class="font-bold text-sm text-neutral-100 border-b border-neutral-800 pb-2">PERMANENT ACTION TIMELINE</h3>
-                    <div id="permanentTimelineLog" class="space-y-2 mono-font text-xs max-h-80 overflow-y-auto custom-scrollbar">
-                        <!-- History log entries -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 08: AI ADVISOR -->
-            <section id="sec-ai" class="view-section space-y-6 hidden">
-                <div class="brutal-card p-5 border-cyan-500/40 bg-cyan-950/10 space-y-4">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="flex items-center space-x-2">
-                                <h2 class="text-2xl font-black text-white uppercase tracking-tight">AI PERSONAL ADVISOR</h2>
-                                <span class="badge-pill badge-rare">CONTEXT-AWARE</span>
-                            </div>
-                            <p class="text-xs text-neutral-300 mt-1">Интеллектуальный советник, учитывающий все задачи, векторы, боссов и текущее состояние эго.</p>
-                        </div>
-                        <div id="aiEngineModeBadge" class="text-[10px] mono-font px-2 py-1 bg-neutral-900 border border-cyan-500/50 text-cyan-400">
-                            MODE: LOCAL RULE ENGINE
-                        </div>
-                    </div>
-
-                    <!-- AI Action Controls Grid -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mono-font">
-                        <button onclick="app.runAiAction('DAY_PLAN')" class="p-3 bg-neutral-900 hover:bg-cyan-950 border border-neutral-700 hover:border-cyan-500 text-left transition space-y-1">
-                            <div class="text-cyan-400 font-bold"><i class="fa-solid fa-calendar-day mr-1"></i> ПЛАН ДНЯ</div>
-                            <div class="text-[10px] text-neutral-400">Сгенерировать оптимизированный сет задач</div>
-                        </button>
-                        <button onclick="app.runAiAction('DAY_REVIEW')" class="p-3 bg-neutral-900 hover:bg-cyan-950 border border-neutral-700 hover:border-cyan-500 text-left transition space-y-1">
-                            <div class="text-emerald-400 font-bold"><i class="fa-solid fa-magnifying-glass-chart mr-1"></i> АНАЛИЗ ДНЯ</div>
-                            <div class="text-[10px] text-neutral-400">Оценить продуктивность и баланс</div>
-                        </button>
-                        <button onclick="app.runAiAction('BOSS_STRATEGY')" class="p-3 bg-neutral-900 hover:bg-cyan-950 border border-neutral-700 hover:border-cyan-500 text-left transition space-y-1">
-                            <div class="text-rose-400 font-bold"><i class="fa-solid fa-shield-halved mr-1"></i> СТРАТЕГИЯ БОССА</div>
-                            <div class="text-[10px] text-neutral-400">План атаки на активную цель</div>
-                        </button>
-                        <button onclick="app.runAiAction('RECOVERY_PLAN')" class="p-3 bg-neutral-900 hover:bg-cyan-950 border border-neutral-700 hover:border-cyan-500 text-left transition space-y-1">
-                            <div class="text-amber-400 font-bold"><i class="fa-solid fa-heart-pulse mr-1"></i> ВОССТАНОВЛЕНИЕ</div>
-                            <div class="text-[10px] text-neutral-400">Снижение нагрузки и рестарты</div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- AI Output Display Console -->
-                <div class="brutal-card p-5 space-y-3 bg-black/60 font-mono text-xs">
-                    <div class="flex justify-between items-center border-b border-neutral-800 pb-2">
-                        <span class="text-cyan-400 font-bold flex items-center"><i class="fa-solid fa-terminal mr-2"></i>ADVISOR OUTPUT CONSOLE</span>
-                        <span class="text-[10px] text-neutral-500">READY</span>
-                    </div>
-                    <div id="aiConsoleOutput" class="min-h-[220px] text-neutral-200 leading-relaxed whitespace-pre-wrap space-y-2">
-                        [SYSTEM]: AI Advisor готов к работе. Выберите действие выше или используйте автогенератор.
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 09: WINTER LORE -->
-            <section id="sec-lore" class="view-section space-y-6 hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 brutal-card p-5 border-purple-500/30 bg-neutral-900/80">
-                    <div>
-                        <h2 class="text-2xl font-black text-white uppercase tracking-tight">WINTER ARC CHRONICLE</h2>
-                        <p class="text-xs text-neutral-400">Альтернативный мир: 50% суровый эпос, 50% острый подземный юмор.</p>
-                    </div>
-                    <button onclick="app.openCharacterModal()" class="px-4 py-2 border border-purple-500 bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 font-bold text-xs mono-font transition">
-                        + СОЗДАТЬ ПЕРСОНАЖА
-                    </button>
-                </div>
-
-                <!-- Lore Chronicle Chapter Cards -->
-                <div id="loreChaptersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Lore chapter cards -->
-                </div>
-
-                <!-- Character Canon Manager -->
-                <div class="brutal-card p-5 space-y-4">
-                    <div class="flex justify-between items-center border-b border-neutral-800 pb-2">
-                        <h3 class="font-bold text-sm text-neutral-100">КАНОН ПЕРСОНАЖЕЙ МИРА</h3>
-                        <span class="text-[10px] mono-font text-purple-400">STRICT CANON GUARD</span>
-                    </div>
-                    <div id="characterCanonGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Characters list -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 10: TELEMETRY & STATS -->
-            <section id="sec-stats" class="view-section space-y-6 hidden">
-                <div class="brutal-card p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-black text-white uppercase tracking-tight">TELEMETRY & ANALYTICS</h2>
-                        <p class="text-xs text-neutral-400">Глубокая статистика активности, роста параметров и динамики выполнения.</p>
-                    </div>
-                    <!-- Period tabs -->
-                    <div class="flex space-x-1 text-xs mono-font">
-                        <button onclick="app.setStatsPeriod('DAY')" class="stats-period-btn px-3 py-1 brutal-border active-tab" data-period="DAY">DAY</button>
-                        <button onclick="app.setStatsPeriod('WEEK')" class="stats-period-btn px-3 py-1 brutal-border bg-neutral-900 text-neutral-400" data-period="WEEK">WEEK</button>
-                        <button onclick="app.setStatsPeriod('MONTH')" class="stats-period-btn px-3 py-1 brutal-border bg-neutral-900 text-neutral-400" data-period="MONTH">MONTH</button>
-                        <button onclick="app.setStatsPeriod('LIFETIME')" class="stats-period-btn px-3 py-1 brutal-border bg-neutral-900 text-neutral-400" data-period="LIFETIME">LIFETIME</button>
-                    </div>
-                </div>
-
-                <!-- Stats Visual Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="brutal-card p-5 space-y-3">
-                        <span class="text-xs font-bold text-neutral-400 uppercase tracking-wider block">ПРОДУКТИВНОСТЬ (DONE %)</span>
-                        <div class="text-4xl font-black text-emerald-400 mono-font" id="statsCompletionRate">0%</div>
-                        <p class="text-[11px] text-neutral-500">Процент выполненных задач за выбранный период.</p>
-                    </div>
-                    <div class="brutal-card p-5 space-y-3">
-                        <span class="text-xs font-bold text-neutral-400 uppercase tracking-wider block">НАРАБОТКА ЧАСОВ</span>
-                        <div class="text-4xl font-black text-sky-400 mono-font" id="statsLoggedHours">0.0 h</div>
-                        <p class="text-[11px] text-neutral-500">Суммарное время чистой работы над векторами.</p>
-                    </div>
-                    <div class="brutal-card p-5 space-y-3">
-                        <span class="text-xs font-bold text-neutral-400 uppercase tracking-wider block">ЗАРАБОТАНО SHARDS</span>
-                        <div class="text-4xl font-black text-amber-400 mono-font" id="statsEarnedShards">0</div>
-                        <p class="text-[11px] text-neutral-500">Экономическая активность и награды.</p>
-                    </div>
-                </div>
-
-                <!-- Vector Breakdown Bars -->
-                <div class="brutal-card p-5 space-y-4">
-                    <h3 class="font-bold text-sm text-neutral-100 border-b border-neutral-800 pb-2">РАСПРЕДЕЛЕНИЕ ПО ВЕКТОРАМ</h3>
-                    <div id="statsVectorBreakdown" class="space-y-3 mono-font text-xs">
-                        <!-- Bars dynamically loaded -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 11: SETTINGS -->
-            <section id="sec-settings" class="view-section space-y-6 hidden">
-                <div class="brutal-card p-5">
-                    <h2 class="text-2xl font-black text-white uppercase tracking-tight">SYSTEM CONFIGURATION</h2>
-                    <p class="text-xs text-neutral-400">Настройки темы, звуков, внешних API ключей и резервного копирования.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Theme & UI Options -->
-                    <div class="brutal-card p-5 space-y-4">
-                        <h3 class="font-bold text-sm text-neutral-100 border-b border-neutral-800 pb-2">ВИЗУАЛЬНАЯ ТЕМА И ЭФФЕКТЫ</h3>
-                        <div class="space-y-3 text-xs mono-font">
-                            <div>
-                                <label class="text-neutral-400 block mb-1">ЦВЕТОВАЯ ПАЛИТРА</label>
-                                <select id="settingThemeSelect" onchange="app.changeTheme(this.value)" class="w-full bg-neutral-950 brutal-border p-2 text-neutral-200">
-                                    <option value="obsidian">WINTER OBSIDIAN (Dark Cyber)</option>
-                                    <option value="polar">POLAR EDITORIAL (Light High-Contrast)</option>
-                                    <option value="amber">SIGNAL AMBER (Warm Brutalism)</option>
-                                </select>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-t border-neutral-800">
-                                <span class="text-neutral-300">АУДИО СИНТЕЗАТОР И КЛИКИ</span>
-                                <input type="checkbox" id="settingSoundToggle" onchange="app.toggleSound(this.checked)" class="w-4 h-4 accent-sky-500">
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-t border-neutral-800">
-                                <span class="text-neutral-300">ФОНОВЫЕ ЧАСТИЦЫ (PARTICLES)</span>
-                                <input type="checkbox" id="settingParticlesToggle" onchange="app.toggleParticles(this.checked)" class="w-4 h-4 accent-sky-500">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- AI Key & External Endpoint Sync -->
-                    <div class="brutal-card p-5 space-y-4">
-                        <h3 class="font-bold text-sm text-neutral-100 border-b border-neutral-800 pb-2">СИНХРОНИЗАЦИЯ И AI API</h3>
-                        <div class="space-y-3 text-xs mono-font">
-                            <div>
-                                <label class="text-neutral-400 block mb-1">VERCEL / BACKEND STATE KEY</label>
-                                <input type="text" id="settingApiKeyInput" placeholder="test_key" class="w-full bg-neutral-950 brutal-border p-2 text-neutral-200">
-                            </div>
-                            <div>
-                                <label class="text-neutral-400 block mb-1">OPTIONAL OPENAI / LLM API KEY</label>
-                                <input type="password" id="settingLlmKeyInput" placeholder="sk-..." class="w-full bg-neutral-950 brutal-border p-2 text-neutral-200">
-                            </div>
-                            <button onclick="app.saveApiSettings()" class="w-full py-2 bg-sky-600 hover:bg-sky-500 text-black font-bold transition">
-                                СОХРАНИТЬ КЛЮЧИ И СИНХРОНИЗИРОВАТЬ
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Data Backup & Reset -->
-                    <div class="brutal-card p-5 space-y-4 md:col-span-2">
-                        <h3 class="font-bold text-sm text-neutral-100 border-b border-neutral-800 pb-2">УПРАВЛЕНИЕ ДАННЫМИ (BACKUP & RESET)</h3>
-                        <div class="flex flex-wrap gap-4 text-xs mono-font">
-                            <button onclick="app.exportStateJson()" class="px-4 py-2 border border-neutral-600 hover:border-white text-white font-bold transition">
-                                <i class="fa-solid fa-download mr-1"></i> ЭКСПОРТ JSON
-                            </button>
-                            <label class="px-4 py-2 border border-neutral-600 hover:border-white text-white font-bold transition cursor-pointer">
-                                <i class="fa-solid fa-upload mr-1"></i> ИМПОРТ JSON
-                                <input type="file" id="importJsonInput" accept=".json" onchange="app.importStateJson(event)" class="hidden">
-                            </label>
-                            <button onclick="app.resetStateFull()" class="px-4 py-2 bg-rose-950 border border-rose-700 hover:bg-rose-900 text-rose-200 font-bold transition">
-                                <i class="fa-solid fa-triangle-exclamation mr-1"></i> СБРОСИТЬ ВСЕ ДАННЫЕ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+<body data-theme="dark">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-badge">WA OS</span>
+      <span>WINTER ARC // D<span id="topDay">1</span></span>
     </div>
+    <span class="status-pill" id="syncStatus">● READY</span>
+  </header>
 
-    <!-- MODAL CONTAINERS -->
-    <!-- Task Modal -->
-    <div id="taskModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="brutal-card w-full max-w-md p-6 space-y-4 bg-neutral-900 border-sky-500/50">
-            <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
-                <h3 id="taskModalTitle" class="font-bold text-sm text-white uppercase">СОЗДАТЬ ЗАДАЧУ</h3>
-                <button onclick="app.closeModal('taskModal')" class="text-neutral-400 hover:text-white text-lg">&times;</button>
-            </div>
-            <div class="space-y-3 text-xs mono-font">
-                <div>
-                    <label class="text-neutral-400 block mb-1">НАЗВАНИЕ ЗАДАЧИ</label>
-                    <input type="text" id="taskTitleInput" class="w-full bg-neutral-950 brutal-border p-2 text-white" placeholder="Напр: 45 мин интенсивной тренировки">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-neutral-400 block mb-1">ТИП (TIER)</label>
-                        <select id="taskTierInput" class="w-full bg-neutral-950 brutal-border p-2 text-white">
-                            <option value="CORE">CORE (Основная)</option>
-                            <option value="EXTENDED">EXTENDED (Доп)</option>
-                            <option value="FREE">FREE ACTION</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-neutral-400 block mb-1">ВЕКТОР</label>
-                        <select id="taskVectorInput" class="w-full bg-neutral-950 brutal-border p-2 text-white">
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-neutral-400 block mb-1">ОЦЕНКА (ЧАСЫ)</label>
-                        <input type="number" step="0.5" id="taskHoursInput" value="1.0" class="w-full bg-neutral-950 brutal-border p-2 text-white">
-                    </div>
-                    <div>
-                        <label class="text-neutral-400 block mb-1">НАГРАДА SHARDS</label>
-                        <input type="number" id="taskShardsInput" value="25" class="w-full bg-neutral-950 brutal-border p-2 text-white">
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-end space-x-2 pt-2 border-t border-neutral-800">
-                <button onclick="app.closeModal('taskModal')" class="px-4 py-2 border border-neutral-700 text-neutral-300 text-xs mono-font">ОТМЕНА</button>
-                <button onclick="app.saveTaskModal()" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-black font-bold text-xs mono-font">СОХРАНИТЬ</button>
-            </div>
+  <nav class="subnav" id="subnav">
+    <button class="tab-btn active" data-page="hub" onclick="openPage('hub', this)">01 HUB</button>
+    <button class="tab-btn" data-page="daily" onclick="openPage('daily', this)">02 DAILY</button>
+    <button class="tab-btn" data-page="goals" onclick="openPage('goals', this)">03 BOSSES</button>
+    <button class="tab-btn" data-page="world" onclick="openPage('world', this)">04 WORLD</button>
+    <button class="tab-btn" data-page="vault" onclick="openPage('vault', this)">05 VAULT & SHOP</button>
+    <button class="tab-btn" data-page="stats" onclick="openPage('stats', this)">06 STATS & DB</button>
+  </nav>
+
+  <main class="wrap">
+    <!-- 01 HUB -->
+    <section id="p-hub" class="page active">
+      <div id="recoveryCard" class="card" style="display:none;border-color:var(--warn)">
+        <div class="label" style="color:var(--warn)">RECOVERY PROTOCOL</div>
+        <div style="font-size:12.5px;margin-top:4px" id="recoveryMsg"></div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn primary sm" onclick="startReturnQuest()">ПРИНЯТЬ RETURN QUEST</button>
+          <button class="btn sm" onclick="hideRecovery()">СВЕРНУТЬ</button>
         </div>
-    </div>
+      </div>
 
-    <!-- Boss Modal -->
-    <div id="bossModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="brutal-card w-full max-w-md p-6 space-y-4 bg-neutral-900 border-rose-500/50">
-            <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
-                <h3 class="font-bold text-sm text-rose-400 uppercase">СОЗДАТЬ БОССА / КАМПАНИЮ</h3>
-                <button onclick="app.closeModal('bossModal')" class="text-neutral-400 hover:text-white text-lg">&times;</button>
-            </div>
-            <div class="space-y-3 text-xs mono-font">
-                <div>
-                    <label class="text-neutral-400 block mb-1">ИМЯ БОССА / ПРОЕКТА</label>
-                    <input type="text" id="bossTitleInput" class="w-full bg-neutral-950 brutal-border p-2 text-white" placeholder="Напр: ТИТАН ДИСЦИПЛИНЫ">
-                </div>
-                <div>
-                    <label class="text-neutral-400 block mb-1">ОПИСАНИЕ И УСЛОВИЯ</label>
-                    <textarea id="bossDescInput" rows="2" class="w-full bg-neutral-950 brutal-border p-2 text-white" placeholder="Финальная цель и этапы поражения..."></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-neutral-400 block mb-1">МАКСИМАЛЬНОЕ HP</label>
-                        <input type="number" id="bossHpInput" value="500" class="w-full bg-neutral-950 brutal-border p-2 text-white">
-                    </div>
-                    <div>
-                        <label class="text-neutral-400 block mb-1">НАГРАДА RELICS</label>
-                        <input type="number" id="bossRelicsInput" value="5" class="w-full bg-neutral-950 brutal-border p-2 text-white">
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-end space-x-2 pt-2 border-t border-neutral-800">
-                <button onclick="app.closeModal('bossModal')" class="px-4 py-2 border border-neutral-700 text-neutral-300 text-xs mono-font">ОТМЕНА</button>
-                <button onclick="app.saveBossModal()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs mono-font">СОЗДАТЬ</button>
-            </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <span class="label">АККАУНТ</span>
+            <span class="tag" id="hubTitleTag">INITIATE</span>
+          </div>
+          <div class="big-num">LVL <span id="hubLvl">1</span></div>
+          <div class="muted mono" style="margin-top:2px"><span id="hubXp">0</span> / <span id="hubNextXp">800</span> XP</div>
+          <div class="meter"><i id="hubXpBar" style="width:0%"></i></div>
+          <div class="stats-strip">
+            <div class="stat-box"><b id="sDisc">12</b><span>DISC</span></div>
+            <div class="stat-box"><b id="sFoc">12</b><span>FOC</span></div>
+            <div class="stat-box"><b id="sInd">12</b><span>IND</span></div>
+          </div>
         </div>
-    </div>
 
-    <!-- Recovery Protocol Modal -->
-    <div id="recoveryModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="brutal-card w-full max-w-lg p-6 space-y-4 bg-neutral-900 border-rose-500/80">
-            <div class="flex items-center space-x-3 text-rose-400 border-b border-neutral-800 pb-3">
-                <i class="fa-solid fa-heart-pulse text-2xl"></i>
-                <div>
-                    <h3 class="font-bold text-base uppercase text-white">ПРОТОКОЛ ВОССТАНОВЛЕНИЯ (RECOVERY)</h3>
-                    <span class="text-[10px] mono-font text-rose-400">БЕЗ ШТРАФОВ И СБРОСА ПРОГРЕССА</span>
-                </div>
-            </div>
-            <p class="text-xs text-neutral-300 leading-relaxed">
-                Если вы были в отъезде или сделали паузу — система мягко адаптирует нагрузку. Просроченные задачи архивируются, уровень и награды сохраняются, а вы получаете адаптивный <strong>Return Quest</strong>.
-            </p>
-            <div class="p-3 bg-neutral-950 brutal-border space-y-2 mono-font text-xs">
-                <div class="flex justify-between text-neutral-400">
-                    <span>Сохранение XP и Level:</span>
-                    <strong class="text-emerald-400">ДА (100%)</strong>
-                </div>
-                <div class="flex justify-between text-neutral-400">
-                    <span>Очистка старых задач:</span>
-                    <strong class="text-sky-400">ОПТИМИЗАЦИЯ</strong>
-                </div>
-                <div class="flex justify-between text-neutral-400">
-                    <span>Бонус Return Quest:</span>
-                    <strong class="text-amber-400">+100 SHARDS</strong>
-                </div>
-            </div>
-            <div class="flex justify-end space-x-2 pt-2 border-t border-neutral-800">
-                <button onclick="app.closeModal('recoveryModal')" class="px-4 py-2 border border-neutral-700 text-neutral-300 text-xs mono-font">ЗАКРЫТЬ</button>
-                <button onclick="app.executeRecoveryProtocol()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs mono-font">ЗАПУСТИТЬ ВОССТАНОВЛЕНИЕ</button>
-            </div>
+        <div class="card">
+          <div class="card-head">
+            <span class="label">ФОКУС-ТАЙМЕР</span>
+            <span class="tag" id="hubShardsTag">120 SHARDS</span>
+          </div>
+          <div class="big-num" id="timerClock">25:00</div>
+          <div class="muted" style="margin-top:2px">Сессия даёт +140 XP и +1 FOC</div>
+          <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+            <button class="btn primary sm" id="timerBtn" onclick="toggleTimer()">СТАРТ</button>
+            <button class="btn sm" onclick="resetTimer()">СБРОС</button>
+            <button class="btn sm" onclick="finishTimerNow()">ЗАЧЕСТЬ</button>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- Character Canon Modal -->
-    <div id="characterModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="brutal-card w-full max-w-md p-6 space-y-4 bg-neutral-900 border-purple-500/50">
-            <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
-                <h3 class="font-bold text-sm text-purple-300 uppercase">ДОБАВИТЬ ПЕРСОНАЖА ЛОРА</h3>
-                <button onclick="app.closeModal('characterModal')" class="text-neutral-400 hover:text-white text-lg">&times;</button>
-            </div>
-            <div class="space-y-3 text-xs mono-font">
-                <div>
-                    <label class="text-neutral-400 block mb-1">ИМЯ ПЕРСОНАЖА</label>
-                    <input type="text" id="charNameInput" class="w-full bg-neutral-950 brutal-border p-2 text-white" placeholder="Напр: Тень Архитектора">
-                </div>
-                <div>
-                    <label class="text-neutral-400 block mb-1">РОЛЬ И ХАРАКТЕР</label>
-                    <input type="text" id="charRoleInput" class="w-full bg-neutral-950 brutal-border p-2 text-white" placeholder="Напр: Хранитель северного ядра">
-                </div>
-                <div>
-                    <label class="text-neutral-400 block mb-1">ФАКТЫ И КАНОН</label>
-                    <textarea id="charCanonInput" rows="3" class="w-full bg-neutral-950 brutal-border p-2 text-white" placeholder="Ключевые особенности и связи..."></textarea>
-                </div>
-            </div>
-            <div class="flex justify-end space-x-2 pt-2 border-t border-neutral-800">
-                <button onclick="app.closeModal('characterModal')" class="px-4 py-2 border border-neutral-700 text-neutral-300 text-xs mono-font">ОТМЕНА</button>
-                <button onclick="app.saveCharacterModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs mono-font">СОХРАНИТЬ В КАНОН</button>
-            </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="label">СЕГОДНЯ — ОСНОВНОЙ КОНТУР</span>
+          <button class="btn sm" onclick="openPage('daily')">ВСЕ ЗАДАЧИ →</button>
         </div>
-    </div>
+        <div id="hubTasks"></div>
+      </div>
 
-    <!-- Toast Notification Overlay -->
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
+      <div class="card">
+        <div class="card-head">
+          <span class="label">AI СОВЕТНИК</span>
+          <span class="tag">CONTEXT</span>
+        </div>
+        <div id="hubAiText" style="font-size:12.5px"></div>
+      </div>
+    </section>
 
-    <!-- APPLICATION JAVASCRIPT LOGIC -->
-    <script>
-        // WebAudio Sound Synthesizer for High-Craft Micro-Interactions
-        class AudioSynth {
-            constructor() {
-                this.ctx = null;
-                this.enabled = true;
-            }
-            init() {
-                if (!this.ctx) {
-                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                    if (AudioCtx) this.ctx = new AudioCtx();
-                }
-            }
-            playTone(freq, duration, type = 'sine', volume = 0.1) {
-                if (!this.enabled) return;
-                try {
-                    this.init();
-                    if (!this.ctx) return;
-                    if (this.ctx.state === 'suspended') this.ctx.resume();
-                    
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(volume, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
-                    
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + duration);
-                } catch(e) {}
-            }
-            click() { this.playTone(800, 0.04, 'square', 0.03); }
-            success() { 
-                this.playTone(523.25, 0.08, 'sine', 0.08);
-                setTimeout(() => this.playTone(659.25, 0.12, 'sine', 0.08), 80);
-            }
-            levelUp() {
-                const freqs = [440, 554.37, 659.25, 880];
-                freqs.forEach((f, idx) => {
-                    setTimeout(() => this.playTone(f, 0.15, 'triangle', 0.1), idx * 70);
-                });
-            }
-            buy() { this.playTone(987.77, 0.1, 'sine', 0.08); }
+    <!-- 02 DAILY -->
+    <section id="p-daily" class="page">
+      <div class="card">
+        <div class="card-head">
+          <span class="label">ЗАДАЧИ ДНЯ</span>
+          <div style="display:flex;gap:6px">
+            <button class="btn sm" onclick="aiAddTask()">+ AI ШАГ</button>
+            <button class="btn primary sm" onclick="toggleBox('newTaskBox')">+ СВОЙ</button>
+          </div>
+        </div>
+
+        <div id="newTaskBox" class="form-box">
+          <input id="tTitle" placeholder="Что нужно сделать?" />
+          <div class="grid-2">
+            <select id="tVector"></select>
+            <select id="tStat">
+              <option value="discipline">Discipline (+DSC)</option>
+              <option value="focus">Focus (+FOC)</option>
+              <option value="independence">Independence (+IND)</option>
+            </select>
+          </div>
+          <div class="grid-2">
+            <select id="tTier">
+              <option value="core">Core (Основная)</option>
+              <option value="extended">Extended (Доп)</option>
+            </select>
+            <select id="tXp">
+              <option value="90">Лёгкая (+90 XP)</option>
+              <option value="150" selected>Средняя (+150 XP)</option>
+              <option value="240">Сложная (+240 XP)</option>
+            </select>
+          </div>
+          <button class="btn primary" onclick="addTask()">СОХРАНИТЬ ЗАДАЧУ</button>
+        </div>
+
+        <div id="allTasksList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="label">НАПРАВЛЕНИЯ (10 ВЕКТОРОВ)</span>
+          <button class="btn sm" onclick="toggleBox('newVecBox')">+ ВЕКТОР</button>
+        </div>
+        <div id="newVecBox" class="form-box">
+          <input id="vName" placeholder="Название направления" />
+          <button class="btn primary" onclick="addVector()">ДОБАВИТЬ</button>
+        </div>
+        <div class="chips" id="vectorList"></div>
+      </div>
+    </section>
+
+    <!-- 03 BOSSES -->
+    <section id="p-goals" class="page">
+      <div class="card">
+        <div class="card-head">
+          <span class="label">КАМПАНИИ И БОССЫ</span>
+          <button class="btn primary sm" onclick="toggleBox('newBossBox')">+ КАМПАНИЯ</button>
+        </div>
+        <div id="newBossBox" class="form-box">
+          <input id="bTitle" placeholder="Название кампании / босса" />
+          <input id="bDesc" placeholder="Суть и критерий победы" />
+          <div class="grid-2">
+            <input id="bTarget" type="number" placeholder="Шагов до победы (напр. 8)" />
+            <input id="bXp" type="number" placeholder="Награда XP (напр. 500)" value="500" />
+          </div>
+          <button class="btn primary" onclick="addBoss()">СОЗДАТЬ КАМПАНИЮ</button>
+        </div>
+        <div id="bossList"></div>
+      </div>
+    </section>
+
+    <!-- 04 WORLD -->
+    <section id="p-world" class="page">
+      <div class="card">
+        <div class="card-head">
+          <span class="label">ХРОНИКА // ГЛАВА <span id="wChapter">1</span></span>
+          <span class="tag" id="wMood">FROST</span>
+        </div>
+        <div style="font-size:15px;font-weight:800" id="wTitle"></div>
+        <div class="muted" style="margin-top:4px" id="wDesc"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="label">СЕКТОРЫ МИРА</span>
+          <span class="tag" id="wShards">0 SHARDS</span>
+        </div>
+        <div id="sectorList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="label">ПЕРСОНАЖИ КАНОНА</span>
+          <button class="btn sm" onclick="toggleBox('newCharBox')">+ ПЕРСОНАЖ</button>
+        </div>
+        <div id="newCharBox" class="form-box">
+          <input id="cName" placeholder="Имя" />
+          <input id="cRole" placeholder="Роль" />
+          <input id="cNote" placeholder="Факт или характер" />
+          <button class="btn primary" onclick="addChar()">ДОБАВИТЬ</button>
+        </div>
+        <div id="charList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="label">ЖУРНАЛ СОБЫТИЙ</span></div>
+        <div class="log-box" id="logList"></div>
+      </div>
+    </section>
+
+    <!-- 05 VAULT & SHOP -->
+    <section id="p-vault" class="page">
+      <div class="card">
+        <div class="card-head">
+          <span class="label">МАГАЗИН ШАРДОВ</span>
+          <span class="tag" id="shopBalance">120 SHARDS</span>
+        </div>
+        <div class="row-item">
+          <div class="item-main">
+            <div class="item-title">Усилитель фокуса (+180 XP)</div>
+            <div class="item-sub">Мгновенный прирост опыта за накопленные шарды</div>
+          </div>
+          <button class="btn primary sm" onclick="buyShop('xp', 90)">90 SHARDS</button>
+        </div>
+        <div class="row-item">
+          <div class="item-main">
+            <div class="item-title">Редкий артефакт в коллекцию</div>
+            <div class="item-sub">Добавляет предмет редкости RARE в инвентарь</div>
+          </div>
+          <button class="btn primary sm" onclick="buyShop('relic', 140)">140 SHARDS</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="label">ДОСТИЖЕНИЯ</span></div>
+        <div id="achList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="label">ИНВЕНТАРЬ</span></div>
+        <div id="invList"></div>
+      </div>
+    </section>
+
+    <!-- 06 STATS & DB -->
+    <section id="p-stats" class="page">
+      <div class="card">
+        <div class="card-head"><span class="label">ТЕМА ОФОРМЛЕНИЯ</span></div>
+        <div class="chips">
+          <button class="chip" onclick="setTheme('dark')">Dark Obsidian</button>
+          <button class="chip" onclick="setTheme('editorial')">Polar Light</button>
+          <button class="chip" onclick="setTheme('amber')">Signal Amber</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="label">СВОДКА ПРОГРЕССА</span></div>
+        <div class="stats-strip">
+          <div class="stat-box"><b id="stTotalDone">0</b><span>ВЫПОЛНЕНО</span></div>
+          <div class="stat-box"><b id="stRelics">0</b><span>АРТЕФАКТОВ</span></div>
+          <div class="stat-box"><b id="stBossDone">0</b><span>БОССОВ</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="label">БАЗА И БЭКАП</span>
+          <span class="mono muted" id="keyView">-</span>
+        </div>
+        <div class="chips" style="margin-bottom:8px">
+          <button class="btn sm" onclick="pullDb(false)">ЗАГРУЗИТЬ ИЗ DB</button>
+          <button class="btn primary sm" onclick="pushDb(true)">СОХРАНИТЬ В DB</button>
+          <button class="btn sm" onclick="copySave()">КОПИРОВАТЬ JSON</button>
+          <button class="btn danger sm" onclick="resetAll()">СБРОС</button>
+        </div>
+        <textarea id="saveDump" rows="4" readonly></textarea>
+      </div>
+    </section>
+  </main>
+
+  <nav class="dock">
+    <button class="active" data-page="hub" onclick="openPage('hub', this)">HUB</button>
+    <button data-page="daily" onclick="openPage('daily', this)">DAILY</button>
+    <button data-page="goals" onclick="openPage('goals', this)">BOSSES</button>
+    <button data-page="world" onclick="openPage('world', this)">WORLD</button>
+  </nav>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
+
+    const PROFILE_KEY = (() => {
+      const id = tg?.initDataUnsafe?.user?.id;
+      if (id) return `tg_${id}`;
+      let k = localStorage.getItem('wa_os_key');
+      if (!k) { k = 'u_' + Math.random().toString(36).slice(2, 9); localStorage.setItem('wa_os_key', k); }
+      return k;
+    })();
+
+    const VECTORS_BASE = [
+      'Fitness', 'Pool', 'College', 'Books', 'Beatmaking',
+      'Independence', 'Character', 'Social', 'Finance', 'Personal Projects'
+    ];
+
+    function todayKey(d = new Date()) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function nowTime() {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    }
+
+    function defaultState() {
+      const tk = todayKey();
+      return {
+        meta: { theme: 'dark', startDate: '2026-11-22', updatedAt: Date.now() },
+        user: { level: 1, xp: 0, title: 'INITIATE', shards: 120, relics: 0, stats: { discipline: 12, focus: 12, independence: 12 } },
+        vectors: VECTORS_BASE.map((name, i) => ({ id: 'v_' + i, name, active: true })),
+        day: {
+          date: tk,
+          tasks: [
+            { id: 't1', title: 'Учебный блок 40 мин без отвлечений', vector: 'College', stat: 'focus', tier: 'core', xp: 160, done: false },
+            { id: 't2', title: 'Подходы на турник / отжимания', vector: 'Fitness', stat: 'discipline', tier: 'core', xp: 140, done: false },
+            { id: 't3', title: 'Сессия в FL Studio / набросок идеи', vector: 'Beatmaking', stat: 'focus', tier: 'extended', xp: 150, done: false }
+          ],
+          recovery: { show: false, daysAway: 0 }
+        },
+        bosses: [
+          { id: 'b1', title: 'Бассейн: 8 сеансов', desc: 'Регулярные заплывы без срыва графика', current: 0, target: 8, xp: 600, done: false },
+          { id: 'b2', title: '600 подтягиваний за зиму', desc: 'Накопительный объём базы', current: 0, target: 600, xp: 500, done: false }
+        ],
+        world: {
+          chapter: 1,
+          mood: 'FROST',
+          title: 'Глава I — Холодный старт',
+          desc: 'Система фиксирует реальные действия и укрепляет контур.',
+          sectors: [
+            { id: 's1', name: 'Северный Пирс', cost: 60, progress: 0, target: 3, xp: 180, done: false },
+            { id: 's2', name: 'Ледяной Архив', cost: 90, progress: 0, target: 4, xp: 240, done: false },
+            { id: 's3', name: 'Цитадель Контура', cost: 120, progress: 0, target: 4, xp: 320, done: false }
+          ],
+          chars: [
+            { id: 'c1', name: 'Архивариус', role: 'Хранитель фактов', note: 'Следит за реальным прогрессом без пустых слов' }
+          ],
+          logs: [{ time: nowTime(), text: 'Система WINTER ARC запущена.' }]
+        },
+        vault: {
+          ach: [
+            { id: 'a1', title: 'Первый шаг', desc: 'Выполнить 1 задачу', unlocked: false },
+            { id: 'a2', title: 'Ритм контура', desc: 'Выполнить 5 задач', unlocked: false },
+            { id: 'a3', title: 'Победа над боссом', desc: 'Завершить любую кампанию', unlocked: false }
+          ],
+          items: [
+            { id: 'i1', name: 'Жетон Контура', rarity: 'COMMON' }
+          ]
+        },
+        stats: { totalDone: 0, bossesDone: 0 }
+      };
+    }
+
+    let db = (() => {
+      try {
+        const raw = localStorage.getItem('wa_os_state_v1');
+        if (raw) {
+          const p = JSON.parse(raw);
+          if (p && p.user && p.day && p.world) return p;
         }
-
-        const audio = new AudioSynth();
-
-        // DEFAULT INITIAL SYSTEM STATE
-        const DEFAULT_STATE = {
-            user: {
-                level: 1,
-                xp: 250,
-                xpToNext: 1000,
-                shards: 120,
-                relics: 3,
-                title: 'INITIATE',
-                frame: 'frame_default',
-                badge: 'badge_initiate',
-                bio: 'Персональный цифровой профиль развития WINTER ARC.',
-                stats: { discipline: 12, focus: 10, independence: 14 },
-                hoursLogged: 14.5
-            },
-            vectors: [
-                { id: 'vec_fit', name: 'Fitness', icon: 'fa-dumbbell', color: 'text-sky-400' },
-                { id: 'vec_pool', name: 'Pool', icon: 'fa-person-swimming', color: 'text-cyan-400' },
-                { id: 'vec_col', name: 'College', icon: 'fa-graduation-cap', color: 'text-indigo-400' },
-                { id: 'vec_book', name: 'Books', icon: 'fa-book-open', color: 'text-amber-400' },
-                { id: 'vec_beat', name: 'Music / Beatmaking', icon: 'fa-sliders', color: 'text-purple-400' },
-                { id: 'vec_indep', name: 'Independence', icon: 'fa-compass', color: 'text-emerald-400' },
-                { id: 'vec_char', name: 'Character', icon: 'fa-shield-cat', color: 'text-rose-400' },
-                { id: 'vec_soc', name: 'Social', icon: 'fa-user-group', color: 'text-teal-400' },
-                { id: 'vec_fin', name: 'Finance', icon: 'fa-coins', color: 'text-yellow-400' },
-                { id: 'vec_proj', name: 'Personal Projects', icon: 'fa-laptop-code', color: 'text-blue-400' }
-            ],
-            tasks: [
-                { id: 't1', title: 'Утренняя силовая тренировка (45 мин)', tier: 'CORE', vectorId: 'vec_fit', hours: 0.75, shards: 30, completed: false },
-                { id: 't2', title: 'Чтение профильной литературы (30 стр)', tier: 'CORE', vectorId: 'vec_book', hours: 0.5, shards: 20, completed: true },
-                { id: 't3', title: 'Сведение нового инструментала', tier: 'EXTENDED', vectorId: 'vec_beat', hours: 1.5, shards: 40, completed: false },
-                { id: 't4', title: 'Планирование бюджета недели', tier: 'FREE', vectorId: 'vec_fin', hours: 0.5, shards: 15, completed: false }
-            ],
-            bosses: [
-                {
-                    id: 'boss_1',
-                    title: 'ТИТАН ДИСЦИПЛИНЫ v1.0',
-                    desc: 'Завершить 25 Core-задач и набрать 10 часов чистой работы над проектами.',
-                    hpCurrent: 320,
-                    hpMax: 500,
-                    relicsReward: 5,
-                    completed: false,
-                    phase: 'Фаза 2: Концентрация'
-                }
-            ],
-            goals: [
-                { id: 'g1', title: 'Релиз собственного музыкального EP', progress: 45, vectorId: 'vec_beat' },
-                { id: 'g2', title: 'Полная бытовая и финансовая автономия', progress: 60, vectorId: 'vec_indep' }
-            ],
-            inventory: [
-                { id: 'inv_1', itemId: 'title_architect', name: 'PROJECT ARCHITECT', type: 'TITLE', rarity: 'EPIC', desc: 'Присваивается за построение собственной цифровой системы.', equipped: true },
-                { id: 'inv_2', itemId: 'frame_cyber', name: 'NEON CYBER FRAME', type: 'FRAME', rarity: 'RARE', desc: 'Неоновая рамка для карточки профиля.', equipped: false },
-                { id: 'inv_3', itemId: 'badge_frost', name: 'FROST CORE BADGE', type: 'BADGE', rarity: 'LEGENDARY', desc: 'Символ выдержки в процессе Winter Arc.', equipped: true }
-            ],
-            shop: [
-                { id: 'shop_1', itemId: 'title_sovereign', name: 'SOVEREIGN OPERATOR', type: 'TITLE', rarity: 'LEGENDARY', costShards: 250, costRelics: 2, desc: 'Эксклюзивный титул высшего уровня автономии.' },
-                { id: 'shop_2', itemId: 'frame_obsidian', name: 'OBSIDIAN EDGE FRAME', type: 'FRAME', rarity: 'UNIQUE', costShards: 500, costRelics: 5, desc: 'Легендарная темная эстетическая рамка.' },
-                { id: 'shop_3', font: 'boost', itemId: 'boost_xp', name: 'ELIXIR OF FOCUS (+50% XP)', type: 'BOOST', rarity: 'RARE', costShards: 100, costRelics: 0, desc: 'Временный буст получения XP на 24 часа.' }
-            ],
-            achievements: [
-                { id: 'ach_1', title: 'ПЕРВЫЙ ИНИЦИАЛ', desc: 'Выполните свою первую задачу в системе Daily Engine.', unlocked: true, icon: 'fa-flag' },
-                { id: 'ach_2', title: 'ТИТАНОБОРЕЦ', desc: 'Одолейте своего первого босса кампании.', unlocked: false, icon: 'fa-skull' },
-                { id: 'ach_3', title: 'ПОЛНАЯ АВТОНОМИЯ', desc: 'Прокачайте параметр INDEPENDENCE до 20.', unlocked: false, icon: 'fa-compass' },
-                { id: 'ach_4', title: 'МАСТЕР ВЕКТОРОВ', desc: 'Создайте задачи во всех 10 направлениях развития.', unlocked: true, icon: 'fa-layer-group' }
-            ],
-            timeline: [
-                { date: '2026-11-20', text: 'Запущена обновленная операционная система WINTER ARC.' },
-                { date: '2026-11-21', text: 'Разблокировано достижение: ПЕРВЫЙ ИНИЦИАЛ.' }
-            ],
-            characters: [
-                { id: 'c1', name: 'Страж Севера', role: 'Аналитик дисциплины', canon: 'Следит за ритмом выполнения задач. Не терпит отговорок.' },
-                { id: 'c2', name: 'Тень Архитектора', role: 'Советник лора', canon: 'Охраняет канон мира и предотвращает противоречия.' }
-            ],
-            loreChapters: [
-                { id: 'l1', title: 'Глава I: Начало Заморозков', text: 'Зима опустилась на цифровое ядро. Личные цели превратились в монолиты, требующие дисциплины.' }
-            ],
-            settings: {
-                theme: 'obsidian',
-                sound: true,
-                particles: true,
-                apiKey: 'test_key',
-                llmKey: ''
-            },
-            dailyNotes: ''
-        };
-
-        // CORE APPLICATION CONTROLLER
-        class WinterArcApp {
-            constructor() {
-                this.state = null;
-                this.currentTab = 'command';
-                this.activeTierFilter = 'ALL';
-                this.activeStatsPeriod = 'DAY';
-                this.activeWorldEvent = null;
-            }
-
-            init() {
-                this.loadState();
-                this.applyTheme(this.state.settings.theme);
-                this.setupCanvas();
-                this.renderAll();
-                this.checkRandomWorldEvent();
-
-                // Keyboard Nav & Interactions
-                document.addEventListener('click', (e) => {
-                    if (e.target.closest('button') || e.target.closest('a')) {
-                        if (this.state.settings.sound) audio.click();
-                    }
-                });
-
-                // Auto Sync Loop
-                setInterval(() => this.syncApiState(false), 30000);
-            }
-
-            // --- STATE PERSISTENCE & SYNC ---
-            loadState() {
-                const raw = localStorage.getItem('WINTER_ARC_STATE_V4');
-                if (raw) {
-                    try {
-                        this.state = JSON.parse(raw);
-                    } catch(e) {
-                        this.state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-                    }
-                } else {
-                    this.state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-                }
-            }
-
-            saveState() {
-                localStorage.setItem('WINTER_ARC_STATE_V4', JSON.stringify(this.state));
-                this.renderHeaderTelemetry();
-            }
-
-            async syncApiState(showToast = true) {
-                const key = this.state.settings.apiKey || 'test_key';
-                const badge = document.getElementById('syncStatusText');
-                if (badge) badge.innerText = 'SYNCING...';
-
-                try {
-                    // Fallback simulated / real api endpoint sync call
-                    const res = await fetch(`/api/state?key=${encodeURIComponent(key)}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ record: this.state })
-                    }).catch(() => null);
-
-                    if (badge) badge.innerText = 'ONLINE';
-                    if (showToast) this.toast('Синхронизация с сервером выполнена!', 'success');
-                } catch(e) {
-                    if (badge) badge.innerText = 'LOCAL ONLY';
-                }
-            }
-
-            manualSyncState() {
-                this.syncApiState(true);
-            }
-
-            // --- NAVIGATION ---
-            navigate(tabId) {
-                this.currentTab = tabId;
-                document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
-                const target = document.getElementById(`sec-${tabId}`);
-                if (target) target.classList.remove('hidden');
-
-                document.querySelectorAll('.nav-btn').forEach(btn => {
-                    if (btn.getAttribute('data-tab') === tabId) {
-                        btn.classList.add('active-tab');
-                    } else {
-                        btn.classList.remove('active-tab');
-                    }
-                });
-
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                this.renderTab(tabId);
-            }
-
-            renderTab(tabId) {
-                switch(tabId) {
-                    case 'command': this.renderCommandCenter(); break;
-                    case 'daily': this.renderDailyEngine(); break;
-                    case 'bosses': this.renderBosses(); break;
-                    case 'profile': this.renderProfile(); break;
-                    case 'inventory': this.renderInventory(); break;
-                    case 'shop': this.renderShop(); break;
-                    case 'achievements': this.renderAchievements(); break;
-                    case 'ai': this.renderAiAdvisor(); break;
-                    case 'lore': this.renderLore(); break;
-                    case 'stats': this.renderStats(); break;
-                    case 'settings': this.renderSettings(); break;
-                }
-            }
-
-            renderAll() {
-                this.renderHeaderTelemetry();
-                this.renderTab(this.currentTab);
-                this.updateDateDisplay();
-            }
-
-            updateDateDisplay() {
-                const el = document.getElementById('currentDateStr');
-                if (el) {
-                    const now = new Date();
-                    el.innerText = now.toLocaleDateString('ru-RU', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
-                }
-            }
-
-            // --- HEADER TELEMETRY RENDER ---
-            renderHeaderTelemetry() {
-                const u = this.state.user;
-                document.getElementById('sidebarLevel').innerText = u.level;
-                document.getElementById('sidebarTitle').innerText = u.title;
-                document.getElementById('sidebarXpText').innerText = `${u.xp} / ${u.xpToNext} XP`;
-                document.getElementById('sidebarCurrencyText').innerText = `⚡ ${u.shards} Shards`;
-                
-                const pct = Math.min(100, Math.round((u.xp / u.xpToNext) * 100));
-                document.getElementById('sidebarXpBar').style.width = `${pct}%`;
-
-                // Daily tasks counter badge
-                const doneCount = this.state.tasks.filter(t => t.completed).length;
-                document.getElementById('dailyCounterBadge').innerText = `${doneCount}/${this.state.tasks.length}`;
-
-                // Inventory counter
-                document.getElementById('inventoryBadge').innerText = `${this.state.inventory.length} ITEMS`;
-                
-                // Achievements counter
-                const achUnlocked = this.state.achievements.filter(a => a.unlocked).length;
-                document.getElementById('achieveBadge').innerText = `${achUnlocked}/${this.state.achievements.length}`;
-            }
-
-            // --- COMMAND CENTER RENDER ---
-            renderCommandCenter() {
-                const u = this.state.user;
-                document.getElementById('statDiscipline').innerText = u.stats.discipline;
-                document.getElementById('statFocus').innerText = u.stats.focus;
-                document.getElementById('statIndep').innerText = u.stats.independence;
-                document.getElementById('userEquippedTitle').innerText = u.title;
-
-                // Render Today's Core Tasks Preview
-                const coreTasks = this.state.tasks.slice(0, 4);
-                const container = document.getElementById('commandTasksList');
-                const doneCount = this.state.tasks.filter(t => t.completed).length;
-                document.getElementById('commandTaskProgress').innerText = `${doneCount} / ${this.state.tasks.length} DONE`;
-
-                if (coreTasks.length === 0) {
-                    container.innerHTML = `<div class="text-xs text-neutral-500 py-3 mono-font">Нет активных задач. Создайте задачи в Daily Engine.</div>`;
-                } else {
-                    container.innerHTML = coreTasks.map(t => {
-                        const vec = this.state.vectors.find(v => v.id === t.vectorId) || { name: 'Общее', color: 'text-neutral-400' };
-                        return `
-                            <div class="flex items-center justify-between p-3 brutal-border ${t.completed ? 'bg-neutral-950/40 opacity-60' : 'bg-neutral-900'} transition">
-                                <div class="flex items-center space-x-3">
-                                    <button onclick="app.toggleTask('${t.id}')" class="w-5 h-5 brutal-border flex items-center justify-center text-xs ${t.completed ? 'bg-emerald-500 text-black font-bold' : 'bg-neutral-950 hover:border-emerald-400'}">
-                                        ${t.completed ? '<i class="fa-solid fa-check"></i>' : ''}
-                                    </button>
-                                    <div>
-                                        <div class="text-xs font-bold ${t.completed ? 'line-through text-neutral-500' : 'text-neutral-200'}">${this.escapeHtml(t.title)}</div>
-                                        <div class="text-[10px] mono-font ${vec.color}">${vec.name} • ${t.hours}h • +${t.shards} Shards</div>
-                                    </div>
-                                </div>
-                                <span class="text-[9px] mono-font px-1.5 py-0.5 border border-neutral-800 text-neutral-400">${t.tier}</span>
-                            </div>
-                        `;
-                    }).join('');
-                }
-
-                // Render Vectors Overview
-                const vecContainer = document.getElementById('commandVectorsGrid');
-                vecContainer.innerHTML = this.state.vectors.slice(0, 6).map(v => {
-                    const taskCount = this.state.tasks.filter(t => t.vectorId === v.id).length;
-                    return `
-                        <div class="p-3 brutal-border bg-neutral-900/60 space-y-1">
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="${v.color} font-bold"><i class="fa-solid ${v.icon} mr-1.5"></i>${v.name}</span>
-                                <span class="text-[10px] mono-font text-neutral-500">${taskCount} tsk</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                // Render Active Boss Widget
-                const bossContainer = document.getElementById('activeBossWidget');
-                const boss = this.state.bosses.find(b => !b.completed) || this.state.bosses[0];
-                if (boss) {
-                    const pct = Math.max(0, Math.min(100, Math.round((boss.hpCurrent / boss.hpMax) * 100)));
-                    bossContainer.innerHTML = `
-                        <div>
-                            <h4 class="font-bold text-white text-base">${this.escapeHtml(boss.title)}</h4>
-                            <p class="text-xs text-neutral-400 mt-1">${this.escapeHtml(boss.desc)}</p>
-                        </div>
-                        <div class="space-y-1 mono-font">
-                            <div class="flex justify-between text-xs text-neutral-300">
-                                <span>HP БОССА:</span>
-                                <strong class="text-rose-400">${boss.hpCurrent} / ${boss.hpMax}</strong>
-                            </div>
-                            <div class="w-full bg-neutral-950 h-3 brutal-border relative overflow-hidden">
-                                <div class="bg-rose-500 h-full transition-all duration-300" style="width: ${pct}%;"></div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center text-xs mono-font pt-2">
-                            <span class="text-neutral-500">${boss.phase}</span>
-                            <button onclick="app.attackBoss('${boss.id}')" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs transition">
-                                АТАКИ (+XP)
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    bossContainer.innerHTML = `<div class="text-xs text-neutral-500">Все боссы одолены! Создайте нового.</div>`;
-                }
-
-                // Telemetry Stats Widget
-                document.getElementById('telemetryTasksDone').innerText = doneCount;
-                document.getElementById('telemetryHoursLogged').innerText = `${u.hoursLogged.toFixed(1)} ч`;
-                document.getElementById('telemetryBossesDefeated').innerText = this.state.bosses.filter(b => b.completed).length;
-                document.getElementById('telemetryRelics').innerText = u.relics;
-            }
-
-            // --- DAILY ENGINE RENDER & LOGIC ---
-            renderDailyEngine() {
-                const vecSelect = document.getElementById('dailyVectorFilter');
-                if (vecSelect.options.length <= 1) {
-                    vecSelect.innerHTML = `<option value="ALL">Все Векторы</option>` + 
-                        this.state.vectors.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
-                }
-
-                const selectedVector = vecSelect.value;
-                let filtered = this.state.tasks;
-
-                if (this.activeTierFilter !== 'ALL') {
-                    filtered = filtered.filter(t => t.tier === this.activeTierFilter);
-                }
-                if (selectedVector !== 'ALL') {
-                    filtered = filtered.filter(t => t.vectorId === selectedVector);
-                }
-
-                const container = document.getElementById('dailyTaskList');
-                if (filtered.length === 0) {
-                    container.innerHTML = `<div class="p-8 brutal-card text-center text-xs mono-font text-neutral-500">Задач по данному фильтру не найдено. Нажмите «НОВАЯ ЗАДАЧА» или запустите AI автопланер.</div>`;
-                } else {
-                    container.innerHTML = filtered.map(t => {
-                        const vec = this.state.vectors.find(v => v.id === t.vectorId) || { name: 'Общее', color: 'text-neutral-400' };
-                        return `
-                            <div class="brutal-card p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${t.completed ? 'bg-neutral-950/50 opacity-60' : 'bg-neutral-900'}">
-                                <div class="flex items-start space-x-3">
-                                    <button onclick="app.toggleTask('${t.id}')" class="mt-1 w-6 h-6 brutal-border flex items-center justify-center text-sm ${t.completed ? 'bg-emerald-500 text-black font-bold' : 'bg-neutral-950 hover:border-emerald-400'}">
-                                        ${t.completed ? '<i class="fa-solid fa-check"></i>' : ''}
-                                    </button>
-                                    <div>
-                                        <h4 class="font-bold text-sm ${t.completed ? 'line-through text-neutral-500' : 'text-neutral-100'}">${this.escapeHtml(t.title)}</h4>
-                                        <div class="flex flex-wrap items-center gap-2 mt-1 text-[11px] mono-font">
-                                            <span class="badge-pill badge-common">${t.tier}</span>
-                                            <span class="${vec.color} font-bold">${vec.name}</span>
-                                            <span class="text-neutral-500">• ${t.hours} ч.</span>
-                                            <span class="text-amber-400 font-bold">+${t.shards} Shards</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-2 self-end sm:self-center">
-                                    <button onclick="app.deleteTask('${t.id}')" class="text-xs text-neutral-500 hover:text-rose-400 p-1 font-mono">&times; УДАЛИТЬ</button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-
-                // Render Vectors Manager
-                const vecManager = document.getElementById('dailyVectorsManager');
-                vecManager.innerHTML = this.state.vectors.map(v => `
-                    <div class="flex justify-between items-center p-2 bg-neutral-950 brutal-border text-xs mono-font">
-                        <span class="${v.color}"><i class="fa-solid ${v.icon} mr-2"></i>${this.escapeHtml(v.name)}</span>
-                        <button onclick="app.removeVector('${v.id}')" class="text-neutral-500 hover:text-rose-400">&times;</button>
-                    </div>
-                `).join('');
-
-                // Load Daily Notes
-                const notesInput = document.getElementById('dailyNotesInput');
-                if (notesInput) notesInput.value = this.state.dailyNotes || '';
-            }
-
-            filterTasksTier(tier) {
-                this.activeTierFilter = tier;
-                document.querySelectorAll('.tier-tab-btn').forEach(btn => {
-                    if (btn.getAttribute('data-tier') === tier) btn.classList.add('active-tab');
-                    else btn.classList.remove('active-tab');
-                });
-                this.renderDailyEngine();
-            }
-
-            toggleTask(taskId) {
-                const task = this.state.tasks.find(t => t.id === taskId);
-                if (!task) return;
-
-                task.completed = !task.completed;
-                if (task.completed) {
-                    this.state.user.xp += 50;
-                    this.state.user.shards += task.shards;
-                    this.state.user.hoursLogged += task.hours;
-                    this.state.user.stats.discipline += 1;
-                    this.toast(`Задача выполнена! +50 XP, +${task.shards} Shards`, 'success');
-                    if (this.state.settings.sound) audio.success();
-
-                    // Boss auto damage
-                    const activeBoss = this.state.bosses.find(b => !b.completed);
-                    if (activeBoss) {
-                        activeBoss.hpCurrent = Math.max(0, activeBoss.hpCurrent - 25);
-                        if (activeBoss.hpCurrent === 0) {
-                            activeBoss.completed = true;
-                            this.state.user.relics += activeBoss.relicsReward;
-                            this.toast(`БОСС ОДОЛЕЙ! Награда: +${activeBoss.relicsReward} Relic Tokens!`, 'legendary');
-                        }
-                    }
-                } else {
-                    this.state.user.xp = Math.max(0, this.state.user.xp - 50);
-                    this.state.user.shards = Math.max(0, this.state.user.shards - task.shards);
-                    this.state.user.hoursLogged = Math.max(0, this.state.user.hoursLogged - task.hours);
-                }
-
-                this.checkLevelUp();
-                this.checkAchievements();
-                this.saveState();
-                this.renderAll();
-            }
-
-            deleteTask(taskId) {
-                this.state.tasks = this.state.tasks.filter(t => t.id !== taskId);
-                this.saveState();
-                this.renderDailyEngine();
-                this.toast('Задача удалена', 'info');
-            }
-
-            openTaskModal() {
-                const vecSelect = document.getElementById('taskVectorInput');
-                vecSelect.innerHTML = this.state.vectors.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
-                document.getElementById('taskModal').classList.remove('hidden');
-            }
-
-            saveTaskModal() {
-                const title = document.getElementById('taskTitleInput').value.trim();
-                if (!title) return this.toast('Введите название задачи', 'error');
-
-                const tier = document.getElementById('taskTierInput').value;
-                const vectorId = document.getElementById('taskVectorInput').value;
-                const hours = parseFloat(document.getElementById('taskHoursInput').value) || 1.0;
-                const shards = parseInt(document.getElementById('taskShardsInput').value) || 25;
-
-                const newTask = {
-                    id: 't_' + Date.now(),
-                    title,
-                    tier,
-                    vectorId,
-                    hours,
-                    shards,
-                    completed: false
-                };
-
-                this.state.tasks.unshift(newTask);
-                this.saveState();
-                this.closeModal('taskModal');
-                this.renderDailyEngine();
-                this.toast('Новая задача создана', 'success');
-            }
-
-            openVectorModal() {
-                const name = prompt('Введите название нового Вектора развития:');
-                if (name && name.trim()) {
-                    const newVec = {
-                        id: 'vec_' + Date.now(),
-                        name: name.trim(),
-                        icon: 'fa-cubes',
-                        color: 'text-sky-400'
-                    };
-                    this.state.vectors.push(newVec);
-                    this.saveState();
-                    this.renderDailyEngine();
-                    this.toast('Вектор добавлен!', 'success');
-                }
-            }
-
-            removeVector(vecId) {
-                this.state.vectors = this.state.vectors.filter(v => v.id !== vecId);
-                this.saveState();
-                this.renderDailyEngine();
-            }
-
-            saveDailyNotes() {
-                const val = document.getElementById('dailyNotesInput').value;
-                this.state.dailyNotes = val;
-                this.saveState();
-                this.toast('Заметка сохранена в локальный журнал', 'success');
-            }
-
-            generateSmartDayPlan() {
-                // Smart auto generator based on user's active vectors
-                const suggested = [
-                    { title: 'Глубокая рабочая сессия (90 мин)', tier: 'CORE', vectorId: 'vec_proj', hours: 1.5, shards: 45 },
-                    { title: 'Кардио и разминка', tier: 'CORE', vectorId: 'vec_fit', hours: 0.75, shards: 25 },
-                    { title: 'Анализ текущего бюджета', tier: 'EXTENDED', vectorId: 'vec_fin', hours: 0.5, shards: 20 }
-                ];
-
-                suggested.forEach(s => {
-                    this.state.tasks.unshift({
-                        id: 't_ai_' + Math.random().toString(36).substr(2, 5),
-                        title: s.title,
-                        tier: s.tier,
-                        vectorId: s.vectorId,
-                        hours: s.hours,
-                        shards: s.shards,
-                        completed: false
-                    });
-                });
-
-                this.saveState();
-                this.renderDailyEngine();
-                this.toast('AI сгенерировал 3 оптимизированные задачи!', 'success');
-            }
-
-            // --- BOSSES & GOALS ---
-            renderBosses() {
-                const container = document.getElementById('bossMissionsContainer');
-                container.innerHTML = this.state.bosses.map(b => {
-                    const pct = Math.max(0, Math.min(100, Math.round((b.hpCurrent / b.hpMax) * 100)));
-                    return `
-                        <div class="brutal-card p-5 space-y-4 border-rose-500/40 bg-neutral-900 ${b.completed ? 'opacity-60' : ''}">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <span class="badge-pill badge-legendary">${b.completed ? 'DEFEATED' : 'ACTIVE BOSS'}</span>
-                                    <h3 class="font-bold text-lg text-white mt-1">${this.escapeHtml(b.title)}</h3>
-                                </div>
-                                <span class="text-xs mono-font text-violet-400 font-bold">+${b.relicsReward} Relics</span>
-                            </div>
-                            <p class="text-xs text-neutral-300 leading-relaxed">${this.escapeHtml(b.desc)}</p>
-                            <div class="space-y-1 mono-font">
-                                <div class="flex justify-between text-xs">
-                                    <span class="text-neutral-400">HP:</span>
-                                    <strong class="text-rose-400">${b.hpCurrent} / ${b.hpMax}</strong>
-                                </div>
-                                <div class="w-full bg-neutral-950 h-3 brutal-border">
-                                    <div class="bg-rose-500 h-full transition-all duration-300" style="width: ${pct}%;"></div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between items-center pt-2">
-                                <span class="text-[10px] mono-font text-neutral-500">${b.phase}</span>
-                                ${!b.completed ? `
-                                    <button onclick="app.attackBoss('${b.id}')" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs mono-font transition">
-                                        АНАЛИЗ И АТАКА
-                                    </button>
-                                ` : '<span class="text-xs text-emerald-400 font-bold mono-font">БОСС ПОВЕРЖЕН</span>'}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                // Render Long term goals
-                const goalsContainer = document.getElementById('longTermGoalsContainer');
-                goalsContainer.innerHTML = this.state.goals.map(g => `
-                    <div class="brutal-card p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div class="space-y-1 flex-1">
-                            <h4 class="font-bold text-sm text-white">${this.escapeHtml(g.title)}</h4>
-                            <div class="w-full bg-neutral-950 h-2 brutal-border max-w-md">
-                                <div class="bg-sky-400 h-full" style="width: ${g.progress}%;"></div>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3 mono-font text-xs">
-                            <span class="text-sky-400 font-bold">${g.progress}% DONE</span>
-                            <button onclick="app.advanceGoal('${g.id}')" class="px-3 py-1 bg-neutral-800 hover:bg-neutral-700 text-white brutal-border">+10%</button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            openBossModal() { document.getElementById('bossModal').classList.remove('hidden'); }
-            saveBossModal() {
-                const title = document.getElementById('bossTitleInput').value.trim();
-                if (!title) return this.toast('Введите название босса', 'error');
-
-                const desc = document.getElementById('bossDescInput').value.trim();
-                const hpMax = parseInt(document.getElementById('bossHpInput').value) || 500;
-                const relicsReward = parseInt(document.getElementById('bossRelicsInput').value) || 5;
-
-                this.state.bosses.unshift({
-                    id: 'boss_' + Date.now(),
-                    title,
-                    desc,
-                    hpCurrent: hpMax,
-                    hpMax,
-                    relicsReward,
-                    completed: false,
-                    phase: 'Фаза 1: Разведка'
-                });
-
-                this.saveState();
-                this.closeModal('bossModal');
-                this.renderBosses();
-                this.toast('Новый босс добавлен в список кампаний!', 'success');
-            }
-
-            attackBoss(bossId) {
-                const boss = this.state.bosses.find(b => b.id === bossId);
-                if (!boss || boss.completed) return;
-
-                boss.hpCurrent = Math.max(0, boss.hpCurrent - 50);
-                this.state.user.xp += 40;
-                this.toast(`Удар по боссу! -50 HP, +40 XP`, 'info');
-                if (this.state.settings.sound) audio.click();
-
-                if (boss.hpCurrent === 0) {
-                    boss.completed = true;
-                    this.state.user.relics += boss.relicsReward;
-                    this.toast(`БОСС ОДОЛЕЙ! +${boss.relicsReward} Relic Tokens!`, 'legendary');
-                }
-
-                this.saveState();
-                this.renderAll();
-            }
-
-            openGoalModal() {
-                const title = prompt('Введите название долгосрочной цели:');
-                if (title && title.trim()) {
-                    this.state.goals.push({
-                        id: 'g_' + Date.now(),
-                        title: title.trim(),
-                        progress: 0,
-                        vectorId: 'vec_proj'
-                    });
-                    this.saveState();
-                    this.renderBosses();
-                }
-            }
-
-            advanceGoal(goalId) {
-                const goal = this.state.goals.find(g => g.id === goalId);
-                if (goal) {
-                    goal.progress = Math.min(100, goal.progress + 10);
-                    this.saveState();
-                    this.renderBosses();
-                }
-            }
-
-            // --- PROFILE & IDENTITY ---
-            renderProfile() {
-                const u = this.state.user;
-                document.getElementById('profileUsername').innerText = 'OPERATOR_01';
-                document.getElementById('profileTitleBadge').innerText = u.title;
-                document.getElementById('profileBio').innerText = u.bio;
-
-                // Stats values & bars
-                document.getElementById('profDispVal').innerText = u.stats.discipline;
-                document.getElementById('profDispBar').style.width = `${Math.min(100, u.stats.discipline * 4)}%`;
-
-                document.getElementById('profFocusVal').innerText = u.stats.focus;
-                document.getElementById('profFocusBar').style.width = `${Math.min(100, u.stats.focus * 4)}%`;
-
-                document.getElementById('profIndepVal').innerText = u.stats.independence;
-                document.getElementById('profIndepBar').style.width = `${Math.min(100, u.stats.independence * 4)}%`;
-
-                // Select Options
-                const titleSelect = document.getElementById('profileTitleSelect');
-                const titles = this.state.inventory.filter(i => i.type === 'TITLE');
-                titleSelect.innerHTML = `<option value="${u.title}">${u.title} (Equipped)</option>` + 
-                    titles.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
-
-                const frameSelect = document.getElementById('profileFrameSelect');
-                const frames = this.state.inventory.filter(i => i.type === 'FRAME');
-                frameSelect.innerHTML = `<option value="${u.frame}">${u.frame}</option>` + 
-                    frames.map(f => `<option value="${f.itemId}">${f.name}</option>`).join('');
-
-                const badgeSelect = document.getElementById('profileBadgeSelect');
-                const badges = this.state.inventory.filter(i => i.type === 'BADGE');
-                badgeSelect.innerHTML = `<option value="${u.badge}">${u.badge}</option>` + 
-                    badges.map(b => `<option value="${b.itemId}">${b.name}</option>`).join('');
-
-                // Showcase Equipped Items
-                const showcase = document.getElementById('profileEquippedShowcase');
-                const equipped = this.state.inventory.filter(i => i.equipped);
-                showcase.innerHTML = equipped.map(i => `
-                    <div class="p-3 bg-neutral-950 brutal-border space-y-1">
-                        <span class="badge-pill badge-${i.rarity.toLowerCase()}">${i.rarity}</span>
-                        <div class="text-xs font-bold text-neutral-200 mt-1">${this.escapeHtml(i.name)}</div>
-                    </div>
-                `).join('');
-            }
-
-            equipTitle(titleName) {
-                this.state.user.title = titleName;
-                this.saveState();
-                this.renderProfile();
-                this.toast(`Титул изменен на: ${titleName}`, 'success');
-            }
-
-            equipFrame(frameId) {
-                this.state.user.frame = frameId;
-                this.saveState();
-                this.renderProfile();
-                this.toast('Визуальная рамка обновлена', 'success');
-            }
-
-            equipBadge(badgeId) {
-                this.state.user.badge = badgeId;
-                this.saveState();
-                this.renderProfile();
-                this.toast('Значок профиля экипирован', 'success');
-            }
-
-            copyProfileCardSummary() {
-                const u = this.state.user;
-                const text = `WINTER ARC PROFILE CARD\nOperator: OPERATOR_01\nLevel: ${u.level} | Title: ${u.title}\nDiscipline: ${u.stats.discipline} | Focus: ${u.stats.focus} | Indep: ${u.stats.independence}\nLogged Hours: ${u.hoursLogged.toFixed(1)}h`;
-                
-                try {
-                    navigator.clipboard.writeText(text);
-                    this.toast('Profile Card скопирована в буфер обмена!', 'success');
-                } catch(e) {
-                    this.toast('Не удалось скопировать', 'error');
-                }
-            }
-
-            // --- INVENTORY ---
-            renderInventory() {
-                const rarity = document.getElementById('inventoryRarityFilter').value;
-                let items = this.state.inventory;
-                if (rarity !== 'ALL') {
-                    items = items.filter(i => i.rarity === rarity);
-                }
-
-                const grid = document.getElementById('inventoryItemsGrid');
-                if (items.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full p-8 brutal-card text-center text-xs mono-font text-neutral-500">В хранилище нет предметов по выбранной редкости.</div>`;
-                } else {
-                    grid.innerHTML = items.map(i => `
-                        <div class="brutal-card p-4 space-y-3 bg-neutral-900 border-neutral-800">
-                            <div class="flex justify-between items-start">
-                                <span class="badge-pill badge-${i.rarity.toLowerCase()}">${i.rarity}</span>
-                                <span class="text-[9px] mono-font text-neutral-500">${i.type}</span>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm text-white">${this.escapeHtml(i.name)}</h4>
-                                <p class="text-[11px] text-neutral-400 mt-1">${this.escapeHtml(i.desc)}</p>
-                            </div>
-                            <button onclick="app.toggleEquipItem('${i.id}')" class="w-full py-1.5 text-xs mono-font font-bold brutal-border ${i.equipped ? 'bg-emerald-950 text-emerald-400 border-emerald-600' : 'bg-neutral-950 text-neutral-300 hover:border-sky-400'}">
-                                ${i.equipped ? 'EQUIPPED' : 'EQUIP ITEM'}
-                            </button>
-                        </div>
-                    `).join('');
-                }
-            }
-
-            toggleEquipItem(invId) {
-                const item = this.state.inventory.find(i => i.id === invId);
-                if (item) {
-                    item.equipped = !item.equipped;
-                    this.saveState();
-                    this.renderInventory();
-                    this.toast(item.equipped ? 'Предмет экипирован' : 'Предмет снят', 'info');
-                }
-            }
-
-            // --- SHOP ---
-            renderShop() {
-                document.getElementById('shopShardsVal').innerText = this.state.user.shards;
-                document.getElementById('shopRelicsVal').innerText = this.state.user.relics;
-
-                const grid = document.getElementById('shopCatalogGrid');
-                grid.innerHTML = this.state.shop.map(s => `
-                    <div class="brutal-card p-5 space-y-4 bg-neutral-900 border-neutral-800 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="badge-pill badge-${s.rarity.toLowerCase()}">${s.rarity}</span>
-                                <span class="text-[10px] mono-font text-neutral-500">${s.type}</span>
-                            </div>
-                            <h4 class="font-bold text-base text-white">${this.escapeHtml(s.name)}</h4>
-                            <p class="text-xs text-neutral-400 mt-1">${this.escapeHtml(s.desc)}</p>
-                        </div>
-                        <div class="space-y-3 pt-3 border-t border-neutral-800">
-                            <div class="flex items-center space-x-3 text-xs mono-font font-bold">
-                                ${s.costShards > 0 ? `<span class="text-amber-400">⚡ ${s.costShards} Shards</span>` : ''}
-                                ${s.costRelics > 0 ? `<span class="text-violet-400">🔮 ${s.costRelics} Relics</span>` : ''}
-                            </div>
-                            <button onclick="app.buyShopItem('${s.id}')" class="w-full py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold text-xs mono-font transition">
-                                КУПИТЬ ПРЕДМЕТ
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            buyShopItem(shopId) {
-                const item = this.state.shop.find(s => s.id === shopId);
-                if (!item) return;
-
-                const u = this.state.user;
-                if (u.shards < item.costShards || u.relics < item.costRelics) {
-                    return this.toast('Недостаточно валюты для покупки!', 'error');
-                }
-
-                u.shards -= item.costShards;
-                u.relics -= item.costRelics;
-
-                this.state.inventory.push({
-                    id: 'inv_' + Date.now(),
-                    itemId: item.itemId,
-                    name: item.name,
-                    type: item.type,
-                    rarity: item.rarity,
-                    desc: item.desc,
-                    equipped: false
-                });
-
-                if (this.state.settings.sound) audio.buy();
-                this.toast(`Покупка совершена! ${item.name} добавлен в инвентарь.`, 'legendary');
-                this.saveState();
-                this.renderShop();
-            }
-
-            // --- ACHIEVEMENTS ---
-            renderAchievements() {
-                const unlocked = this.state.achievements.filter(a => a.unlocked).length;
-                document.getElementById('achieveUnlockedCount').innerText = unlocked;
-                document.getElementById('achieveTotalCount').innerText = this.state.achievements.length;
-
-                const grid = document.getElementById('achievementsGrid');
-                grid.innerHTML = this.state.achievements.map(a => `
-                    <div class="brutal-card p-4 flex items-start space-x-3 ${a.unlocked ? 'bg-amber-950/20 border-amber-500/40' : 'opacity-50 bg-neutral-900'}">
-                        <div class="w-10 h-10 brutal-border flex items-center justify-center text-lg ${a.unlocked ? 'text-amber-400 border-amber-500' : 'text-neutral-600 border-neutral-800'}">
-                            <i class="fa-solid ${a.icon}"></i>
-                        </div>
-                        <div>
-                            <div class="flex items-center space-x-2">
-                                <h4 class="font-bold text-sm text-white">${this.escapeHtml(a.title)}</h4>
-                                ${a.unlocked ? '<span class="text-[9px] mono-font text-amber-400 font-bold">[UNLOCKED]</span>' : ''}
-                            </div>
-                            <p class="text-xs text-neutral-400 mt-1">${this.escapeHtml(a.desc)}</p>
-                        </div>
-                    </div>
-                `).join('');
-
-                // Render Timeline
-                const timelineLog = document.getElementById('permanentTimelineLog');
-                timelineLog.innerHTML = this.state.timeline.map(t => `
-                    <div class="flex space-x-3 text-neutral-400 border-b border-neutral-900 pb-1.5">
-                        <span class="text-sky-400 shrink-0 font-bold">${t.date}</span>
-                        <span>${this.escapeHtml(t.text)}</span>
-                    </div>
-                `).join('');
-            }
-
-            checkAchievements() {
-                const u = this.state.user;
-                if (u.stats.independence >= 20) {
-                    const ach = this.state.achievements.find(a => a.id === 'ach_3');
-                    if (ach && !ach.unlocked) {
-                        ach.unlocked = true;
-                        this.toast('РАЗБЛОКИРОВАНО ДОСТИЖЕНИЕ: ПОЛНАЯ АВТОНОМИЯ', 'legendary');
-                    }
-                }
-            }
-
-            // --- AI ADVISOR ---
-            renderAiAdvisor() {
-                // UI state default view
-            }
-
-            runAiAction(type) {
-                const output = document.getElementById('aiConsoleOutput');
-                output.innerText = '[AI]: Обработка контекста профиля и задачи...';
-
-                setTimeout(() => {
-                    let text = '';
-                    const u = this.state.user;
-                    const tasksDone = this.state.tasks.filter(t => t.completed).length;
-
-                    switch(type) {
-                        case 'DAY_PLAN':
-                            text = `[AI TACTICAL DIRECTIVE — DAY PLAN]\nСформирован рекомендательный сет на сегодня:\n- Дисциплина текущего уровня: ${u.stats.discipline}.\n- Рекомендуется сделать фокус на Core-задачах вектора Personal Projects.\n- Оптимальная нагрузка: 2.5 часа чистой работы.`;
-                            break;
-                        case 'DAY_REVIEW':
-                            text = `[AI DAY REVIEW]\nВыполнено задач: ${tasksDone} из ${this.state.tasks.length}.\nТекущий показатель Focus: ${u.stats.focus}.\nВывод: Стабильная динамика. Направьте внимание на завершение оставшихся задач категории CORE.`;
-                            break;
-                        case 'BOSS_STRATEGY':
-                            const boss = this.state.bosses.find(b => !b.completed);
-                            text = `[BOSS STRATEGY ANALYZER]\nЦель: ${boss ? boss.title : 'Все боссы одолены'}.\nСтратегия: Выполняйте задачи высших категорий CORE, чтобы наносить по 25 ед. авто-урона за каждые 50 XP.`;
-                            break;
-                        case 'RECOVERY_PLAN':
-                            text = `[RECOVERY PROTOCOL ANALYSIS]\nСистема находится в нормальном режиме. Если вам требуется пауза, воспользуйтесь встроенной кнопкой Recovery Protocol.`;
-                            break;
-                    }
-
-                    output.innerText = text;
-                    if (this.state.settings.sound) audio.click();
-                }, 400);
-            }
-
-            generateAiDirective() {
-                const directives = [
-                    "Сфокусируйтесь на 1 главной задаче вектора Personal Projects.",
-                    "Повысьте показатель FOCUS путем работы без отвлечений 45 мин.",
-                    "Нанесите урон боссу через завершение нескольких задач категории CORE."
-                ];
-                const rand = directives[Math.floor(Math.random() * directives.length)];
-                document.getElementById('aiTacticalText').innerText = rand;
-                this.toast('AI Директива обновлена', 'info');
-            }
-
-            // --- RECOVERY PROTOCOL ENGINE ---
-            triggerRecoveryModal() {
-                document.getElementById('recoveryModal').classList.remove('hidden');
-            }
-
-            executeRecoveryProtocol() {
-                // Clear incomplete tasks, add return quest, preserve level & rewards
-                this.state.tasks = this.state.tasks.filter(t => t.completed);
-                this.state.tasks.unshift({
-                    id: 't_return_' + Date.now(),
-                    title: 'RETURN QUEST: Лёгкая разминка и настройка дня',
-                    tier: 'CORE',
-                    vectorId: 'vec_char',
-                    hours: 0.5,
-                    shards: 100,
-                    completed: false
-                });
-
-                this.state.timeline.unshift({
-                    date: new Date().toISOString().split('T')[0],
-                    text: 'Успешно активирован Протокол Восстановления (Recovery Protocol).'
-                });
-
-                this.saveState();
-                this.closeModal('recoveryModal');
-                this.renderAll();
-                this.toast('Протокол Восстановления успешно завершен!', 'legendary');
-            }
-
-            // --- LORE & CANON ---
-            renderLore() {
-                const container = document.getElementById('loreChaptersContainer');
-                container.innerHTML = this.state.loreChapters.map(l => `
-                    <div class="brutal-card p-5 space-y-3 bg-purple-950/10 border-purple-500/30">
-                        <span class="badge-pill badge-epic">WINTER CHRONICLE</span>
-                        <h3 class="font-bold text-base text-white">${this.escapeHtml(l.title)}</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed">${this.escapeHtml(l.text)}</p>
-                    </div>
-                `).join('');
-
-                const charGrid = document.getElementById('characterCanonGrid');
-                charGrid.innerHTML = this.state.characters.map(c => `
-                    <div class="brutal-card p-4 space-y-2 bg-neutral-900 border-neutral-800">
-                        <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-sm text-purple-300">${this.escapeHtml(c.name)}</h4>
-                            <span class="text-[9px] mono-font text-neutral-500">${this.escapeHtml(c.role)}</span>
-                        </div>
-                        <p class="text-[11px] text-neutral-400">${this.escapeHtml(c.canon)}</p>
-                    </div>
-                `).join('');
-            }
-
-            openCharacterModal() { document.getElementById('characterModal').classList.remove('hidden'); }
-            saveCharacterModal() {
-                const name = document.getElementById('charNameInput').value.trim();
-                if (!name) return this.toast('Введите имя персонажа', 'error');
-
-                const role = document.getElementById('charRoleInput').value.trim();
-                const canon = document.getElementById('charCanonInput').value.trim();
-
-                this.state.characters.push({
-                    id: 'c_' + Date.now(),
-                    name,
-                    role,
-                    canon
-                });
-
-                this.saveState();
-                this.closeModal('characterModal');
-                this.renderLore();
-                this.toast('Персонаж добавлен в канон мира!', 'success');
-            }
-
-            // --- RANDOM WORLD EVENTS ENGINE ---
-            checkRandomWorldEvent() {
-                if (Math.random() > 0.4) {
-                    this.activeWorldEvent = {
-                        title: 'Северный Буран: Проверка Дисциплины',
-                        desc: 'В системе зарегистрировано усиление внешнего давления. Сделайте выбор для вашей операционной среды.'
-                    };
-
-                    const banner = document.getElementById('worldEventBanner');
-                    document.getElementById('eventTitle').innerText = this.activeWorldEvent.title;
-                    document.getElementById('eventDesc').innerText = this.activeWorldEvent.desc;
-
-                    const actions = document.getElementById('eventActions');
-                    actions.innerHTML = `
-                        <button onclick="app.resolveEvent('boost')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs mono-font">ПРИНЯТЬ ВЫЗОВ (+50 SHARDS)</button>
-                        <button onclick="app.resolveEvent('ignore')" class="px-3 py-1.5 border border-neutral-700 text-neutral-400 text-xs mono-font">ИГНОРИРОВАТЬ</button>
-                    `;
-
-                    banner.classList.remove('hidden');
-                }
-            }
-
-            resolveEvent(choice) {
-                if (choice === 'boost') {
-                    this.state.user.shards += 50;
-                    this.toast('Вызов принят! +50 Shards', 'success');
-                }
-                document.getElementById('worldEventBanner').classList.add('hidden');
-                this.saveState();
-                this.renderAll();
-            }
-
-            // --- TELEMETRY & STATS ---
-            renderStats() {
-                const doneTasks = this.state.tasks.filter(t => t.completed).length;
-                const totalTasks = this.state.tasks.length || 1;
-                const rate = Math.round((doneTasks / totalTasks) * 100);
-
-                document.getElementById('statsCompletionRate').innerText = `${rate}%`;
-                document.getElementById('statsLoggedHours').innerText = `${this.state.user.hoursLogged.toFixed(1)} h`;
-                document.getElementById('statsEarnedShards').innerText = this.state.user.shards;
-
-                // Breakdown by vectors
-                const breakdownContainer = document.getElementById('statsVectorBreakdown');
-                breakdownContainer.innerHTML = this.state.vectors.map(v => {
-                    const vTasks = this.state.tasks.filter(t => t.vectorId === v.id);
-                    const vDone = vTasks.filter(t => t.completed).length;
-                    const pct = vTasks.length ? Math.round((vDone / vTasks.length) * 100) : 0;
-                    return `
-                        <div>
-                            <div class="flex justify-between text-neutral-300 mb-1">
-                                <span class="${v.color} font-bold">${v.name}</span>
-                                <span>${vDone} / ${vTasks.length} Done (${pct}%)</span>
-                            </div>
-                            <div class="w-full bg-neutral-950 h-2 brutal-border">
-                                <div class="bg-sky-400 h-full" style="width: ${pct}%;"></div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            setStatsPeriod(period) {
-                this.activeStatsPeriod = period;
-                document.querySelectorAll('.stats-period-btn').forEach(btn => {
-                    if (btn.getAttribute('data-period') === period) btn.classList.add('active-tab');
-                    else btn.classList.remove('active-tab');
-                });
-                this.renderStats();
-            }
-
-            // --- SETTINGS & HELPERS ---
-            renderSettings() {
-                document.getElementById('settingThemeSelect').value = this.state.settings.theme;
-                document.getElementById('settingSoundToggle').checked = this.state.settings.sound;
-                document.getElementById('settingParticlesToggle').checked = this.state.settings.particles;
-                document.getElementById('settingApiKeyInput').value = this.state.settings.apiKey || '';
-                document.getElementById('settingLlmKeyInput').value = this.state.settings.llmKey || '';
-            }
-
-            changeTheme(themeName) {
-                this.state.settings.theme = themeName;
-                this.applyTheme(themeName);
-                this.saveState();
-            }
-
-            applyTheme(themeName) {
-                document.body.classList.remove('theme-polar', 'theme-amber');
-                if (themeName === 'polar') document.body.classList.add('theme-polar');
-                if (themeName === 'amber') document.body.classList.add('theme-amber');
-            }
-
-            toggleSound(val) {
-                this.state.settings.sound = val;
-                audio.enabled = val;
-                this.saveState();
-            }
-
-            toggleParticles(val) {
-                this.state.settings.particles = val;
-                const canvas = document.getElementById('particleCanvas');
-                if (canvas) canvas.style.display = val ? 'block' : 'none';
-                this.saveState();
-            }
-
-            saveApiSettings() {
-                this.state.settings.apiKey = document.getElementById('settingApiKeyInput').value.trim();
-                this.state.settings.llmKey = document.getElementById('settingLlmKeyInput').value.trim();
-                this.saveState();
-                this.syncApiState(true);
-            }
-
-            exportStateJson() {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state, null, 2));
-                const anchor = document.createElement('a');
-                anchor.setAttribute("href", dataStr);
-                anchor.setAttribute("download", `winter_arc_backup_${Date.now()}.json`);
-                document.body.appendChild(anchor);
-                anchor.click();
-                anchor.remove();
-                this.toast('JSON бэкап выгружен', 'success');
-            }
-
-            importStateJson(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const imported = JSON.parse(event.target.result);
-                        this.state = imported;
-                        this.saveState();
-                        this.renderAll();
-                        this.toast('Данные успешно импортированы!', 'success');
-                    } catch(err) {
-                        this.toast('Ошибка импорта JSON!', 'error');
-                    }
-                };
-                reader.readAsText(file);
-            }
-
-            resetStateFull() {
-                if (confirm('Сбросить все данные операционной системы до базовых параметров?')) {
-                    this.state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-                    this.saveState();
-                    this.renderAll();
-                    this.toast('Система сброшена к исходному состоянию', 'info');
-                }
-            }
-
-            checkLevelUp() {
-                const u = this.state.user;
-                if (u.xp >= u.xpToNext) {
-                    u.level += 1;
-                    u.xp -= u.xpToNext;
-                    u.xpToNext = Math.round(u.xpToNext * 1.3);
-                    if (this.state.settings.sound) audio.levelUp();
-                    this.toast(`LEVEL UP! Теперь вы Уровень ${u.level}`, 'legendary');
-                }
-            }
-
-            closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-            toast(msg, type = 'info') {
-                const container = document.getElementById('toastContainer');
-                const t = document.createElement('div');
-                let borderClass = 'border-sky-500 bg-neutral-900 text-sky-200';
-                if (type === 'success') borderClass = 'border-emerald-500 bg-neutral-900 text-emerald-200';
-                if (type === 'error') borderClass = 'border-rose-500 bg-neutral-900 text-rose-200';
-                if (type === 'legendary') borderClass = 'border-amber-500 bg-amber-950 text-amber-200 shadow-[0_0_15px_rgba(245,158,11,0.3)]';
-
-                t.className = `p-3 brutal-border ${borderClass} text-xs mono-font max-w-xs shadow-lg transition-all duration-300 opacity-0 transform translate-y-2`;
-                t.innerText = msg;
-                container.appendChild(t);
-
-                setTimeout(() => t.classList.remove('opacity-0', 'translate-y-2'), 20);
-                setTimeout(() => {
-                    t.classList.add('opacity-0');
-                    setTimeout(() => t.remove(), 300);
-                }, 3500);
-            }
-
-            escapeHtml(str) {
-                if (!str) return '';
-                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-            }
-
-            // Canvas Background Particles
-            setupCanvas() {
-                const canvas = document.getElementById('particleCanvas');
-                if (!canvas) return;
-                const ctx = canvas.getContext('2d');
-
-                let width = canvas.width = window.innerWidth;
-                let height = canvas.height = window.innerHeight;
-
-                window.addEventListener('resize', () => {
-                    width = canvas.width = window.innerWidth;
-                    height = canvas.height = window.innerHeight;
-                });
-
-                const particles = Array.from({ length: 45 }, () => ({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3,
-                    r: Math.random() * 1.5 + 0.5
-                }));
-
-                function loop() {
-                    ctx.clearRect(0, 0, width, height);
-                    ctx.fillStyle = '#38bdf8';
-
-                    particles.forEach(p => {
-                        p.x += p.vx;
-                        p.y += p.vy;
-                        if (p.x < 0) p.x = width;
-                        if (p.x > width) p.x = 0;
-                        if (p.y < 0) p.y = height;
-                        if (p.y > height) p.y = 0;
-
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                        ctx.fill();
-                    });
-
-                    requestAnimationFrame(loop);
-                }
-
-                loop();
-            }
+      } catch (e) {}
+      return defaultState();
+    })();
+
+    function addLog(text) {
+      db.world.logs.unshift({ time: nowTime(), text });
+      if (db.world.logs.length > 30) db.world.logs.length = 30;
+    }
+
+    function nextXpFor(lvl) {
+      return 800 + (lvl - 1) * 300;
+    }
+
+    function syncLevel() {
+      let lvl = 1, rem = db.user.xp;
+      while (rem >= nextXpFor(lvl)) { rem -= nextXpFor(lvl); lvl++; }
+      db.user.level = lvl;
+      db.user.title = lvl >= 6 ? 'SOVEREIGN' : lvl >= 3 ? 'VANGUARD' : 'INITIATE';
+    }
+
+    function checkAch() {
+      if (db.stats.totalDone >= 1) db.vault.ach[0].unlocked = true;
+      if (db.stats.totalDone >= 5) db.vault.ach[1].unlocked = true;
+      if (db.stats.bossesDone >= 1) db.vault.ach[2].unlocked = true;
+    }
+
+    function checkDayRollover() {
+      const tk = todayKey();
+      if (db.day.date !== tk) {
+        const diff = Math.floor((new Date(tk + 'T00:00:00') - new Date(db.day.date + 'T00:00:00')) / 86400000);
+        db.day.tasks.forEach(t => { t.done = false; });
+        if (diff > 1) db.day.recovery = { show: true, daysAway: diff - 1 };
+        db.day.date = tk;
+        addLog(`Новый день: ${tk}.`);
+      }
+    }
+
+    function setSyncLabel(txt) {
+      document.getElementById('syncStatus').textContent = txt;
+    }
+
+    let saveTimer = null;
+    function saveState() {
+      db.meta.updatedAt = Date.now();
+      const raw = JSON.stringify(db);
+      localStorage.setItem('wa_os_state_v1', raw);
+      document.getElementById('saveDump').value = raw;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => pushDb(false), 600);
+    }
+
+    async function pushDb(notify = false) {
+      setSyncLabel('● SYNC...');
+      try {
+        let res = await fetch('/api/state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: PROFILE_KEY, state: db })
+        });
+        if (res.status === 405) {
+          const packed = encodeURIComponent(JSON.stringify({ key: PROFILE_KEY, state: db }));
+          res = await fetch(`/api/state?action=save&payload=${packed}`);
         }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        setSyncLabel('● DB OK');
+        if (notify) alert('Сохранено в базу.');
+      } catch (e) {
+        setSyncLabel('● LOCAL');
+        if (notify) alert('Сохранено локально (' + e.message + ').');
+      }
+    }
 
-        // Global Instance Initialize
-        let app;
-        window.onload = function() {
-            app = new WinterArcApp();
-            app.init();
-        };
-    </script>
+    async function pullDb(silent = true) {
+      setSyncLabel('● LOAD...');
+      try {
+        const res = await fetch(`/api/state?key=${encodeURIComponent(PROFILE_KEY)}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const remote = data?.record?.state_json;
+        if (remote?.user && remote?.day && remote?.world) {
+          if (!silent || (remote.meta?.updatedAt || 0) >= (db.meta?.updatedAt || 0)) {
+            db = remote;
+            checkDayRollover();
+            render(false);
+          }
+          setSyncLabel('● DB OK');
+          if (!silent) alert('Данные загружены из базы.');
+        } else {
+          setSyncLabel('● LOCAL');
+          if (!silent) alert('Запись в базе пока пуста.');
+        }
+      } catch (e) {
+        setSyncLabel('● LOCAL');
+        if (!silent) alert('Не удалось загрузить: ' + e.message);
+      }
+    }
+
+    function openPage(name, btn) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('p-' + name).classList.add('active');
+      document.querySelectorAll('.tab-btn, .dock button').forEach(b => {
+        b.classList.toggle('active', b.dataset.page === name);
+      });
+      if (btn) btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    function toggleBox(id) {
+      document.getElementById(id).classList.toggle('open');
+    }
+
+    function setTheme(theme) {
+      db.meta.theme = theme;
+      document.body.dataset.theme = theme;
+      saveState();
+    }
+
+    function toggleTask(id) {
+      const t = db.day.tasks.find(x => x.id === id);
+      if (!t) return;
+      if (!t.done) {
+        t.done = true;
+        db.user.xp += t.xp;
+        db.user.shards += Math.max(10, Math.round(t.xp / 10));
+        db.user.stats[t.stat] += 1;
+        db.stats.totalDone += 1;
+        addLog(`Выполнено: «${t.title}» (+${t.xp} XP).`);
+      } else {
+        t.done = false;
+        db.user.xp = Math.max(0, db.user.xp - t.xp);
+        db.user.stats[t.stat] = Math.max(1, db.user.stats[t.stat] - 1);
+        db.stats.totalDone = Math.max(0, db.stats.totalDone - 1);
+      }
+      syncLevel();
+      checkAch();
+      render();
+    }
+
+    function deleteTask(id, ev) {
+      if (ev) ev.stopPropagation();
+      const idx = db.day.tasks.findIndex(x => x.id === id);
+      if (idx === -1) return;
+      const t = db.day.tasks[idx];
+      if (t.done) {
+        db.user.xp = Math.max(0, db.user.xp - t.xp);
+        db.user.stats[t.stat] = Math.max(1, db.user.stats[t.stat] - 1);
+        db.stats.totalDone = Math.max(0, db.stats.totalDone - 1);
+      }
+      db.day.tasks.splice(idx, 1);
+      addLog(`Удалена задача: «${t.title}».`);
+      syncLevel();
+      render();
+    }
+
+    function addTask() {
+      const title = document.getElementById('tTitle').value.trim();
+      if (!title) return;
+      db.day.tasks.push({
+        id: 't_' + Date.now(),
+        title,
+        vector: document.getElementById('tVector').value || 'Personal Projects',
+        stat: document.getElementById('tStat').value,
+        tier: document.getElementById('tTier').value,
+        xp: parseInt(document.getElementById('tXp').value, 10) || 150,
+        done: false
+      });
+      document.getElementById('tTitle').value = '';
+      document.getElementById('newTaskBox').classList.remove('open');
+      addLog(`Добавлена задача: «${title}».`);
+      render();
+    }
+
+    function aiAddTask() {
+      const activeVecs = db.vectors.filter(v => v.active).map(v => v.name);
+      const vec = activeVecs[db.stats.totalDone % Math.max(1, activeVecs.length)] || 'Focus';
+      const title = `Фокус-блок (${vec}): закрыть 1 конкретный этап`;
+      db.day.tasks.push({ id: 'ai_' + Date.now(), title, vector: vec, stat: 'focus', tier: 'extended', xp: 140, done: false });
+      addLog(`AI предложил шаг: «${title}».`);
+      render();
+    }
+
+    function addVector() {
+      const name = document.getElementById('vName').value.trim();
+      if (!name) return;
+      db.vectors.push({ id: 'v_' + Date.now(), name, active: true });
+      document.getElementById('vName').value = '';
+      document.getElementById('newVecBox').classList.remove('open');
+      render();
+    }
+
+    function toggleVector(id) {
+      const v = db.vectors.find(x => x.id === id);
+      if (v) { v.active = !v.active; render(); }
+    }
+
+    function addBoss() {
+      const title = document.getElementById('bTitle').value.trim();
+      const target = parseInt(document.getElementById('bTarget').value, 10);
+      if (!title || !target || target < 1) return;
+      db.bosses.push({
+        id: 'b_' + Date.now(),
+        title,
+        desc: document.getElementById('bDesc').value.trim() || 'Долгосрочная цель',
+        current: 0,
+        target,
+        xp: parseInt(document.getElementById('bXp').value, 10) || 500,
+        done: false
+      });
+      document.getElementById('bTitle').value = '';
+      document.getElementById('bDesc').value = '';
+      document.getElementById('bTarget').value = '';
+      document.getElementById('newBossBox').classList.remove('open');
+      addLog(`Новая кампания: «${title}».`);
+      render();
+    }
+
+    function stepBoss(id) {
+      const b = db.bosses.find(x => x.id === id);
+      if (!b || b.done) return;
+      b.current = Math.min(b.target, b.current + 1);
+      db.user.xp += 60;
+      db.user.shards += 20;
+      if (b.current >= b.target) {
+        b.done = true;
+        b.current = b.target;
+        db.user.xp += b.xp;
+        db.user.relics += 1;
+        db.stats.bossesDone += 1;
+        db.vault.items.push({ id: 'i_' + Date.now(), name: 'Трофей: ' + b.title, rarity: 'EPIC' });
+        addLog(`Кампания завершена: «${b.title}» (+${b.xp} XP).`);
+      } else {
+        addLog(`Шаг кампании «${b.title}»: ${b.current}/${b.target}.`);
+      }
+      syncLevel();
+      checkAch();
+      render();
+    }
+
+    function deleteBoss(id) {
+      db.bosses = db.bosses.filter(x => x.id !== id);
+      render();
+    }
+
+    function reinforceSector(id) {
+      const s = db.world.sectors.find(x => x.id === id);
+      if (!s || s.done) return;
+      if (db.user.shards < s.cost) { alert('Не хватает Shards.'); return; }
+      db.user.shards -= s.cost;
+      s.progress = Math.min(s.target, s.progress + 1);
+      if (s.progress >= s.target) {
+        s.done = true;
+        db.user.xp += s.xp;
+        db.user.relics += 1;
+        db.vault.items.push({ id: 's_' + Date.now(), name: 'Печать: ' + s.name, rarity: 'RARE' });
+        const secured = db.world.sectors.filter(x => x.done).length;
+        db.world.chapter = 1 + secured;
+        db.world.title = `Глава ${db.world.chapter} — Укрепление контура`;
+        addLog(`Сектор «${s.name}» взят (+${s.xp} XP).`);
+      } else {
+        addLog(`Укреплён сектор «${s.name}» (${s.progress}/${s.target}).`);
+      }
+      syncLevel();
+      render();
+    }
+
+    function addChar() {
+      const name = document.getElementById('cName').value.trim();
+      if (!name) return;
+      db.world.chars.push({
+        id: 'c_' + Date.now(),
+        name,
+        role: document.getElementById('cRole').value.trim() || 'Персонаж',
+        note: document.getElementById('cNote').value.trim() || 'Канон мира'
+      });
+      document.getElementById('cName').value = '';
+      document.getElementById('cRole').value = '';
+      document.getElementById('cNote').value = '';
+      document.getElementById('newCharBox').classList.remove('open');
+      render();
+    }
+
+    function deleteChar(id) {
+      db.world.chars = db.world.chars.filter(x => x.id !== id);
+      render();
+    }
+
+    function buyShop(kind, cost) {
+      if (db.user.shards < cost) { alert('Недостаточно Shards.'); return; }
+      db.user.shards -= cost;
+      if (kind === 'xp') {
+        db.user.xp += 180;
+        addLog('Куплен усилитель фокуса (+180 XP).');
+      } else {
+        db.user.relics += 1;
+        db.vault.items.push({ id: 'sh_' + Date.now(), name: 'Редкий реликт #' + (db.vault.items.length + 1), rarity: 'RARE' });
+        addLog('Приобретён редкий артефакт в магазине.');
+      }
+      syncLevel();
+      render();
+    }
+
+    function startReturnQuest() {
+      db.day.tasks.unshift({ id: 'rq_' + Date.now(), title: 'Return Quest: 15 минут спокойной работы', vector: 'Character', stat: 'discipline', tier: 'core', xp: 150, done: false });
+      db.day.recovery.show = false;
+      render();
+    }
+
+    function hideRecovery() {
+      db.day.recovery.show = false;
+      render();
+    }
+
+    function copySave() {
+      const el = document.getElementById('saveDump');
+      el.select();
+      navigator.clipboard?.writeText(el.value);
+      alert('JSON скопирован.');
+    }
+
+    function resetAll() {
+      if (!confirm('Сбросить весь локальный прогресс?')) return;
+      db = defaultState();
+      render();
+    }
+
+    /* TIMER */
+    let secLeft = 25 * 60;
+    let timerId = null;
+
+    function fmtClock(s) {
+      return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function toggleTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        document.getElementById('timerBtn').textContent = 'СТАРТ';
+      } else {
+        document.getElementById('timerBtn').textContent = 'ПАУЗА';
+        timerId = setInterval(() => {
+          if (secLeft > 1) {
+            secLeft--;
+            document.getElementById('timerClock').textContent = fmtClock(secLeft);
+          } else {
+            finishTimerNow();
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      secLeft = 25 * 60;
+      document.getElementById('timerClock').textContent = fmtClock(secLeft);
+      document.getElementById('timerBtn').textContent = 'СТАРТ';
+    }
+
+    function finishTimerNow() {
+      resetTimer();
+      db.user.xp += 140;
+      db.user.shards += 25;
+      db.user.stats.focus += 1;
+      db.stats.totalDone += 1;
+      addLog('Завершена фокус-сессия (+140 XP, +1 FOC).');
+      syncLevel();
+      checkAch();
+      render();
+    }
+
+    function taskHtml(t) {
+      return `
+        <div class="row-item ${t.done ? 'done' : ''}">
+          <button class="check" onclick="toggleTask('${t.id}')">${t.done ? '✓' : ''}</button>
+          <div class="item-main" onclick="toggleTask('${t.id}')">
+            <div class="item-title">${t.title}</div>
+            <div class="item-sub">${t.vector} · +1 ${t.stat.toUpperCase()}</div>
+          </div>
+          <div class="item-side">
+            <span class="tag">+${t.xp} XP</span>
+            <button class="btn danger sm" onclick="deleteTask('${t.id}', event)">×</button>
+          </div>
+        </div>`;
+    }
+
+    function render(shouldSave = true) {
+      document.body.dataset.theme = db.meta.theme || 'dark';
+      const dayNum = Math.max(1, Math.floor((new Date(todayKey() + 'T00:00:00') - new Date((db.meta.startDate || '2026-11-22') + 'T00:00:00')) / 86400000) + 1);
+      document.getElementById('topDay').textContent = dayNum;
+
+      if (db.day.recovery?.show) {
+        document.getElementById('recoveryCard').style.display = 'block';
+        document.getElementById('recoveryMsg').textContent = `Пропущено дней: ${db.day.recovery.daysAway}. Уровень и достижения сохранены.`;
+      } else {
+        document.getElementById('recoveryCard').style.display = 'none';
+      }
+
+      const need = nextXpFor(db.user.level);
+      let rem = db.user.xp;
+      for (let i = 1; i < db.user.level; i++) rem -= nextXpFor(i);
+      rem = Math.max(0, rem);
+
+      document.getElementById('hubLvl').textContent = db.user.level;
+      document.getElementById('hubTitleTag').textContent = db.user.title;
+      document.getElementById('hubXp').textContent = rem;
+      document.getElementById('hubNextXp').textContent = need;
+      document.getElementById('hubXpBar').style.width = Math.min(100, (rem / need) * 100) + '%';
+      document.getElementById('hubShardsTag').textContent = `${db.user.shards} SHARDS`;
+
+      document.getElementById('sDisc').textContent = db.user.stats.discipline;
+      document.getElementById('sFoc').textContent = db.user.stats.focus;
+      document.getElementById('sInd').textContent = db.user.stats.independence;
+
+      const core = db.day.tasks.filter(t => t.tier === 'core');
+      document.getElementById('hubTasks').innerHTML = (core.length ? core : db.day.tasks).slice(0, 4).map(taskHtml).join('') || '<div class="muted">Задач пока нет.</div>';
+      document.getElementById('allTasksList').innerHTML = db.day.tasks.map(taskHtml).join('') || '<div class="muted">Список задач пуст.</div>';
+
+      const leftCore = core.filter(t => !t.done).length;
+      document.getElementById('hubAiText').textContent = leftCore > 0
+        ? `Факт: осталось закрыть ${leftCore} основных задач. Рекомендация: сначала добей основной контур, затем переходи к доп-шагам.`
+        : `Факт: основной контур закрыт. Рекомендация: закрепи результат фокус-сессией или продвинь кампанию.`;
+
+      document.getElementById('tVector').innerHTML = db.vectors.filter(v => v.active).map(v => `<option>${v.name}</option>`).join('');
+      document.getElementById('vectorList').innerHTML = db.vectors.map(v => `
+        <button class="chip ${v.active ? 'on' : ''}" onclick="toggleVector('${v.id}')">${v.name}</button>
+      `).join('');
+
+      document.getElementById('bossList').innerHTML = db.bosses.map(b => {
+        const pct = Math.min(100, Math.round((b.current / b.target) * 100));
+        return `
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div style="font-size:14px;font-weight:800">${b.title}</div>
+                <div class="muted">${b.desc}</div>
+              </div>
+              <span class="tag">${b.current}/${b.target}</span>
+            </div>
+            <div class="meter ok"><i style="width:${pct}%"></i></div>
+            <div style="display:flex;gap:6px;margin-top:10px;align-items:center">
+              ${!b.done ? `<button class="btn primary sm" onclick="stepBoss('${b.id}')">+1 ШАГ</button>` : `<span class="tag">ЗАВЕРШЕНО</span>`}
+              <span class="muted mono" style="margin-left:auto">+${b.xp} XP</span>
+              <button class="btn danger sm" onclick="deleteBoss('${b.id}')">×</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      document.getElementById('wChapter').textContent = db.world.chapter;
+      document.getElementById('wMood').textContent = db.world.mood;
+      document.getElementById('wTitle').textContent = db.world.title;
+      document.getElementById('wDesc').textContent = db.world.desc;
+      document.getElementById('wShards').textContent = `${db.user.shards} SHARDS`;
+
+      document.getElementById('sectorList').innerHTML = db.world.sectors.map(s => `
+        <div class="row-item">
+          <div class="item-main">
+            <div class="item-title">${s.name} (${s.progress}/${s.target})</div>
+            <div class="item-sub">Награда: +${s.xp} XP · Цена шага: ${s.cost} Shards</div>
+          </div>
+          ${!s.done
+            ? `<button class="btn primary sm" onclick="reinforceSector('${s.id}')">УСИЛИТЬ</button>`
+            : `<span class="tag">ВЗЯТ</span>`}
+        </div>`).join('');
+
+      document.getElementById('charList').innerHTML = db.world.chars.map(c => `
+        <div class="row-item">
+          <div class="item-main">
+            <div class="item-title">${c.name} · <span class="muted">${c.role}</span></div>
+            <div class="item-sub">${c.note}</div>
+          </div>
+          <button class="btn danger sm" onclick="deleteChar('${c.id}')">×</button>
+        </div>`).join('');
+
+      document.getElementById('logList').innerHTML = db.world.logs.map(l => `
+        <div class="log-row"><b>${l.time}</b>${l.text}</div>
+      `).join('');
+
+      document.getElementById('shopBalance').textContent = `${db.user.shards} SHARDS`;
+      document.getElementById('achList').innerHTML = db.vault.ach.map(a => `
+        <div class="row-item" style="opacity:${a.unlocked ? 1 : 0.55}">
+          <div class="item-main">
+            <div class="item-title">${a.unlocked ? '★ ' : ''}${a.title}</div>
+            <div class="item-sub">${a.desc}</div>
+          </div>
+          <span class="tag">${a.unlocked ? 'ОТКРЫТО' : 'ЗАКРЫТО'}</span>
+        </div>`).join('');
+
+      document.getElementById('invList').innerHTML = db.vault.items.map(i => `
+        <div class="row-item">
+          <div class="item-main"><div class="item-title">${i.name}</div></div>
+          <span class="tag">${i.rarity}</span>
+        </div>`).join('');
+
+      document.getElementById('stTotalDone').textContent = db.stats.totalDone;
+      document.getElementById('stRelics').textContent = db.user.relics;
+      document.getElementById('stBossDone').textContent = db.stats.bossesDone;
+      document.getElementById('keyView').textContent = PROFILE_KEY;
+      document.getElementById('saveDump').value = JSON.stringify(db);
+
+      if (shouldSave) saveState();
+    }
+
+    checkDayRollover();
+    syncLevel();
+    checkAch();
+    render(false);
+    pullDb(true);
+  </script>
 </body>
 </html>
