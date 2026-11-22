@@ -15,7 +15,20 @@ export default async function handler(req, res) {
     }
   }
 
-  const rawKey = req.method === 'GET' ? req.query?.key : parsedBody?.key;
+  const isSaveViaGet = req.method === 'GET' && req.query?.action === 'save' && req.query?.payload;
+  let getPayload = null;
+  if (isSaveViaGet) {
+    try {
+      getPayload = JSON.parse(req.query.payload);
+    } catch {
+      return res.status(400).json({ error: 'Invalid GET payload JSON' });
+    }
+  }
+
+  const rawKey = req.method === 'GET'
+    ? (getPayload?.key || req.query?.key)
+    : parsedBody?.key;
+
   const profileKey = String(rawKey || 'winter_arc_default')
     .replace(/[^a-zA-Z0-9_-]/g, '_')
     .slice(0, 120);
@@ -31,19 +44,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    if (req.method === 'GET') {
-      const url = `${baseUrl}/rest/v1/winter_arc_profiles?profile_key=eq.${encodeURIComponent(profileKey)}&select=profile_key,state_json,updated_at`;
-      const response = await fetch(url, { headers });
-      const text = await response.text();
-      if (!response.ok) {
-        return res.status(response.status).json({ error: text });
-      }
-      const rows = text ? JSON.parse(text) : [];
-      return res.status(200).json({ record: rows[0] || null });
-    }
-
-    if (req.method === 'POST') {
-      const stateObj = parsedBody?.state;
+    if (req.method === 'POST' || isSaveViaGet) {
+      const stateObj = isSaveViaGet ? getPayload?.state : parsedBody?.state;
       if (!stateObj || typeof stateObj !== 'object') {
         return res.status(400).json({ error: 'Invalid state object' });
       }
@@ -72,6 +74,17 @@ export default async function handler(req, res) {
       }
       const rows = text ? JSON.parse(text) : [];
       return res.status(200).json({ ok: true, record: rows[0] || null });
+    }
+
+    if (req.method === 'GET') {
+      const url = `${baseUrl}/rest/v1/winter_arc_profiles?profile_key=eq.${encodeURIComponent(profileKey)}&select=profile_key,state_json,updated_at`;
+      const response = await fetch(url, { headers });
+      const text = await response.text();
+      if (!response.ok) {
+        return res.status(response.status).json({ error: text });
+      }
+      const rows = text ? JSON.parse(text) : [];
+      return res.status(200).json({ record: rows[0] || null });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
