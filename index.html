@@ -9,43 +9,46 @@
     :root {
       --paper: #f6f4ef;
       --paper-2: #ede9e0;
+      --paper-3: #e4ded2;
       --ink: #141413;
       --ink-2: #5c5a55;
-      --hairline: rgba(20, 20, 19, 0.16);
-      --hairline-strong: rgba(20, 20, 19, 0.36);
+      --hairline: rgba(20, 20, 19, 0.14);
+      --hairline-strong: rgba(20, 20, 19, 0.34);
       --accent: #b84a27;
-      --accent-soft: rgba(184, 74, 39, 0.1);
+      --accent-soft: rgba(184, 74, 39, 0.11);
       --pine: #1f5c4b;
-      --pine-soft: rgba(31, 92, 75, 0.1);
+      --pine-soft: rgba(31, 92, 75, 0.11);
       --serif: Georgia, "Times New Roman", serif;
       --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
       --mono: ui-monospace, "SF Mono", Menlo, monospace;
     }
 
+    body[data-issue="frost-folio"] {
+      --paper: #eff3f5;
+      --paper-2: #e3e9ed;
+      --paper-3: #d7e0e6;
+      --ink: #12181d;
+      --ink-2: #52606d;
+      --hairline: rgba(18, 24, 29, 0.14);
+      --hairline-strong: rgba(18, 24, 29, 0.32);
+      --accent: #a8492b;
+      --accent-soft: rgba(168, 73, 43, 0.11);
+      --pine: #1c5e52;
+      --pine-soft: rgba(28, 94, 82, 0.11);
+    }
+
     body[data-issue="nocturne"] {
       --paper: #171614;
       --paper-2: #211f1c;
+      --paper-3: #2a2723;
       --ink: #f3efe6;
       --ink-2: #a39d92;
-      --hairline: rgba(243, 239, 230, 0.15);
-      --hairline-strong: rgba(243, 239, 230, 0.35);
-      --accent: #df6d46;
-      --accent-soft: rgba(223, 109, 70, 0.14);
+      --hairline: rgba(243, 239, 230, 0.14);
+      --hairline-strong: rgba(243, 239, 230, 0.34);
+      --accent: #cf633f;
+      --accent-soft: rgba(207, 99, 63, 0.15);
       --pine: #4ea88d;
-      --pine-soft: rgba(78, 168, 141, 0.14);
-    }
-
-    body[data-issue="frost-folio"] {
-      --paper: #eef2f4;
-      --paper-2: #e2e8ec;
-      --ink: #12181d;
-      --ink-2: #52606d;
-      --hairline: rgba(18, 24, 29, 0.15);
-      --hairline-strong: rgba(18, 24, 29, 0.34);
-      --accent: #1d4ed8;
-      --accent-soft: rgba(29, 78, 216, 0.09);
-      --pine: #0f766e;
-      --pine-soft: rgba(15, 118, 110, 0.1);
+      --pine-soft: rgba(78, 168, 141, 0.15);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -55,25 +58,23 @@
       color: var(--ink);
       font-family: var(--sans);
       min-height: 100vh;
-      padding-bottom: 84px;
+      padding-bottom: 78px;
       transition: background 0.25s ease, color 0.25s ease;
     }
 
     .masthead {
-      max-width: 920px;
+      max-width: 860px;
       margin: 0 auto;
-      padding: 14px 18px 10px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--hairline-strong);
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
     }
     .masthead-title {
       font-family: var(--serif);
-      font-size: 22px;
-      font-weight: 400;
+      font-size: 20px;
       letter-spacing: -0.02em;
     }
     .masthead-meta {
@@ -82,7 +83,7 @@
       color: var(--ink-2);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .dot-live {
       display: inline-block;
@@ -90,191 +91,195 @@
       height: 6px;
       border-radius: 50%;
       background: var(--pine);
-      margin-right: 5px;
-    }
-
-    .edition-bar {
-      max-width: 920px;
-      margin: 0 auto;
-      padding: 8px 18px;
-      border-bottom: 1px solid var(--hairline);
-      display: flex;
-      gap: 18px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .edition-bar::-webkit-scrollbar { display: none; }
-    .nav-link {
-      background: none;
-      border: none;
-      padding: 4px 0;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink-2);
-      cursor: pointer;
-      white-space: nowrap;
-      position: relative;
-    }
-    .nav-link.active {
-      color: var(--ink);
-      font-weight: 700;
-    }
-    .nav-link.active::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -9px;
-      height: 2px;
-      background: var(--accent);
+      margin-right: 4px;
     }
 
     .container {
-      max-width: 920px;
+      max-width: 860px;
       margin: 0 auto;
-      padding: 18px;
+      padding: 14px 16px 20px;
     }
     .section { display: none; }
-    .section.active { display: block; animation: rise 0.22s ease; }
+    .section.active { display: block; animation: rise 0.2s ease; }
     @keyframes rise {
-      from { opacity: 0; transform: translateY(5px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Editorial Lead & Asymmetric Layout */
-    .lead-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 22px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--hairline-strong);
-    }
-    @media (min-width: 720px) {
-      .lead-grid {
-        grid-template-columns: 1.35fr 0.9fr;
-        gap: 28px;
-      }
     }
 
     .eyebrow {
       font-family: var(--mono);
-      font-size: 10.5px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--accent);
-      margin-bottom: 6px;
+      font-weight: 700;
     }
-    .hero-serif {
+    .serif-head {
       font-family: var(--serif);
-      font-size: clamp(28px, 6vw, 42px);
-      line-height: 1.08;
       font-weight: 400;
       letter-spacing: -0.02em;
     }
-    .lead-copy {
-      margin-top: 10px;
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--ink-2);
-      max-width: 54ch;
-    }
+    .muted { color: var(--ink-2); }
+    .mono { font-family: var(--mono); }
 
-    .identity-folio {
-      background: var(--paper-2);
-      border: 1px solid var(--hairline-strong);
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 14px;
-    }
-    .folio-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      border-bottom: 1px solid var(--hairline);
-      padding-bottom: 10px;
-    }
-    .lvl-figure {
-      font-family: var(--serif);
-      font-size: 32px;
-      line-height: 1;
-    }
-    .xp-rule {
-      height: 3px;
-      background: var(--hairline);
-      margin-top: 8px;
-      position: relative;
-    }
-    .xp-rule > span {
-      display: block;
-      height: 100%;
-      background: var(--accent);
-      transition: width 0.3s ease;
-    }
-
-    .pillars {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-    .pillar {
-      border-top: 1px solid var(--hairline-strong);
-      padding-top: 7px;
-    }
-    .pillar-val {
-      font-family: var(--serif);
-      font-size: 20px;
-      color: var(--ink);
-    }
-    .pillar-lbl {
-      font-size: 11px;
-      color: var(--ink-2);
-      margin-top: 1px;
-    }
-
-    .two-col {
+    /* Компактная верхняя полоса главной */
+    .top-digest {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 24px;
-      margin-top: 20px;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--hairline-strong);
     }
-    @media (min-width: 720px) {
-      .two-col {
-        grid-template-columns: 1.25fr 0.85fr;
-        gap: 28px;
+    @media (min-width: 700px) {
+      .top-digest {
+        grid-template-columns: 1.25fr 0.95fr;
+        gap: 20px;
+        align-items: stretch;
       }
     }
 
-    .col-head {
+    .issue-hero {
+      font-size: clamp(25px, 5.5vw, 34px);
+      line-height: 1.1;
+      margin-top: 4px;
+    }
+    .issue-sub {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--ink-2);
+      margin-top: 6px;
+    }
+
+    .folio-box {
+      background: var(--paper-2);
+      border: 1px solid var(--hairline-strong);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .folio-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--hairline-strong);
-      margin-bottom: 12px;
     }
-    .col-title {
+    .folio-level {
+      font-family: var(--serif);
+      font-size: 26px;
+      line-height: 1;
+    }
+    .xp-track {
+      height: 3px;
+      background: var(--hairline);
+      margin-top: 6px;
+    }
+    .xp-track > i {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    .mini-pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--hairline);
+    }
+    .mini-pillar b {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 400;
+      display: block;
+      line-height: 1.1;
+    }
+    .mini-pillar span {
+      font-size: 11px;
+      color: var(--ink-2);
+    }
+
+    /* Главная цель в центре внимания */
+    .flagship-goal {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--paper-2);
+      border: 1px solid var(--hairline-strong);
+      border-left: 4px solid var(--accent);
+    }
+    .flagship-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .flagship-title {
       font-family: var(--serif);
       font-size: 20px;
+      line-height: 1.2;
+      margin-top: 3px;
+    }
+    .flagship-metric {
+      font-family: var(--serif);
+      font-size: 24px;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .progress-bar {
+      height: 5px;
+      background: var(--hairline);
+      margin-top: 10px;
+    }
+    .progress-bar > i {
+      display: block;
+      height: 100%;
+      background: var(--pine);
+      transition: width 0.25s ease;
+    }
+
+    /* Сетка разделов */
+    .content-split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 16px;
+    }
+    @media (min-width: 700px) {
+      .content-split {
+        grid-template-columns: 1.3fr 0.85fr;
+        gap: 24px;
+      }
+    }
+
+    .sec-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--hairline-strong);
+      margin-bottom: 8px;
+    }
+    .sec-title {
+      font-family: var(--serif);
+      font-size: 19px;
       font-weight: 400;
     }
 
-    .task-row {
+    .task-line {
       display: flex;
       align-items: flex-start;
-      gap: 11px;
-      padding: 11px 0;
+      gap: 10px;
+      padding: 9px 0;
       border-bottom: 1px solid var(--hairline);
     }
-    .task-row.done .task-name {
+    .task-line.done .task-label {
       text-decoration: line-through;
       color: var(--ink-2);
     }
-    .mark-btn {
-      width: 19px;
-      height: 19px;
+    .tick-btn {
+      width: 18px;
+      height: 18px;
       margin-top: 2px;
       border: 1.5px solid var(--ink);
       background: transparent;
@@ -287,126 +292,150 @@
       align-items: center;
       justify-content: center;
     }
-    .task-row.done .mark-btn {
+    .task-line.done .tick-btn {
       background: var(--pine);
       border-color: var(--pine);
     }
-    .task-body { flex: 1; min-width: 0; cursor: pointer; }
-    .task-name { font-size: 14px; font-weight: 600; line-height: 1.35; }
-    .task-meta { font-size: 11.5px; color: var(--ink-2); margin-top: 2px; }
-    .task-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .xp-pill {
+    .task-info { flex: 1; min-width: 0; cursor: pointer; }
+    .task-label { font-size: 13.5px; font-weight: 600; line-height: 1.35; }
+    .task-sub { font-size: 11.5px; color: var(--ink-2); margin-top: 1px; }
+    .task-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .pts {
       font-family: var(--mono);
       font-size: 11px;
       color: var(--accent);
     }
 
-    .action-btn {
+    .btn {
       background: var(--ink);
       color: var(--paper);
       border: 1px solid var(--ink);
-      padding: 6px 11px;
+      padding: 6px 10px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
     }
-    .action-btn.accent {
+    .btn.terracotta {
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
     }
-    .action-btn.subtle {
+    .btn.outline {
       background: transparent;
       color: var(--ink);
       border-color: var(--hairline-strong);
     }
-    .action-btn.sm { padding: 4px 8px; font-size: 11px; }
-    .icon-del {
+    .btn.sm { padding: 4px 8px; font-size: 11px; }
+    .del-x {
       background: none;
       border: none;
       color: var(--ink-2);
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1;
       cursor: pointer;
-      padding: 2px 4px;
+      padding: 0 3px;
     }
-    .icon-del:hover { color: var(--accent); }
+    .del-x:hover { color: var(--accent); }
 
-    .composer {
+    .drawer-form {
       display: none;
       background: var(--paper-2);
       border: 1px solid var(--hairline-strong);
-      padding: 12px;
-      margin-bottom: 14px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
     }
-    .composer.open { display: grid; gap: 8px; }
+    .drawer-form.open { display: grid; gap: 8px; }
     input, select, textarea {
       width: 100%;
       background: var(--paper);
       color: var(--ink);
       border: 1px solid var(--hairline-strong);
-      padding: 8px 10px;
+      padding: 7px 9px;
       font-size: 13px;
       font-family: var(--sans);
     }
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .two-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    .campaign-feature {
-      background: var(--paper-2);
-      border-left: 3px solid var(--accent);
-      padding: 14px 16px;
-      margin-bottom: 16px;
-    }
-    .scale-line {
-      height: 4px;
-      background: var(--hairline);
-      margin-top: 10px;
-    }
-    .scale-line > i {
-      display: block;
-      height: 100%;
-      background: var(--pine);
-      transition: width 0.3s ease;
-    }
-
-    .note-entry {
-      padding: 10px 0;
+    .story-item {
+      padding: 9px 0;
       border-bottom: 1px solid var(--hairline);
       font-size: 13px;
-      line-height: 1.45;
+      line-height: 1.42;
     }
-    .note-entry time {
+    .story-date {
       font-family: var(--mono);
       font-size: 10.5px;
-      color: var(--ink-2);
-      margin-right: 8px;
+      color: var(--accent);
+      margin-right: 6px;
     }
 
-    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .pill-toggle {
+    .camp-card {
+      background: var(--paper-2);
+      border: 1px solid var(--hairline-strong);
+      padding: 13px 14px;
+      margin-bottom: 10px;
+    }
+    .camp-card.done-camp {
+      border-left: 3px solid var(--pine);
+    }
+
+    .chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip-btn {
       background: transparent;
       border: 1px solid var(--hairline-strong);
       color: var(--ink-2);
-      padding: 5px 10px;
+      padding: 5px 9px;
       font-size: 12px;
       cursor: pointer;
     }
-    .pill-toggle.active {
+    .chip-btn.on {
       background: var(--accent-soft);
       border-color: var(--accent);
       color: var(--accent);
       font-weight: 600;
     }
 
-    .badge-item {
-      padding: 12px;
+    /* Профиль и характеристики */
+    .identity-banner {
+      background: var(--paper-2);
+      border: 1px solid var(--hairline-strong);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .stat-meter-row {
+      margin-bottom: 10px;
+    }
+    .stat-meter-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      margin-bottom: 4px;
+    }
+    .stat-meter-bar {
+      height: 6px;
+      background: var(--paper-3);
+    }
+    .stat-meter-bar > i {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    .ach-card {
+      padding: 10px 12px;
       border: 1px solid var(--hairline);
       background: var(--paper-2);
       margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
     }
-    .badge-item.locked { opacity: 0.52; }
+    .ach-card.locked { opacity: 0.5; }
 
-    .bottom-dock {
+    /* Единая нижняя навигация */
+    .nav-dock {
       position: fixed;
       left: 0;
       right: 0;
@@ -416,19 +445,20 @@
       border-top: 1px solid var(--hairline-strong);
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      padding: 8px 6px 16px;
+      padding: 8px 4px 16px;
     }
-    .bottom-dock button {
+    .nav-dock button {
       background: none;
       border: none;
       color: var(--ink-2);
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
-      padding: 4px;
+      padding: 4px 2px;
     }
-    .bottom-dock button.active {
+    .nav-dock button.active {
       color: var(--accent);
+      font-weight: 700;
     }
   </style>
 </head>
@@ -438,302 +468,286 @@
     <div class="masthead-meta">
       <span>День <strong id="topDay">1</strong></span>
       <span>Осколков: <strong id="topShards">120</strong></span>
-      <span><i class="dot-live"></i><span id="syncState">Готово</span></span>
+      <span><i class="dot-live"></i><span id="syncLabel">Готово</span></span>
     </div>
   </header>
 
-  <nav class="edition-bar" id="topNav">
-    <button class="nav-link active" data-tab="today" onclick="goTab('today', this)">Главная</button>
-    <button class="nav-link" data-tab="campaigns" onclick="goTab('campaigns', this)">Кампании</button>
-    <button class="nav-link" data-tab="world" onclick="goTab('world', this)">Мир и лор</button>
-    <button class="nav-link" data-tab="profile" onclick="goTab('profile', this)">Профиль и база</button>
-  </nav>
-
   <main class="container">
-    <!-- ГЛАВНАЯ -->
-    <section id="tab-today" class="section active">
-      <div id="recoveryBox" class="campaign-feature" style="display:none;border-left-color:var(--accent)">
-        <div class="eyebrow">Спокойное возвращение</div>
-        <div id="recoveryText" style="font-size:13.5px"></div>
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="action-btn accent sm" onclick="acceptReturnStep()">Добавить лёгкий шаг</button>
-          <button class="action-btn subtle sm" onclick="closeRecovery()">Скрыть</button>
+    <!-- 1. ГЛАВНАЯ -->
+    <section id="view-today" class="section active">
+      <div id="recoveryBanner" class="flagship-goal" style="display:none;margin-top:0;margin-bottom:14px">
+        <div class="eyebrow">Возвращение в ритм</div>
+        <div id="recoveryText" style="font-size:13px;margin-top:3px"></div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button class="btn terracotta sm" onclick="acceptReturnStep()">Лёгкий шаг сегодня</button>
+          <button class="btn outline sm" onclick="closeRecovery()">Скрыть</button>
         </div>
       </div>
 
-      <div class="lead-grid">
+      <div class="top-digest">
         <div>
-          <div class="eyebrow" id="issueEyebrow">Выпуск I · Зимний цикл</div>
-          <h1 class="hero-serif" id="leadHeadline">Тишина перед первым шагом</h1>
-          <p class="lead-copy" id="leadSummary">
-            Личное пространство для дел, долгих целей и живого мира. Прогресс строится из подтверждённых действий в реальности — без суеты и лишних экранов.
+          <div class="eyebrow" id="issueTag">Выпуск 1 · Зимняя глава</div>
+          <h1 class="serif-head issue-hero" id="heroHeadline">Собранность вместо суеты</h1>
+          <p class="issue-sub" id="heroLead">
+            Личный дневник действий, долгих целей и живого зимнего мира. Каждая отметка здесь опирается на реальный шаг дня.
           </p>
-
-          <div class="campaign-feature" style="margin-top:16px;margin-bottom:0">
-            <div class="eyebrow">Главная цель</div>
-            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
-              <strong style="font-size:15px" id="leadGoalTitle">Абонемент в бассейн: 8 сеансов</strong>
-              <span class="xp-pill" id="leadGoalRatio">0 / 8</span>
-            </div>
-            <div class="muted" style="font-size:12px;margin-top:3px" id="leadGoalDesc">Плавное закрытие абонемента до 16.12.2026</div>
-            <div class="scale-line"><i id="leadGoalBar" style="width:0%"></i></div>
+          <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span class="mono" style="font-size:12px;font-weight:700" id="focusClock">25:00</span>
+            <button class="btn sm" id="focusBtn" onclick="toggleFocus()">Фокус-старт</button>
+            <button class="btn outline sm" onclick="completeFocusSession()">Зачесть сессию</button>
           </div>
         </div>
 
-        <aside class="identity-folio">
+        <div class="folio-box">
           <div>
-            <div class="folio-top">
-              <div>
-                <div class="eyebrow" style="margin-bottom:2px">Личный счёт</div>
-                <div class="lvl-figure">Уровень <span id="profLvl">1</span></div>
-              </div>
-              <span class="xp-pill" id="profRank">Новичок зимы</span>
+            <div class="folio-header">
+              <span class="folio-level">Уровень <span id="lvlNum">1</span></span>
+              <span class="eyebrow" id="rankLabel">Новичок зимы</span>
             </div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-top:10px">
-              <span>Опыт</span>
-              <span class="mono"><span id="profXp">0</span> / <span id="profNextXp">800</span></span>
+            <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-2);margin-top:6px">
+              <span>Опыт цикла</span>
+              <span class="mono"><span id="xpCur">0</span> / <span id="xpNeed">800</span></span>
             </div>
-            <div class="xp-rule"><span id="profXpBar" style="width:0%"></span></div>
+            <div class="xp-track"><i id="xpBar" style="width:0%"></i></div>
           </div>
 
-          <div class="pillars">
-            <div class="pillar">
-              <div class="pillar-val" id="valDisc">12</div>
-              <div class="pillar-lbl">Дисциплина</div>
-            </div>
-            <div class="pillar">
-              <div class="pillar-val" id="valFoc">12</div>
-              <div class="pillar-lbl">Фокус</div>
-            </div>
-            <div class="pillar">
-              <div class="pillar-val" id="valInd">12</div>
-              <div class="pillar-lbl">Опора</div>
-            </div>
+          <div class="mini-pillars">
+            <div class="mini-pillar"><b id="pDisc">12</b><span>Дисциплина</span></div>
+            <div class="mini-pillar"><b id="pFoc">12</b><span>Фокус</span></div>
+            <div class="mini-pillar"><b id="pInd">12</b><span>Опора</span></div>
           </div>
-
-          <div style="border-top:1px solid var(--hairline);padding-top:10px;display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div class="eyebrow" style="margin-bottom:1px">Фокус-блок</div>
-              <div class="mono" style="font-size:16px;font-weight:700" id="focusClock">25:00</div>
-            </div>
-            <div style="display:flex;gap:6px">
-              <button class="action-btn sm" id="focusToggleBtn" onclick="toggleFocus()">Старт</button>
-              <button class="action-btn subtle sm" onclick="completeFocusSession()">Зачесть</button>
-            </div>
-          </div>
-        </aside>
+        </div>
       </div>
 
-      <div class="two-col">
+      <div class="flagship-goal">
+        <div class="flagship-top">
+          <div>
+            <div class="eyebrow">Главная цель кампании</div>
+            <div class="flagship-title" id="mainGoalTitle">Абонемент в бассейн: 8 сеансов</div>
+            <div class="muted" style="font-size:12px;margin-top:2px" id="mainGoalNote">Плавное закрытие абонемента без потери ритма</div>
+          </div>
+          <div class="flagship-metric" id="mainGoalProgress">0 / 8</div>
+        </div>
+        <div class="progress-bar"><i id="mainGoalBar" style="width:0%"></i></div>
+      </div>
+
+      <div class="content-split">
         <div>
-          <div class="col-head">
-            <h2 class="col-title">Задачи на день</h2>
+          <div class="sec-bar">
+            <h2 class="sec-title">Задачи дня</h2>
             <div style="display:flex;gap:6px">
-              <button class="action-btn subtle sm" onclick="suggestSmartTask()">Идея дня</button>
-              <button class="action-btn accent sm" onclick="toggleForm('taskForm')">+ Задача</button>
+              <button class="btn outline sm" onclick="suggestSmartTask()">Идея шага</button>
+              <button class="btn terracotta sm" onclick="toggleDrawer('taskDrawer')">+ Задача</button>
             </div>
           </div>
 
-          <div id="taskForm" class="composer">
-            <input id="newTaskName" placeholder="Например: 40 минут физики без телефона" />
-            <div class="row-2">
-              <select id="newTaskArea"></select>
-              <select id="newTaskPillar">
+          <div id="taskDrawer" class="drawer-form">
+            <input id="tTitleInput" placeholder="Что сделаешь сегодня (например: 40 мин по колледжу)" />
+            <div class="two-inputs">
+              <select id="tAreaSelect"></select>
+              <select id="tPillarSelect">
                 <option value="discipline">Дисциплина</option>
                 <option value="focus">Фокус</option>
                 <option value="independence">Опора</option>
               </select>
             </div>
-            <div class="row-2">
-              <select id="newTaskKind">
+            <div class="two-inputs">
+              <select id="tKindSelect">
                 <option value="core">Основная</option>
                 <option value="extra">Дополнительная</option>
               </select>
-              <select id="newTaskXp">
+              <select id="tXpSelect">
                 <option value="90">Короткая (+90 опыта)</option>
                 <option value="150" selected>Обычная (+150 опыта)</option>
                 <option value="240">Глубокая (+240 опыта)</option>
               </select>
             </div>
-            <button class="action-btn accent" onclick="addTaskItem()">Добавить в список</button>
+            <button class="btn terracotta" onclick="createTask()">Сохранить задачу</button>
           </div>
 
-          <div id="dayTaskList"></div>
+          <div id="taskList"></div>
         </div>
 
         <div>
-          <div class="col-head">
-            <h2 class="col-title">Хроника и заметка</h2>
-            <span class="mono" style="font-size:11px;color:var(--ink-2)" id="doneCounter">0 выполнено</span>
+          <div class="sec-bar">
+            <h2 class="sec-title">Хроника пути</h2>
+            <span class="mono" style="font-size:11px;color:var(--ink-2)" id="dayProgressText">0 из 3</span>
           </div>
-
-          <div class="campaign-feature" style="margin-bottom:12px">
-            <div class="eyebrow">Совет дня</div>
-            <div id="editorialNote" style="font-size:13px;line-height:1.45"></div>
-          </div>
-
-          <div id="recentFeed"></div>
+          <p class="issue-sub" style="margin-top:0;margin-bottom:8px" id="dailyGuidance"></p>
+          <div id="chronicleFeed"></div>
         </div>
       </div>
     </section>
 
-    <!-- КАМПАНИИ -->
-    <section id="tab-campaigns" class="section">
-      <div class="col-head">
-        <h2 class="col-title">Долгие кампании</h2>
-        <button class="action-btn accent sm" onclick="toggleForm('campForm')">+ Кампания</button>
+    <!-- 2. КАМПАНИИ -->
+    <section id="view-campaigns" class="section">
+      <div class="sec-bar">
+        <h2 class="sec-title">Кампании и этапы</h2>
+        <button class="btn terracotta sm" onclick="toggleDrawer('campDrawer')">+ Кампания</button>
       </div>
 
-      <div id="campForm" class="composer">
-        <input id="campTitle" placeholder="Название кампании (например: 15 тренировок на турнике)" />
-        <input id="campNote" placeholder="Зачем эта цель и каким будет итог" />
-        <div class="row-2">
-          <input id="campGoal" type="number" placeholder="Шагов (например: 15)" />
-          <input id="campReward" type="number" placeholder="Опыт за финал" value="500" />
+      <div id="campDrawer" class="drawer-form">
+        <input id="cTitleInput" placeholder="Название кампании" />
+        <input id="cNoteInput" placeholder="Какой результат станет победой" />
+        <div class="two-inputs">
+          <input id="cTargetInput" type="number" placeholder="Всего шагов (напр. 8)" />
+          <input id="cRewardInput" type="number" placeholder="Опыт за финал" value="500" />
         </div>
-        <button class="action-btn accent" onclick="addCampaign()">Создать кампанию</button>
+        <button class="btn terracotta" onclick="createCampaign()">Запустить кампанию</button>
       </div>
 
-      <div id="campaignsList"></div>
+      <div id="campaignsWrap"></div>
 
-      <div class="col-head" style="margin-top:22px">
-        <h2 class="col-title">Направления жизни</h2>
-        <button class="action-btn subtle sm" onclick="toggleForm('areaForm')">+ Направление</button>
+      <div class="sec-bar" style="margin-top:20px">
+        <h2 class="sec-title">Направления развития</h2>
+        <button class="btn outline sm" onclick="toggleDrawer('areaDrawer')">+ Направление</button>
       </div>
-      <div id="areaForm" class="composer">
-        <input id="areaName" placeholder="Новое направление" />
-        <button class="action-btn" onclick="addArea()">Сохранить направление</button>
+      <div id="areaDrawer" class="drawer-form">
+        <input id="aNameInput" placeholder="Название направления" />
+        <button class="btn" onclick="createArea()">Добавить</button>
       </div>
-      <div class="tag-row" id="areasContainer"></div>
+      <div class="chips-wrap" id="areasWrap"></div>
     </section>
 
-    <!-- МИР И ЛОР -->
-    <section id="tab-world" class="section">
-      <div class="campaign-feature">
-        <div class="eyebrow" id="worldChapterLabel">Глава 1</div>
-        <h2 class="hero-serif" style="font-size:26px" id="worldStoryTitle">Тишина перед первым шагом</h2>
-        <p class="lead-copy" id="worldStoryBody"></p>
+    <!-- 3. МИР И ЛОР -->
+    <section id="view-world" class="section">
+      <div class="flagship-goal" style="margin-top:0">
+        <div class="eyebrow" id="chapterEyebrow">Глава 1</div>
+        <h2 class="serif-head flagship-title" id="chapterTitle">Собранность вместо суеты</h2>
+        <p class="issue-sub" id="chapterBody"></p>
       </div>
 
-      <div class="two-col">
+      <div class="content-split">
         <div>
-          <div class="col-head">
-            <h2 class="col-title">Рубежи мира</h2>
-            <span class="mono" style="font-size:11px;color:var(--ink-2)" id="shardsCounter">120 осколков</span>
+          <div class="sec-bar">
+            <h2 class="sec-title">Рубежи мира</h2>
+            <span class="mono" style="font-size:11px;color:var(--ink-2)" id="worldShardsLbl">120 осколков</span>
           </div>
-          <div id="worldRegions"></div>
+          <div id="regionsWrap"></div>
         </div>
 
         <div>
-          <div class="col-head">
-            <h2 class="col-title">Персонажи канона</h2>
-            <button class="action-btn subtle sm" onclick="toggleForm('charForm')">+ Герой</button>
+          <div class="sec-bar">
+            <h2 class="sec-title">Герои и канон</h2>
+            <button class="btn outline sm" onclick="toggleDrawer('charDrawer')">+ Герой</button>
           </div>
-          <div id="charForm" class="composer">
-            <input id="charName" placeholder="Имя" />
-            <input id="charRole" placeholder="Роль в истории" />
-            <input id="charDetail" placeholder="Характер или важный факт" />
-            <button class="action-btn" onclick="addCanonChar()">Добавить</button>
+          <div id="charDrawer" class="drawer-form">
+            <input id="chNameInput" placeholder="Имя" />
+            <input id="chRoleInput" placeholder="Роль в истории" />
+            <input id="chNoteInput" placeholder="Характер или важный факт" />
+            <button class="btn" onclick="createChar()">Записать в канон</button>
           </div>
-          <div id="canonChars"></div>
+          <div id="charsWrap"></div>
         </div>
       </div>
     </section>
 
-    <!-- ПРОФИЛЬ И БАЗА -->
-    <section id="tab-profile" class="section">
-      <div class="two-col" style="margin-top:0">
+    <!-- 4. ПРОФИЛЬ -->
+    <section id="view-profile" class="section">
+      <div class="identity-banner">
+        <div class="eyebrow">Личный аккаунт</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:4px">
+          <h2 class="serif-head" style="font-size:26px" id="profileRankHeading">Новичок зимы</h2>
+          <span class="mono" style="font-size:12px;color:var(--accent)">Уровень <span id="profileLvl">1</span></span>
+        </div>
+        <div class="muted" style="font-size:12.5px;margin-top:4px" id="profileStatsSummary">
+          Выполнено шагов: 0 · Предметов в коллекции: 1
+        </div>
+
+        <div style="margin-top:14px">
+          <div class="stat-meter-row">
+            <div class="stat-meter-head"><span>Дисциплина</span><strong class="mono" id="barDiscVal">12</strong></div>
+            <div class="stat-meter-bar"><i id="barDiscFill" style="width:30%"></i></div>
+          </div>
+          <div class="stat-meter-row">
+            <div class="stat-meter-head"><span>Фокус</span><strong class="mono" id="barFocVal">12</strong></div>
+            <div class="stat-meter-bar"><i id="barFocFill" style="width:30%"></i></div>
+          </div>
+          <div class="stat-meter-row" style="margin-bottom:0">
+            <div class="stat-meter-head"><span>Опора</span><strong class="mono" id="barIndVal">12</strong></div>
+            <div class="stat-meter-bar"><i id="barIndFill" style="width:30%"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-split" style="margin-top:0">
         <div>
-          <div class="col-head">
-            <h2 class="col-title">Оформление и карточка</h2>
+          <div class="sec-bar">
+            <h2 class="sec-title">Достижения и коллекция</h2>
           </div>
-          <div class="campaign-feature">
-            <div class="eyebrow">Настроение издания</div>
-            <div class="tag-row">
-              <button class="pill-toggle active" onclick="setPalette('folio', this)">Архивная бумага</button>
-              <button class="pill-toggle" onclick="setPalette('frost-folio', this)">Холодный лист</button>
-              <button class="pill-toggle" onclick="setPalette('nocturne', this)">Вечерний кабинет</button>
-            </div>
+          <div id="achievementsWrap"></div>
 
-            <div class="eyebrow" style="margin-top:14px">Мастерская осколков</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px">
-              <div>
-                <div style="font-size:13.5px;font-weight:600">Памятный предмет в коллекцию</div>
-                <div class="muted" style="font-size:12px">Добавляет предмет в коллекцию и даёт +150 опыта (90 осколков)</div>
-              </div>
-              <button class="action-btn accent sm" onclick="craftKeepake()">Создать</button>
-            </div>
+          <div class="sec-bar" style="margin-top:16px">
+            <h2 class="sec-title">Предметы в коллекции</h2>
+            <button class="btn terracotta sm" onclick="craftKeepake()">+ Предмет (90 оск.)</button>
           </div>
-
-          <div class="col-head">
-            <h2 class="col-title">Достижения</h2>
-          </div>
-          <div id="badgesList"></div>
-
-          <div class="col-head">
-            <h2 class="col-title">Коллекция предметов</h2>
-          </div>
-          <div id="keepsakesList"></div>
+          <div id="keepsakesWrap"></div>
         </div>
 
         <div>
-          <div class="col-head">
-            <h2 class="col-title">Синхронизация и резерв</h2>
+          <div class="sec-bar">
+            <h2 class="sec-title">Бумага и сохранение</h2>
           </div>
-          <div class="campaign-feature">
-            <div class="eyebrow">Профиль</div>
-            <div class="mono" style="font-size:12px;margin-bottom:10px" id="profileIdText">-</div>
-            <div class="tag-row" style="margin-bottom:10px">
-              <button class="action-btn subtle sm" onclick="syncFromServer(false)">Загрузить из базы</button>
-              <button class="action-btn accent sm" onclick="syncToServer(true)">Сохранить в базу</button>
-              <button class="action-btn subtle sm" onclick="exportJson()">Скопировать JSON</button>
-              <button class="action-btn subtle sm" onclick="wipeProgress()">Сброс</button>
+          <div class="camp-card">
+            <div class="eyebrow">Оттенок издания</div>
+            <div class="chips-wrap" style="margin-bottom:12px">
+              <button class="chip-btn on" id="pal-folio" onclick="setPalette('folio')">Молочный лист</button>
+              <button class="chip-btn" id="pal-frost-folio" onclick="setPalette('frost-folio')">Холодный лён</button>
+              <button class="chip-btn" id="pal-nocturne" onclick="setPalette('nocturne')">Вечерний лист</button>
             </div>
-            <textarea id="jsonBackup" rows="5" readonly></textarea>
+
+            <div class="eyebrow">Синхронизация</div>
+            <div class="mono muted" style="font-size:11px;margin:4px 0 8px" id="keyCaption">-</div>
+            <div class="chips-wrap" style="margin-bottom:10px">
+              <button class="btn outline sm" onclick="pullFromServer(false)">Загрузить</button>
+              <button class="btn terracotta sm" onclick="pushToServer(true)">Сохранить</button>
+              <button class="btn outline sm" onclick="copyBackup()">Копировать JSON</button>
+              <button class="btn outline sm" onclick="resetState()">Сброс</button>
+            </div>
+            <textarea id="backupArea" rows="4" readonly></textarea>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <nav class="bottom-dock">
-    <button class="active" data-tab="today" onclick="goTab('today', this)">Главная</button>
-    <button data-tab="campaigns" onclick="goTab('campaigns', this)">Кампании</button>
-    <button data-tab="world" onclick="goTab('world', this)">Мир</button>
-    <button data-tab="profile" onclick="goTab('profile', this)">Профиль</button>
+  <nav class="nav-dock">
+    <button class="active" data-tab="today" onclick="openTab('today', this)">Главная</button>
+    <button data-tab="campaigns" onclick="openTab('campaigns', this)">Кампании</button>
+    <button data-tab="world" onclick="openTab('world', this)">Мир</button>
+    <button data-tab="profile" onclick="openTab('profile', this)">Профиль</button>
   </nav>
 
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
-    const USER_KEY = (() => {
-      const uid = tg?.initDataUnsafe?.user?.id;
-      if (uid) return `tg_${uid}`;
-      let saved = localStorage.getItem('wa_folio_key');
-      if (!saved) {
-        saved = 'member_' + Math.random().toString(36).slice(2, 9);
-        localStorage.setItem('wa_folio_key', saved);
+    const PROFILE_ID = (() => {
+      const id = tg?.initDataUnsafe?.user?.id;
+      if (id) return `tg_${id}`;
+      let k = localStorage.getItem('wa_almanac_key');
+      if (!k) {
+        k = 'reader_' + Math.random().toString(36).slice(2, 9);
+        localStorage.setItem('wa_almanac_key', k);
       }
-      return saved;
+      return k;
     })();
 
-    const LIFE_AREAS = [
+    const DEFAULT_AREAS = [
       'Плавание', 'Турник и сила', 'Учёба', 'Битмейкинг', 'Чтение',
       'Быт и опора', 'Характер', 'Общение', 'Финансы', 'Личные проекты'
     ];
 
-    function dateStamp(d = new Date()) {
+    function isoDay(d = new Date()) {
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
-    function clockStamp() {
-      const d = new Date();
-      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    function shortDayLabel(d = new Date()) {
+      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }).replace('.', '');
     }
 
-    function makeInitialState() {
-      const today = dateStamp();
+    function initialData() {
+      const today = isoDay();
       return {
         meta: { palette: 'folio', start: '2026-11-22', updatedAt: Date.now() },
         account: {
@@ -743,231 +757,229 @@
           shards: 120,
           pillars: { discipline: 12, focus: 12, independence: 12 }
         },
-        areas: LIFE_AREAS.map((name, i) => ({ id: 'a_' + i, name, enabled: true })),
+        areas: DEFAULT_AREAS.map((name, idx) => ({ id: 'ar_' + idx, name, enabled: true })),
         day: {
           date: today,
           tasks: [
-            { id: 'd1', title: 'Учебный блок 40 минут без отвлечений', area: 'Учёба', pillar: 'focus', kind: 'core', xp: 160, done: false },
-            { id: 'd2', title: 'Подходы на турник или отжимания', area: 'Турник и сила', pillar: 'discipline', kind: 'core', xp: 140, done: false },
-            { id: 'd3', title: 'Набросок бита или текста в FL Studio', area: 'Битмейкинг', pillar: 'focus', kind: 'extra', xp: 150, done: false }
+            { id: 'tk1', title: 'Учебный блок 40 минут без отвлечений', area: 'Учёба', pillar: 'focus', kind: 'core', xp: 160, done: false },
+            { id: 'tk2', title: 'Подходы на турник или отжимания', area: 'Турник и сила', pillar: 'discipline', kind: 'core', xp: 140, done: false },
+            { id: 'tk3', title: 'Набросок бита или текста в FL Studio', area: 'Битмейкинг', pillar: 'focus', kind: 'extra', xp: 150, done: false }
           ],
           recovery: { active: false, days: 0 }
         },
         campaigns: [
-          { id: 'c1', title: 'Абонемент в бассейн: 8 сеансов', note: 'Спокойный ритм до 16.12.2026', current: 0, target: 8, reward: 600, done: false },
-          { id: 'c2', title: 'Зимний объём: 600 подтягиваний', note: 'Накопительная база без спешки', current: 0, target: 600, reward: 500, done: false }
+          { id: 'cp1', title: 'Абонемент в бассейн: 8 сеансов', note: 'Плавное закрытие абонемента без потери ритма', current: 0, target: 8, reward: 600, done: false },
+          { id: 'cp2', title: 'Зимний объём: 600 подтягиваний', note: 'Накопительный подход к силе и выносливости', current: 0, target: 600, reward: 500, done: false }
         ],
         world: {
           chapter: 1,
-          title: 'Тишина перед первым шагом',
-          body: 'Зимний контур начинается с малого. Каждый отмеченный шаг в реальной жизни закрепляет новую главу в личной хронике.',
+          title: 'Собранность вместо суеты',
+          body: 'Зимний контур складывается из спокойных повторяемых действий. Каждый завершённый шаг оставляет след в истории.',
           regions: [
-            { id: 'r1', name: 'Северный причал', note: 'Первый рубеж плавного ритма', progress: 0, goal: 3, cost: 60, xp: 180, done: false },
-            { id: 'r2', name: 'Тихий архив', note: 'Хранилище заметок и верных решений', progress: 0, goal: 4, cost: 90, xp: 240, done: false }
+            { id: 'rg1', name: 'Северный причал', note: 'Первый берег устойчивого графика', progress: 0, goal: 3, cost: 60, xp: 180, done: false },
+            { id: 'rg2', name: 'Тихий архив', note: 'Место собранных мыслей и заметок', progress: 0, goal: 4, cost: 90, xp: 240, done: false }
           ],
           chars: [
-            { id: 'ch1', name: 'Хранитель хроники', role: 'Наблюдатель', detail: 'Фиксирует только сделанное и ценит спокойную регулярность' }
+            { id: 'ch1', name: 'Хранитель хроники', role: 'Наблюдатель', detail: 'Отмечает реальные шаги и бережёт ровный темп' }
           ],
-          feed: [{ time: clockStamp(), text: 'Открыт первый выпуск WINTER ARC.' }]
-        },
-        vault: {
-          badges: [
-            { id: 'b1', title: 'Первый шаг', note: 'Выполнить первую задачу дня', unlocked: false },
-            { id: 'b2', title: 'Ровный ход', note: 'Закрыть 5 задач', unlocked: false },
-            { id: 'b3', title: 'Финал кампании', note: 'Довести любую кампанию до конца', unlocked: false }
-          ],
-          keepsakes: [
-            { id: 'k1', title: 'Памятный жетон зимы', grade: 'Базовый' }
+          story: [
+            { date: shortDayLabel(), text: 'Начата первая страница зимнего цикла.' }
           ]
         },
-        totals: { completed: 0, campaignsDone: 0 }
+        vault: {
+          achievements: [
+            { id: 'ac1', title: 'Первый шаг', note: 'Отметить первую выполненную задачу', unlocked: false },
+            { id: 'ac2', title: 'Пять шагов в ритме', note: 'Завершить 5 задач', unlocked: false },
+            { id: 'ac3', title: 'Итог кампании', note: 'Довести любую кампанию до конца', unlocked: false }
+          ],
+          keepsakes: [
+            { id: 'ks1', title: 'Памятный жетон зимы', grade: 'Основа' }
+          ]
+        },
+        summary: { completed: 0, campaignsDone: 0 }
       };
     }
 
-    let app = (() => {
+    let state = (() => {
       try {
-        const raw = localStorage.getItem('wa_folio_state');
+        const raw = localStorage.getItem('wa_almanac_state');
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && parsed.account && parsed.day && parsed.world) return parsed;
         }
       } catch (e) {}
-      return makeInitialState();
+      return initialData();
     })();
 
-    function pushFeed(text) {
-      app.world.feed.unshift({ time: clockStamp(), text });
-      if (app.world.feed.length > 25) app.world.feed.length = 25;
+    function addStory(text) {
+      state.world.story.unshift({ date: shortDayLabel(), text });
+      if (state.world.story.length > 20) state.world.story.length = 20;
     }
 
-    function xpThreshold(level) {
-      return 800 + (level - 1) * 300;
+    function xpForNext(lvl) {
+      return 800 + (lvl - 1) * 300;
     }
 
-    function refreshLevel() {
-      let lvl = 1, rem = app.account.xp;
-      while (rem >= xpThreshold(lvl)) { rem -= xpThreshold(lvl); lvl++; }
-      app.account.level = lvl;
-      app.account.rank = lvl >= 6 ? 'Хранитель зимы' : lvl >= 3 ? 'Уверенный ход' : 'Новичок зимы';
+    function recalcLevel() {
+      let lvl = 1, rem = state.account.xp;
+      while (rem >= xpForNext(lvl)) { rem -= xpForNext(lvl); lvl++; }
+      state.account.level = lvl;
+      state.account.rank = lvl >= 6 ? 'Мастер зимы' : lvl >= 3 ? 'Уверенный ход' : 'Новичок зимы';
     }
 
-    function refreshBadges() {
-      if (app.totals.completed >= 1) app.vault.badges[0].unlocked = true;
-      if (app.totals.completed >= 5) app.vault.badges[1].unlocked = true;
-      if (app.totals.campaignsDone >= 1) app.vault.badges[2].unlocked = true;
+    function refreshAchievements() {
+      if (state.summary.completed >= 1) state.vault.achievements[0].unlocked = true;
+      if (state.summary.completed >= 5) state.vault.achievements[1].unlocked = true;
+      if (state.summary.campaignsDone >= 1) state.vault.achievements[2].unlocked = true;
     }
 
-    function checkNewDay() {
-      const today = dateStamp();
-      if (app.day.date !== today) {
-        const gap = Math.floor((new Date(today + 'T00:00:00') - new Date(app.day.date + 'T00:00:00')) / 86400000);
-        app.day.tasks.forEach(t => { t.done = false; });
-        if (gap > 1) app.day.recovery = { active: true, days: gap - 1 };
-        app.day.date = today;
-        pushFeed(`Новый день: ${today}.`);
+    function checkDayRollover() {
+      const today = isoDay();
+      if (state.day.date !== today) {
+        const gap = Math.floor((new Date(today + 'T00:00:00') - new Date(state.day.date + 'T00:00:00')) / 86400000);
+        state.day.tasks.forEach(t => { t.done = false; });
+        if (gap > 1) state.day.recovery = { active: true, days: gap - 1 };
+        state.day.date = today;
       }
     }
 
-    let saveDebounce = null;
-    function persist(syncRemote = true) {
-      app.meta.updatedAt = Date.now();
-      const raw = JSON.stringify(app);
-      localStorage.setItem('wa_folio_state', raw);
-      document.getElementById('jsonBackup').value = raw;
-      if (!syncRemote) return;
-      clearTimeout(saveDebounce);
-      document.getElementById('syncState').textContent = 'Сохранение…';
-      saveDebounce = setTimeout(() => syncToServer(false), 600);
+    let syncTimeout = null;
+    function saveProgress(remote = true) {
+      state.meta.updatedAt = Date.now();
+      const raw = JSON.stringify(state);
+      localStorage.setItem('wa_almanac_state', raw);
+      document.getElementById('backupArea').value = raw;
+      if (!remote) return;
+      clearTimeout(syncTimeout);
+      document.getElementById('syncLabel').textContent = 'Сохранение…';
+      syncTimeout = setTimeout(() => pushToServer(false), 600);
     }
 
-    async function syncToServer(alertUser = false) {
+    async function pushToServer(showNotice = false) {
       try {
         let res = await fetch('/api/state', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key: USER_KEY, state: app })
+          body: JSON.stringify({ key: PROFILE_ID, state })
         });
         if (res.status === 405) {
-          const packed = encodeURIComponent(JSON.stringify({ key: USER_KEY, state: app }));
+          const packed = encodeURIComponent(JSON.stringify({ key: PROFILE_ID, state }));
           res = await fetch(`/api/state?action=save&payload=${packed}`);
         }
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        document.getElementById('syncState').textContent = 'В базе';
-        if (alertUser) alert('Сохранено в базе.');
+        document.getElementById('syncLabel').textContent = 'Синхронно';
+        if (showNotice) alert('Сохранено.');
       } catch (e) {
-        document.getElementById('syncState').textContent = 'Локально';
-        if (alertUser) alert('Сохранено на устройстве (' + e.message + ').');
+        document.getElementById('syncLabel').textContent = 'На устройстве';
+        if (showNotice) alert('Сохранено на устройстве (' + e.message + ').');
       }
     }
 
-    async function syncFromServer(silent = true) {
+    async function pullFromServer(silent = true) {
       try {
-        const res = await fetch(`/api/state?key=${encodeURIComponent(USER_KEY)}`);
+        const res = await fetch(`/api/state?key=${encodeURIComponent(PROFILE_ID)}`);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         const remote = data?.record?.state_json;
         if (remote?.account && remote?.day && remote?.world) {
-          if (!silent || (remote.meta?.updatedAt || 0) >= (app.meta?.updatedAt || 0)) {
-            app = remote;
-            checkNewDay();
-            renderAll(false);
+          if (!silent || (remote.meta?.updatedAt || 0) >= (state.meta?.updatedAt || 0)) {
+            state = remote;
+            checkDayRollover();
+            render(false);
           }
-          document.getElementById('syncState').textContent = 'В базе';
-          if (!silent) alert('Данные загружены из базы.');
+          document.getElementById('syncLabel').textContent = 'Синхронно';
+          if (!silent) alert('Данные загружены.');
         } else {
-          document.getElementById('syncState').textContent = 'Локально';
-          if (!silent) alert('В базе пока нет сохранённого профиля.');
+          document.getElementById('syncLabel').textContent = 'На устройстве';
+          if (!silent) alert('В базе пока пусто.');
         }
       } catch (e) {
-        document.getElementById('syncState').textContent = 'Локально';
-        if (!silent) alert('Не удалось загрузить: ' + e.message);
+        document.getElementById('syncLabel').textContent = 'На устройстве';
+        if (!silent) alert('Ошибка загрузки: ' + e.message);
       }
     }
 
-    function goTab(name, el) {
+    function openTab(tabName, btn) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById('tab-' + name).classList.add('active');
-      document.querySelectorAll('.nav-link, .bottom-dock button').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === name);
+      document.getElementById('view-' + tabName).classList.add('active');
+      document.querySelectorAll('.nav-dock button').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tabName);
       });
-      if (el && el.classList.contains('nav-link')) {
-        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function toggleForm(id) {
+    function toggleDrawer(id) {
       document.getElementById(id).classList.toggle('open');
     }
 
-    function setPalette(name, btn) {
-      app.meta.palette = name;
+    function setPalette(name) {
+      state.meta.palette = name;
       document.body.dataset.issue = name;
-      document.querySelectorAll('.pill-toggle').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      persist(true);
+      document.querySelectorAll('[id^="pal-"]').forEach(b => b.classList.remove('on'));
+      const activeBtn = document.getElementById('pal-' + name);
+      if (activeBtn) activeBtn.classList.add('on');
+      saveProgress(true);
     }
 
-    function toggleTaskDone(id) {
-      const t = app.day.tasks.find(x => x.id === id);
+    function toggleTask(id) {
+      const t = state.day.tasks.find(x => x.id === id);
       if (!t) return;
       if (!t.done) {
         t.done = true;
-        app.account.xp += t.xp;
-        app.account.shards += Math.max(10, Math.round(t.xp / 10));
-        app.account.pillars[t.pillar] += 1;
-        app.totals.completed += 1;
-        pushFeed(`Выполнено: «${t.title}» (+${t.xp} опыта).`);
+        state.account.xp += t.xp;
+        state.account.shards += Math.max(10, Math.round(t.xp / 10));
+        state.account.pillars[t.pillar] += 1;
+        state.summary.completed += 1;
+        addStory(`Закрыт шаг «${t.title}» (+${t.xp} опыта).`);
       } else {
         t.done = false;
-        app.account.xp = Math.max(0, app.account.xp - t.xp);
-        app.account.pillars[t.pillar] = Math.max(1, app.account.pillars[t.pillar] - 1);
-        app.totals.completed = Math.max(0, app.totals.completed - 1);
+        state.account.xp = Math.max(0, state.account.xp - t.xp);
+        state.account.pillars[t.pillar] = Math.max(1, state.account.pillars[t.pillar] - 1);
+        state.summary.completed = Math.max(0, state.summary.completed - 1);
       }
-      refreshLevel();
-      refreshBadges();
-      renderAll();
+      recalcLevel();
+      refreshAchievements();
+      render();
     }
 
-    function removeTask(id, ev) {
+    function deleteTask(id, ev) {
       if (ev) ev.stopPropagation();
-      const idx = app.day.tasks.findIndex(x => x.id === id);
+      const idx = state.day.tasks.findIndex(x => x.id === id);
       if (idx === -1) return;
-      const t = app.day.tasks[idx];
+      const t = state.day.tasks[idx];
       if (t.done) {
-        app.account.xp = Math.max(0, app.account.xp - t.xp);
-        app.account.pillars[t.pillar] = Math.max(1, app.account.pillars[t.pillar] - 1);
-        app.totals.completed = Math.max(0, app.totals.completed - 1);
+        state.account.xp = Math.max(0, state.account.xp - t.xp);
+        state.account.pillars[t.pillar] = Math.max(1, state.account.pillars[t.pillar] - 1);
+        state.summary.completed = Math.max(0, state.summary.completed - 1);
       }
-      app.day.tasks.splice(idx, 1);
-      pushFeed(`Удалена задача: «${t.title}».`);
-      refreshLevel();
-      renderAll();
+      state.day.tasks.splice(idx, 1);
+      recalcLevel();
+      render();
     }
 
-    function addTaskItem() {
-      const title = document.getElementById('newTaskName').value.trim();
+    function createTask() {
+      const title = document.getElementById('tTitleInput').value.trim();
       if (!title) return;
-      app.day.tasks.push({
-        id: 't_' + Date.now(),
+      state.day.tasks.push({
+        id: 'tk_' + Date.now(),
         title,
-        area: document.getElementById('newTaskArea').value || 'Личные проекты',
-        pillar: document.getElementById('newTaskPillar').value,
-        kind: document.getElementById('newTaskKind').value,
-        xp: parseInt(document.getElementById('newTaskXp').value, 10) || 150,
+        area: document.getElementById('tAreaSelect').value || 'Личные проекты',
+        pillar: document.getElementById('tPillarSelect').value,
+        kind: document.getElementById('tKindSelect').value,
+        xp: parseInt(document.getElementById('tXpSelect').value, 10) || 150,
         done: false
       });
-      document.getElementById('newTaskName').value = '';
-      document.getElementById('taskForm').classList.remove('open');
-      pushFeed(`Добавлена задача: «${title}».`);
-      renderAll();
+      document.getElementById('tTitleInput').value = '';
+      document.getElementById('taskDrawer').classList.remove('open');
+      render();
     }
 
     function suggestSmartTask() {
-      const activeAreas = app.areas.filter(a => a.enabled).map(a => a.name);
-      const area = activeAreas[app.totals.completed % Math.max(1, activeAreas.length)] || 'Учёба';
-      const title = `30 минут вдумчивой работы по направлению «${area}»`;
-      app.day.tasks.push({
-        id: 'sug_' + Date.now(),
+      const enabled = state.areas.filter(a => a.enabled).map(a => a.name);
+      const area = enabled[state.summary.completed % Math.max(1, enabled.length)] || 'Учёба';
+      const title = `30 минут спокойной работы по теме «${area}»`;
+      state.day.tasks.push({
+        id: 'sg_' + Date.now(),
         title,
         area,
         pillar: 'focus',
@@ -975,130 +987,129 @@
         xp: 130,
         done: false
       });
-      pushFeed(`Добавлен предложенный шаг: «${title}».`);
-      renderAll();
+      render();
     }
 
-    function addCampaign() {
-      const title = document.getElementById('campTitle').value.trim();
-      const target = parseInt(document.getElementById('campGoal').value, 10);
+    function createCampaign() {
+      const title = document.getElementById('cTitleInput').value.trim();
+      const target = parseInt(document.getElementById('cTargetInput').value, 10);
       if (!title || !target || target < 1) return;
-      app.campaigns.push({
-        id: 'c_' + Date.now(),
+      state.campaigns.push({
+        id: 'cp_' + Date.now(),
         title,
-        note: document.getElementById('campNote').value.trim() || 'Долгосрочная цель',
+        note: document.getElementById('cNoteInput').value.trim() || 'Долгосрочная цель',
         current: 0,
         target,
-        reward: parseInt(document.getElementById('campReward').value, 10) || 500,
+        reward: parseInt(document.getElementById('cRewardInput').value, 10) || 500,
         done: false
       });
-      document.getElementById('campTitle').value = '';
-      document.getElementById('campNote').value = '';
-      document.getElementById('campGoal').value = '';
-      document.getElementById('campForm').classList.remove('open');
-      pushFeed(`Начата кампания: «${title}».`);
-      renderAll();
+      document.getElementById('cTitleInput').value = '';
+      document.getElementById('cNoteInput').value = '';
+      document.getElementById('cTargetInput').value = '';
+      document.getElementById('campDrawer').classList.remove('open');
+      addStory(`Начата новая кампания: «${title}».`);
+      render();
     }
 
-    function advanceCampaign(id) {
-      const c = app.campaigns.find(x => x.id === id);
+    function stepCampaign(id) {
+      const c = state.campaigns.find(x => x.id === id);
       if (!c || c.done) return;
       c.current = Math.min(c.target, c.current + 1);
-      app.account.xp += 60;
-      app.account.shards += 20;
+      state.account.xp += 60;
+      state.account.shards += 20;
       if (c.current >= c.target) {
         c.done = true;
         c.current = c.target;
-        app.account.xp += c.reward;
-        app.totals.campaignsDone += 1;
-        app.vault.keepsakes.push({ id: 'k_' + Date.now(), title: 'Знак завершения: ' + c.title, grade: 'Редкий' });
-        pushFeed(`Кампания завершена: «${c.title}» (+${c.reward} опыта).`);
+        state.account.xp += c.reward;
+        state.summary.campaignsDone += 1;
+        state.vault.keepsakes.push({ id: 'ks_' + Date.now(), title: 'Знак кампании: ' + c.title, grade: 'Редкий' });
+        addStory(`Завершена кампания «${c.title}» (+${c.reward} опыта).`);
       } else {
-        pushFeed(`Шаг по кампании «${c.title}»: ${c.current} из ${c.target}.`);
+        addStory(`Продвижение в кампании «${c.title}» (${c.current} из ${c.target}).`);
       }
-      refreshLevel();
-      refreshBadges();
-      renderAll();
+      recalcLevel();
+      refreshAchievements();
+      render();
     }
 
     function deleteCampaign(id) {
-      app.campaigns = app.campaigns.filter(x => x.id !== id);
-      renderAll();
+      state.campaigns = state.campaigns.filter(x => x.id !== id);
+      render();
     }
 
-    function addArea() {
-      const name = document.getElementById('areaName').value.trim();
+    function createArea() {
+      const name = document.getElementById('aNameInput').value.trim();
       if (!name) return;
-      app.areas.push({ id: 'a_' + Date.now(), name, enabled: true });
-      document.getElementById('areaName').value = '';
-      document.getElementById('areaForm').classList.remove('open');
-      renderAll();
+      state.areas.push({ id: 'ar_' + Date.now(), name, enabled: true });
+      document.getElementById('aNameInput').value = '';
+      document.getElementById('areaDrawer').classList.remove('open');
+      render();
     }
 
     function toggleArea(id) {
-      const a = app.areas.find(x => x.id === id);
-      if (a) { a.enabled = !a.enabled; renderAll(); }
+      const a = state.areas.find(x => x.id === id);
+      if (a) { a.enabled = !a.enabled; render(); }
     }
 
-    function stepRegion(id) {
-      const r = app.world.regions.find(x => x.id === id);
+    function reinforceRegion(id) {
+      const r = state.world.regions.find(x => x.id === id);
       if (!r || r.done) return;
-      if (app.account.shards < r.cost) { alert('Не хватает осколков.'); return; }
-      app.account.shards -= r.cost;
+      if (state.account.shards < r.cost) { alert('Недостаточно осколков.'); return; }
+      state.account.shards -= r.cost;
       r.progress = Math.min(r.goal, r.progress + 1);
       if (r.progress >= r.goal) {
         r.done = true;
-        app.account.xp += r.xp;
-        app.world.chapter += 1;
-        app.world.title = `Рубеж «${r.name}» освоен`;
-        app.world.body = `Новый этап хроники открыт после освоения «${r.name}». Ритм закреплён в истории.`;
-        app.vault.keepsakes.push({ id: 'kr_' + Date.now(), title: 'Реликвия «' + r.name + '»', grade: 'Редкий' });
-        pushFeed(`Освоен рубеж мира: «${r.name}» (+${r.xp} опыта).`);
+        state.account.xp += r.xp;
+        state.world.chapter += 1;
+        state.world.title = `Рубеж «${r.name}» открыт`;
+        state.world.body = `Новый этап истории наступил после освоения «${r.name}». Пространство мира стало шире.`;
+        state.vault.keepsakes.push({ id: 'kr_' + Date.now(), title: 'Реликвия «' + r.name + '»', grade: 'Редкий' });
+        addStory(`Освоен рубеж «${r.name}» и открыта глава ${state.world.chapter}.`);
       } else {
-        pushFeed(`Укреплён рубеж «${r.name}» (${r.progress}/${r.goal}).`);
+        addStory(`Укреплён рубеж «${r.name}» (${r.progress}/${r.goal}).`);
       }
-      refreshLevel();
-      renderAll();
+      recalcLevel();
+      render();
     }
 
-    function addCanonChar() {
-      const name = document.getElementById('charName').value.trim();
+    function createChar() {
+      const name = document.getElementById('chNameInput').value.trim();
       if (!name) return;
-      app.world.chars.push({
+      state.world.chars.push({
         id: 'ch_' + Date.now(),
         name,
-        role: document.getElementById('charRole').value.trim() || 'Герой мира',
-        detail: document.getElementById('charDetail').value.trim() || 'Запись в каноне'
+        role: document.getElementById('chRoleInput').value.trim() || 'Персонаж',
+        detail: document.getElementById('chNoteInput').value.trim() || 'Запись в каноне'
       });
-      document.getElementById('charName').value = '';
-      document.getElementById('charRole').value = '';
-      document.getElementById('charDetail').value = '';
-      document.getElementById('charForm').classList.remove('open');
-      renderAll();
+      document.getElementById('chNameInput').value = '';
+      document.getElementById('chRoleInput').value = '';
+      document.getElementById('chNoteInput').value = '';
+      document.getElementById('charDrawer').classList.remove('open');
+      render();
     }
 
-    function removeChar(id) {
-      app.world.chars = app.world.chars.filter(x => x.id !== id);
-      renderAll();
+    function deleteChar(id) {
+      state.world.chars = state.world.chars.filter(x => x.id !== id);
+      render();
     }
 
     function craftKeepake() {
-      if (app.account.shards < 90) { alert('Нужно 90 осколков.'); return; }
-      app.account.shards -= 90;
-      app.account.xp += 150;
-      app.vault.keepsakes.push({
-        id: 'k_' + Date.now(),
-        title: 'Зимний предмет #' + (app.vault.keepsakes.length + 1),
+      if (state.account.shards < 90) { alert('Нужно 90 осколков.'); return; }
+      state.account.shards -= 90;
+      state.account.xp += 150;
+      state.vault.keepsakes.push({
+        id: 'ks_' + Date.now(),
+        title: 'Зимний предмет #' + (state.vault.keepsakes.length + 1),
         grade: 'Особый'
       });
-      pushFeed('Создан новый предмет в коллекции (+150 опыта).');
-      refreshLevel();
-      renderAll();
+      addStory('В коллекцию добавлен новый памятный предмет (+150 опыта).');
+      recalcLevel();
+      render();
     }
 
     function acceptReturnStep() {
-      app.day.tasks.unshift({
-        id: 'ret_' + Date.now(),
+      state.day.tasks.unshift({
+        id: 'rt_' + Date.now(),
         title: 'Спокойный возврат: 15 минут без спешки',
         area: 'Характер',
         pillar: 'discipline',
@@ -1106,47 +1117,47 @@
         xp: 140,
         done: false
       });
-      app.day.recovery.active = false;
-      renderAll();
+      state.day.recovery.active = false;
+      render();
     }
 
     function closeRecovery() {
-      app.day.recovery.active = false;
-      renderAll();
+      state.day.recovery.active = false;
+      render();
     }
 
-    function exportJson() {
-      const box = document.getElementById('jsonBackup');
+    function copyBackup() {
+      const box = document.getElementById('backupArea');
       box.select();
       navigator.clipboard?.writeText(box.value);
       alert('JSON скопирован.');
     }
 
-    function wipeProgress() {
+    function resetState() {
       if (!confirm('Очистить локальные данные и начать заново?')) return;
-      app = makeInitialState();
-      renderAll();
+      state = initialData();
+      render();
     }
 
-    /* FOCUS TIMER */
-    let secRem = 25 * 60;
-    let focusTimer = null;
+    /* Фокус-сессия */
+    let secLeft = 25 * 60;
+    let timerRef = null;
 
-    function fmtTime(s) {
+    function fmtClock(s) {
       return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
     }
 
     function toggleFocus() {
-      if (focusTimer) {
-        clearInterval(focusTimer);
-        focusTimer = null;
-        document.getElementById('focusToggleBtn').textContent = 'Старт';
+      if (timerRef) {
+        clearInterval(timerRef);
+        timerRef = null;
+        document.getElementById('focusBtn').textContent = 'Фокус-старт';
       } else {
-        document.getElementById('focusToggleBtn').textContent = 'Пауза';
-        focusTimer = setInterval(() => {
-          if (secRem > 1) {
-            secRem--;
-            document.getElementById('focusClock').textContent = fmtTime(secRem);
+        document.getElementById('focusBtn').textContent = 'Пауза';
+        timerRef = setInterval(() => {
+          if (secLeft > 1) {
+            secLeft--;
+            document.getElementById('focusClock').textContent = fmtClock(secLeft);
           } else {
             completeFocusSession();
           }
@@ -1155,166 +1166,190 @@
     }
 
     function completeFocusSession() {
-      clearInterval(focusTimer);
-      focusTimer = null;
-      secRem = 25 * 60;
-      document.getElementById('focusClock').textContent = fmtTime(secRem);
-      document.getElementById('focusToggleBtn').textContent = 'Старт';
-      app.account.xp += 140;
-      app.account.shards += 25;
-      app.account.pillars.focus += 1;
-      app.totals.completed += 1;
-      pushFeed('Завершён фокус-блок (+140 опыта, +1 к фокусу).');
-      refreshLevel();
-      refreshBadges();
-      renderAll();
+      clearInterval(timerRef);
+      timerRef = null;
+      secLeft = 25 * 60;
+      document.getElementById('focusClock').textContent = fmtClock(secLeft);
+      document.getElementById('focusBtn').textContent = 'Фокус-старт';
+      state.account.xp += 140;
+      state.account.shards += 25;
+      state.account.pillars.focus += 1;
+      state.summary.completed += 1;
+      addStory('Завершена сосредоточенная сессия (+140 опыта, +1 к фокусу).');
+      recalcLevel();
+      refreshAchievements();
+      render();
     }
 
-    function renderTaskRow(t) {
+    function renderTaskElement(t) {
       return `
-        <div class="task-row ${t.done ? 'done' : ''}">
-          <button class="mark-btn" onclick="toggleTaskDone('${t.id}')">${t.done ? '✓' : ''}</button>
-          <div class="task-body" onclick="toggleTaskDone('${t.id}')">
-            <div class="task-name">${t.title}</div>
-            <div class="task-meta">${t.area} · ${t.kind === 'core' ? 'Основная' : 'Дополнительная'}</div>
+        <div class="task-line ${t.done ? 'done' : ''}">
+          <button class="tick-btn" onclick="toggleTask('${t.id}')">${t.done ? '✓' : ''}</button>
+          <div class="task-info" onclick="toggleTask('${t.id}')">
+            <div class="task-label">${t.title}</div>
+            <div class="task-sub">${t.area} · ${t.kind === 'core' ? 'Основная' : 'Дополнительная'}</div>
           </div>
-          <div class="task-actions">
-            <span class="xp-pill">+${t.xp}</span>
-            <button class="icon-del" title="Удалить" onclick="removeTask('${t.id}', event)">×</button>
+          <div class="task-right">
+            <span class="pts">+${t.xp}</span>
+            <button class="del-x" title="Удалить" onclick="deleteTask('${t.id}', event)">×</button>
           </div>
         </div>`;
     }
 
-    function renderAll(save = true) {
-      document.body.dataset.issue = app.meta.palette || 'folio';
-      const dayCount = Math.max(1, Math.floor((new Date(dateStamp() + 'T00:00:00') - new Date((app.meta.start || '2026-11-22') + 'T00:00:00')) / 86400000) + 1);
-      document.getElementById('topDay').textContent = dayCount;
-      document.getElementById('topShards').textContent = app.account.shards;
-      document.getElementById('issueEyebrow').textContent = `Выпуск ${dayCount} · Глава ${app.world.chapter}`;
+    function render(shouldSave = true) {
+      const pal = state.meta.palette || 'folio';
+      document.body.dataset.issue = pal;
+      document.querySelectorAll('[id^="pal-"]').forEach(b => b.classList.remove('on'));
+      const palBtn = document.getElementById('pal-' + pal);
+      if (palBtn) palBtn.classList.add('on');
 
-      if (app.day.recovery?.active) {
-        document.getElementById('recoveryBox').style.display = 'block';
-        document.getElementById('recoveryText').textContent = `Перерыв составил ${app.day.recovery.days} дн. Уровень и достижения на месте — начнём спокойно.`;
+      const dayNum = Math.max(1, Math.floor((new Date(isoDay() + 'T00:00:00') - new Date((state.meta.start || '2026-11-22') + 'T00:00:00')) / 86400000) + 1);
+      document.getElementById('topDay').textContent = dayNum;
+      document.getElementById('topShards').textContent = state.account.shards;
+      document.getElementById('issueTag').textContent = `Выпуск ${dayNum} · Глава ${state.world.chapter}`;
+      document.getElementById('heroHeadline').textContent = state.world.title;
+
+      if (state.day.recovery?.active) {
+        document.getElementById('recoveryBanner').style.display = 'block';
+        document.getElementById('recoveryText').textContent = `Пропущено дней: ${state.day.recovery.days}. Весь прогресс сохранён — вернёмся мягко.`;
       } else {
-        document.getElementById('recoveryBox').style.display = 'none';
+        document.getElementById('recoveryBanner').style.display = 'none';
       }
 
-      const need = xpThreshold(app.account.level);
-      let rem = app.account.xp;
-      for (let i = 1; i < app.account.level; i++) rem -= xpThreshold(i);
+      const need = xpForNext(state.account.level);
+      let rem = state.account.xp;
+      for (let i = 1; i < state.account.level; i++) rem -= xpForNext(i);
       rem = Math.max(0, rem);
 
-      document.getElementById('profLvl').textContent = app.account.level;
-      document.getElementById('profRank').textContent = app.account.rank;
-      document.getElementById('profXp').textContent = rem;
-      document.getElementById('profNextXp').textContent = need;
-      document.getElementById('profXpBar').style.width = Math.min(100, (rem / need) * 100) + '%';
+      document.getElementById('lvlNum').textContent = state.account.level;
+      document.getElementById('rankLabel').textContent = state.account.rank;
+      document.getElementById('xpCur').textContent = rem;
+      document.getElementById('xpNeed').textContent = need;
+      document.getElementById('xpBar').style.width = Math.min(100, (rem / need) * 100) + '%';
 
-      document.getElementById('valDisc').textContent = app.account.pillars.discipline;
-      document.getElementById('valFoc').textContent = app.account.pillars.focus;
-      document.getElementById('valInd').textContent = app.account.pillars.independence;
+      document.getElementById('pDisc').textContent = state.account.pillars.discipline;
+      document.getElementById('pFoc').textContent = state.account.pillars.focus;
+      document.getElementById('pInd').textContent = state.account.pillars.independence;
 
-      const mainCamp = app.campaigns.find(c => !c.done) || app.campaigns[0];
-      if (mainCamp) {
-        const pct = Math.min(100, Math.round((mainCamp.current / mainCamp.target) * 100));
-        document.getElementById('leadGoalTitle').textContent = mainCamp.title;
-        document.getElementById('leadGoalRatio').textContent = `${mainCamp.current} / ${mainCamp.target}`;
-        document.getElementById('leadGoalDesc').textContent = mainCamp.note;
-        document.getElementById('leadGoalBar').style.width = pct + '%';
+      const leadCamp = state.campaigns.find(c => !c.done) || state.campaigns[0];
+      if (leadCamp) {
+        const pct = Math.min(100, Math.round((leadCamp.current / leadCamp.target) * 100));
+        document.getElementById('mainGoalTitle').textContent = leadCamp.title;
+        document.getElementById('mainGoalNote').textContent = leadCamp.note;
+        document.getElementById('mainGoalProgress').textContent = `${leadCamp.current} / ${leadCamp.target}`;
+        document.getElementById('mainGoalBar').style.width = pct + '%';
       }
 
-      document.getElementById('newTaskArea').innerHTML = app.areas.filter(a => a.enabled).map(a => `<option>${a.name}</option>`).join('');
-      document.getElementById('dayTaskList').innerHTML = app.day.tasks.map(renderTaskRow).join('') || '<p class="muted" style="font-size:13px">На сегодня задач нет — добавьте свою или возьмите идею дня.</p>';
+      document.getElementById('tAreaSelect').innerHTML = state.areas
+        .filter(a => a.enabled)
+        .map(a => `<option>${a.name}</option>`)
+        .join('');
 
-      const doneToday = app.day.tasks.filter(t => t.done).length;
-      document.getElementById('doneCounter').textContent = `${doneToday} из ${app.day.tasks.length} сегодня`;
+      document.getElementById('taskList').innerHTML = state.day.tasks.map(renderTaskElement).join('') ||
+        '<p class="muted" style="font-size:13px;padding:8px 0">На сегодня задач нет. Добавьте свою или нажмите «Идея шага».</p>';
 
-      const openCore = app.day.tasks.filter(t => t.kind === 'core' && !t.done).length;
-      document.getElementById('editorialNote').textContent = openCore > 0
-        ? `Впереди ещё ${openCore} основных дел. Лучше закрыть их первыми, чтобы вечер остался свободным.`
-        : `Основные дела дня закрыты. Можно спокойно переключиться на кампании, мир или отдых.`;
+      const doneCount = state.day.tasks.filter(t => t.done).length;
+      document.getElementById('dayProgressText').textContent = `${doneCount} из ${state.day.tasks.length}`;
 
-      document.getElementById('recentFeed').innerHTML = app.world.feed.slice(0, 6).map(item => `
-        <div class="note-entry"><time>${item.time}</time>${item.text}</div>
+      const coreLeft = state.day.tasks.filter(t => t.kind === 'core' && !t.done).length;
+      document.getElementById('dailyGuidance').textContent = coreLeft > 0
+        ? `Впереди ${coreLeft} основных шага. Закройте их первыми, чтобы спокойно выдохнуть.`
+        : `Основные шаги на сегодня закрыты — можно перейти к кампании или отдохнуть.`;
+
+      document.getElementById('chronicleFeed').innerHTML = state.world.story.slice(0, 6).map(item => `
+        <div class="story-item"><span class="story-date">${item.date}</span>${item.text}</div>
       `).join('');
 
-      document.getElementById('campaignsList').innerHTML = app.campaigns.map(c => {
+      document.getElementById('campaignsWrap').innerHTML = state.campaigns.map(c => {
         const pct = Math.min(100, Math.round((c.current / c.target) * 100));
         return `
-          <div class="campaign-feature">
+          <div class="camp-card ${c.done ? 'done-camp' : ''}">
             <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
               <strong style="font-size:15px">${c.title}</strong>
-              <span class="xp-pill">${c.current} / ${c.target}</span>
+              <span class="pts">${c.current} / ${c.target}</span>
             </div>
             <div class="muted" style="font-size:12.5px;margin-top:3px">${c.note}</div>
-            <div class="scale-line"><i style="width:${pct}%"></i></div>
-            <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-              ${!c.done ? `<button class="action-btn accent sm" onclick="advanceCampaign('${c.id}')">+1 шаг</button>` : `<span class="xp-pill" style="color:var(--pine)">Завершена</span>`}
-              <span class="mono" style="font-size:11px;color:var(--ink-2);margin-left:auto">+${c.reward} опыта</span>
-              <button class="icon-del" onclick="deleteCampaign('${c.id}')">×</button>
+            <div class="progress-bar"><i style="width:${pct}%"></i></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+              ${!c.done
+                ? `<button class="btn terracotta sm" onclick="stepCampaign('${c.id}')">+1 шаг</button>`
+                : `<span class="mono" style="font-size:11px;color:var(--pine);font-weight:700">Кампания завершена</span>`}
+              <span class="mono muted" style="font-size:11px;margin-left:auto">+${c.reward} опыта</span>
+              <button class="del-x" onclick="deleteCampaign('${c.id}')">×</button>
             </div>
           </div>`;
       }).join('');
 
-      document.getElementById('areasContainer').innerHTML = app.areas.map(a => `
-        <button class="pill-toggle ${a.enabled ? 'active' : ''}" onclick="toggleArea('${a.id}')">${a.name}</button>
+      document.getElementById('areasWrap').innerHTML = state.areas.map(a => `
+        <button class="chip-btn ${a.enabled ? 'on' : ''}" onclick="toggleArea('${a.id}')">${a.name}</button>
       `).join('');
 
-      document.getElementById('worldChapterLabel').textContent = `Глава ${app.world.chapter}`;
-      document.getElementById('worldStoryTitle').textContent = app.world.title;
-      document.getElementById('worldStoryBody').textContent = app.world.body;
-      document.getElementById('shardsCounter').textContent = `${app.account.shards} осколков`;
+      document.getElementById('chapterEyebrow').textContent = `Глава ${state.world.chapter}`;
+      document.getElementById('chapterTitle').textContent = state.world.title;
+      document.getElementById('chapterBody').textContent = state.world.body;
+      document.getElementById('worldShardsLbl').textContent = `${state.account.shards} осколков`;
 
-      document.getElementById('worldRegions').innerHTML = app.world.regions.map(r => `
-        <div class="task-row">
-          <div class="task-body">
-            <div class="task-name">${r.name} (${r.progress}/${r.goal})</div>
-            <div class="task-meta">${r.note} · Награда: +${r.xp} опыта</div>
+      document.getElementById('regionsWrap').innerHTML = state.world.regions.map(r => `
+        <div class="task-line">
+          <div class="task-info">
+            <div class="task-label">${r.name} (${r.progress}/${r.goal})</div>
+            <div class="task-sub">${r.note} · Награда: +${r.xp} опыта</div>
           </div>
-          <div class="task-actions">
+          <div class="task-right">
             ${!r.done
-              ? `<button class="action-btn sm" onclick="stepRegion('${r.id}')">${r.cost} оск.</button>`
-              : `<span class="xp-pill" style="color:var(--pine)">Освоен</span>`}
+              ? `<button class="btn outline sm" onclick="reinforceRegion('${r.id}')">${r.cost} оск.</button>`
+              : `<span class="mono" style="font-size:11px;color:var(--pine);font-weight:700">Освоен</span>`}
           </div>
         </div>`).join('');
 
-      document.getElementById('canonChars').innerHTML = app.world.chars.map(ch => `
-        <div class="task-row">
-          <div class="task-body">
-            <div class="task-name">${ch.name} <span style="font-weight:400;color:var(--ink-2)">— ${ch.role}</span></div>
-            <div class="task-meta">${ch.detail}</div>
+      document.getElementById('charsWrap').innerHTML = state.world.chars.map(ch => `
+        <div class="task-line">
+          <div class="task-info">
+            <div class="task-label">${ch.name} <span class="muted" style="font-weight:400">— ${ch.role}</span></div>
+            <div class="task-sub">${ch.detail}</div>
           </div>
-          <button class="icon-del" onclick="removeChar('${ch.id}')">×</button>
+          <button class="del-x" onclick="deleteChar('${ch.id}')">×</button>
         </div>`).join('');
 
-      document.getElementById('badgesList').innerHTML = app.vault.badges.map(b => `
-        <div class="badge-item ${b.unlocked ? '' : 'locked'}">
-          <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <strong style="font-size:13.5px">${b.title}</strong>
-            <span class="xp-pill" style="color:${b.unlocked ? 'var(--pine)' : 'var(--ink-2)'}">${b.unlocked ? 'Открыто' : 'Впереди'}</span>
+      document.getElementById('profileRankHeading').textContent = state.account.rank;
+      document.getElementById('profileLvl').textContent = state.account.level;
+      document.getElementById('profileStatsSummary').textContent =
+        `Выполнено шагов: ${state.summary.completed} · Предметов в коллекции: ${state.vault.keepsakes.length}`;
+
+      const { discipline, focus, independence } = state.account.pillars;
+      document.getElementById('barDiscVal').textContent = discipline;
+      document.getElementById('barFocVal').textContent = focus;
+      document.getElementById('barIndVal').textContent = independence;
+      document.getElementById('barDiscFill').style.width = Math.min(100, Math.round((discipline / 30) * 100)) + '%';
+      document.getElementById('barFocFill').style.width = Math.min(100, Math.round((focus / 30) * 100)) + '%';
+      document.getElementById('barIndFill').style.width = Math.min(100, Math.round((independence / 30) * 100)) + '%';
+
+      document.getElementById('achievementsWrap').innerHTML = state.vault.achievements.map(a => `
+        <div class="ach-card ${a.unlocked ? '' : 'locked'}">
+          <div>
+            <div style="font-size:13.5px;font-weight:700">${a.title}</div>
+            <div class="muted" style="font-size:12px;margin-top:2px">${a.note}</div>
           </div>
-          <div class="muted" style="font-size:12px;margin-top:2px">${b.note}</div>
+          <span class="mono" style="font-size:11px;color:${a.unlocked ? 'var(--pine)' : 'var(--ink-2)'}">${a.unlocked ? 'Открыто' : 'В пути'}</span>
         </div>`).join('');
 
-      document.getElementById('keepsakesList').innerHTML = app.vault.keepsakes.map(k => `
-        <div class="task-row">
-          <div class="task-body">
-            <div class="task-name">${k.title}</div>
-          </div>
-          <span class="xp-pill">${k.grade}</span>
+      document.getElementById('keepsakesWrap').innerHTML = state.vault.keepsakes.map(k => `
+        <div class="task-line">
+          <div class="task-info"><div class="task-label">${k.title}</div></div>
+          <span class="pts">${k.grade}</span>
         </div>`).join('');
 
-      document.getElementById('profileIdText').textContent = USER_KEY;
-      document.getElementById('jsonBackup').value = JSON.stringify(app);
+      document.getElementById('keyCaption').textContent = `Профиль: ${PROFILE_ID}`;
+      document.getElementById('backupArea').value = JSON.stringify(state);
 
-      if (save) persist(true);
+      if (shouldSave) saveProgress(true);
     }
 
-    checkNewDay();
-    refreshLevel();
-    refreshBadges();
-    renderAll(false);
-    syncFromServer(true);
+    checkDayRollover();
+    recalcLevel();
+    refreshAchievements();
+    render(false);
+    pullFromServer(true);
   </script>
 </body>
 </html>
