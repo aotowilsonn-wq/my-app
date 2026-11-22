@@ -3,1132 +3,1433 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VIPERR OS // WINTER ARC</title>
+  <title>WINTER ARC // PERSONAL OS</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #eef5fb;
-      --s1: rgba(255, 255, 255, 0.88);
-      --s2: #e3eff9;
-      --bd: #c6dcef;
-      --ice: #0284c7;
-      --ice-soft: rgba(2, 132, 199, 0.11);
+      --bg: #f3f6fa;
+      --surface: #ffffff;
+      --surface-alt: #e9eff6;
+      --ink: #0d131d;
+      --ink-soft: #526075;
+      --line: #cfd9e6;
+      --accent: #0c66e4;
+      --accent-tint: rgba(12, 102, 228, 0.09);
+      --ok: #0d9488;
       --warn: #d97706;
-      --bad: #dc2626;
-      --txt: #0f172a;
-      --mut: #5b6b82;
+      --danger: #dc2626;
+      --r-lg: 14px;
+      --r-md: 10px;
+      --r-sm: 6px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+      --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
-    body {
-      background: linear-gradient(180deg, #f6faff 0%, #e7f2fb 55%, #dbeaf7 100%);
-      color: var(--txt);
-      padding-bottom: 88px;
-      min-height: 100vh;
-      overflow-x: hidden;
-      transition: background 0.25s ease;
-    }
-    body.red-flash { background: #fee2e2; }
 
-    #snowCanvas {
+    body[data-theme="night-protocol"] {
+      --bg: #0c1118;
+      --surface: #131b26;
+      --surface-alt: #1b2534;
+      --ink: #eef4fc;
+      --ink-soft: #8a9bb3;
+      --line: #273447;
+      --accent: #38bdf8;
+      --accent-tint: rgba(56, 189, 248, 0.12);
+    }
+
+    body[data-theme="glacier-steel"] {
+      --bg: #eef2f5;
+      --surface: #fafcfd;
+      --surface-alt: #e2e8ee;
+      --ink: #111827;
+      --ink-soft: #4b5563;
+      --line: #cbd5e1;
+      --accent: #1d4ed8;
+      --accent-tint: rgba(29, 78, 216, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding-bottom: 86px;
+      overflow-x: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    #snowLayer {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
       z-index: 1;
+      opacity: 0.75;
     }
 
-    .topbar {
+    /* TOP TELEMETRY BAR */
+    .hud {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      padding: 9px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .hud-tag { color: var(--ink-soft); }
+    .hud-tag b { color: var(--accent); }
+
+    .shell {
       position: relative;
       z-index: 2;
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--bd);
-      padding: 8px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--mut);
-      gap: 8px;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 14px 16px;
     }
-    .topbar b { color: var(--ice); font-family: monospace; }
 
-    .wrap { position: relative; z-index: 2; max-width: 440px; margin: 0 auto; padding: 14px 16px; }
-    .tab { display: none; }
-    .tab.active { display: block; }
-
-    .card {
-      background: var(--s1);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--bd);
-      border-radius: 18px;
-      padding: 15px;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    .view { display: none; animation: fadeUp 0.2s ease; }
+    .view.active { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 6px; }
-    .badge {
+
+    /* TYPOGRAPHY & MODULES */
+    .kicker {
+      font-family: var(--font-mono);
       font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: var(--ice);
-      border: 1px solid rgba(2, 132, 199, 0.3);
-      padding: 4px 9px;
-      border-radius: 7px;
-      background: var(--ice-soft);
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--ink-soft);
     }
-    .pills { display: flex; gap: 5px; font-family: monospace; font-size: 11px; font-weight: 800; }
-    .pill {
-      background: var(--s2);
-      border: 1px solid var(--bd);
-      padding: 4px 7px;
-      border-radius: 7px;
-      color: var(--txt);
-    }
-    .aura {
-      font-size: 36px;
+    .display-num {
+      font-size: 34px;
       font-weight: 900;
       letter-spacing: -1.2px;
-      color: var(--txt);
-      line-height: 1.08;
+      line-height: 1.05;
     }
-    .sub {
-      font-size: 11px;
-      color: var(--mut);
-      margin-top: 4px;
-      font-weight: 700;
+    .sec-head {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      margin: 18px 0 9px;
     }
-    .p-lbl {
+
+    /* ASYMMETRIC HERO MODULE */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 14px;
+    }
+    .panel.accent-border { border-left: 3px solid var(--accent); }
+    .panel.recovery-panel {
+      border: 1px solid var(--warn);
+      background: rgba(217, 119, 6, 0.08);
+      margin-bottom: 12px;
+    }
+
+    .bar-track {
+      height: 5px;
+      background: var(--surface-alt);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .mini-stats {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .stat-row {
       display: flex;
       justify-content: space-between;
-      font-size: 10px;
-      color: var(--mut);
-      font-family: monospace;
-      margin: 10px 0 5px;
-    }
-    .p-bar { height: 6px; background: var(--s2); border-radius: 99px; overflow: hidden; }
-    .p-fill { height: 100%; background: var(--ice); width: 0%; transition: width 0.35s ease; }
-
-    .penalty-box {
-      background: rgba(220, 38, 38, 0.09);
-      border: 1px solid rgba(220, 38, 38, 0.45);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 12px;
-      display: none;
-    }
-    .penalty-box.on { display: block; }
-
-    .box {
-      background: var(--s1);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--bd);
-      border-radius: 15px;
-      padding: 12px;
-      margin-bottom: 12px;
-      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
-    }
-    .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .t-opts { display: flex; gap: 5px; flex-wrap: wrap; }
-    .t-opt {
-      background: var(--s2);
-      border: 1px solid var(--bd);
-      color: var(--mut);
+      align-items: center;
+      font-family: var(--font-mono);
       font-size: 11px;
-      font-weight: 800;
-      padding: 5px 9px;
-      border-radius: 7px;
-      cursor: pointer;
+      padding: 5px 8px;
+      background: var(--surface-alt);
+      border-radius: var(--r-sm);
     }
-    .t-opt.on { border-color: var(--ice); background: var(--ice-soft); color: var(--ice); }
+    .stat-row b { color: var(--accent); font-size: 12px; }
 
+    /* BUTTONS & CHIPS */
     .btn {
-      background: var(--txt);
-      color: #fff;
+      background: var(--ink);
+      color: var(--surface);
       border: none;
+      border-radius: var(--r-sm);
       padding: 8px 12px;
-      border-radius: 8px;
       font-size: 11px;
       font-weight: 800;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.4px;
       cursor: pointer;
     }
-    .btn.ice { background: var(--ice); color: #fff; }
-    .btn.red { background: var(--bad); color: #fff; }
-    .btn.ghost { background: var(--s2); color: var(--txt); border: 1px solid var(--bd); }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.ghost { background: var(--surface-alt); color: var(--ink); border: 1px solid var(--line); }
     .btn.sm { padding: 5px 9px; font-size: 10px; }
 
-    .sec { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 8px; }
-    .sec h3 { font-size: 11px; color: var(--mut); letter-spacing: 1.5px; font-weight: 900; }
-
-    .form {
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-      background: var(--s1);
-      border: 1px solid var(--bd);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 12px;
+    .chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 5px 9px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--line);
+      background: var(--surface-alt);
+      color: var(--ink-soft);
+      cursor: pointer;
     }
-    .form.open { display: flex; }
-    .form input, .form select, textarea {
-      background: #fff;
-      border: 1px solid var(--bd);
-      color: var(--txt);
-      padding: 9px 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      outline: none;
-      width: 100%;
+    .chip.on {
+      background: var(--accent-tint);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    .list { display: flex; flex-direction: column; gap: 8px; }
-    .item {
-      background: var(--s1);
-      border: 1px solid var(--bd);
-      border-radius: 13px;
+    /* TASK ITEMS */
+    .task-list { display: flex; flex-direction: column; gap: 7px; }
+    .task {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
       padding: 11px 12px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
-    }
-    .item.daily-spec { border-color: rgba(2, 132, 199, 0.35); background: rgba(240, 249, 255, 0.95); }
-    .item.done { border-color: rgba(2, 132, 199, 0.55); background: rgba(224, 242, 254, 0.72); }
-    .item.done .it-t { text-decoration: line-through; color: var(--mut); }
-    .it-main { flex: 1; cursor: pointer; padding-right: 8px; }
-    .it-t { font-size: 13px; font-weight: 800; color: var(--txt); }
-    .it-d { font-size: 11px; color: var(--mut); margin-top: 2px; line-height: 1.35; }
-    .pts {
-      font-family: monospace;
-      font-size: 11px;
-      font-weight: 900;
-      color: var(--ice);
-      background: var(--ice-soft);
-      padding: 4px 7px;
-      border-radius: 6px;
-      white-space: nowrap;
-    }
-    .del { background: none; border: none; color: var(--mut); font-size: 18px; padding: 2px 6px; cursor: pointer; margin-left: 4px; }
-
-    .choice-grid { display: flex; flex-direction: column; gap: 7px; }
-    .choice-btn {
-      text-align: left;
-      background: var(--s1);
-      border: 1px solid var(--bd);
-      border-radius: 12px;
-      padding: 10px 12px;
-      cursor: pointer;
-      display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .choice-btn:hover { border-color: var(--ice); }
-
-    .buffer-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .buf-chip {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid var(--bd);
-      background: var(--s2);
-      color: var(--mut);
-      cursor: pointer;
+    .task.done {
+      background: var(--surface-alt);
+      opacity: 0.72;
     }
-    .buf-chip.on { background: var(--ice); color: #fff; border-color: var(--ice); }
-
-    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; margin-top: 10px; }
-    .stat-box { background: var(--s2); border: 1px solid var(--bd); border-radius: 10px; padding: 9px 6px; }
-    .stat-box b { font-size: 18px; color: var(--ice); display: block; font-family: monospace; }
-    .stat-box span { font-size: 9px; color: var(--mut); font-weight: 800; letter-spacing: 0.8px; }
-
-    .boss { background: var(--s1); border: 1px solid var(--bd); border-radius: 14px; padding: 13px; }
-    .boss.dead { border-color: var(--ice); opacity: 0.78; }
-    .b-btns { display: flex; gap: 6px; margin-top: 10px; align-items: center; }
-
-    .cal-head { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 10px; font-weight: 800; color: var(--mut); margin: 10px 0 6px; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-    .cal-day {
-      aspect-ratio: 1;
-      border-radius: 7px;
-      background: var(--s2);
-      border: 1px solid var(--bd);
+    .task.done .t-title { text-decoration: line-through; color: var(--ink-soft); }
+    .t-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 1.5px solid var(--accent);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
-      font-weight: 800;
-      font-family: monospace;
-      color: var(--mut);
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--accent);
+      flex-shrink: 0;
+      cursor: pointer;
     }
-    .cal-day.empty { background: transparent; border: none; }
-    .cal-day.part { background: #bae6fd; border-color: #7dd3fc; color: #0369a1; }
-    .cal-day.full { background: var(--ice); border-color: var(--ice); color: #fff; }
-    .cal-day.fail { background: #fee2e2; border-color: #fca5a5; color: var(--bad); text-decoration: line-through; }
-    .cal-day.today { outline: 2px solid var(--txt); outline-offset: -2px; color: var(--txt); }
+    .task.done .t-check { background: var(--accent); color: #fff; }
+    .t-body { flex: 1; cursor: pointer; }
+    .t-title { font-size: 13px; font-weight: 700; line-height: 1.25; }
+    .t-meta { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+    .xp-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--accent);
+      background: var(--accent-tint);
+      padding: 3px 7px;
+      border-radius: var(--r-sm);
+      white-space: nowrap;
+    }
 
-    .ach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-    .ach { background: var(--s1); border: 1px solid var(--bd); border-radius: 12px; padding: 11px; opacity: 0.48; }
-    .ach.open { opacity: 1; border-color: var(--ice); background: rgba(240, 249, 255, 0.95); }
-    .ach b { font-size: 12px; display: block; margin-bottom: 3px; }
-    .ach span { font-size: 10.5px; color: var(--mut); display: block; line-height: 1.3; }
+    /* COLLAPSIBLE FORM & DRAWER */
+    .drawer {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      padding: 12px;
+      margin-bottom: 10px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .drawer.open { display: flex; }
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 8px 10px;
+      border-radius: var(--r-sm);
+      font-size: 13px;
+      font-family: var(--font-sans);
+      outline: none;
+    }
 
+    /* CAMPAIGN CARDS */
+    .camp {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .camp.completed { border-color: var(--ok); }
+    .camp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .camp-title { font-size: 14px; font-weight: 800; }
+    .camp-sub { font-size: 11.5px; color: var(--ink-soft); margin-top: 3px; }
+    .camp-actions { display: flex; gap: 6px; align-items: center; margin-top: 10px; }
+
+    /* TELEMETRY BARS */
+    .tel-bars {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      align-items: end;
+      height: 76px;
+      margin-top: 10px;
+      padding-top: 10px;
+    }
+    .tel-col { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .tel-fill { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s ease; }
+    .tel-lbl { font-family: var(--font-mono); font-size: 9.5px; color: var(--ink-soft); }
+
+    /* RARITY & INVENTORY */
+    .rarity-Common { color: #64748b; border-color: #94a3b8; }
+    .rarity-Uncommon { color: #0d9488; border-color: #0d9488; }
+    .rarity-Rare { color: #0284c7; border-color: #0284c7; }
+    .rarity-Epic { color: #7c3aed; border-color: #7c3aed; }
+    .rarity-Legendary { color: #d97706; border-color: #d97706; }
+    .rarity-Unique { color: #e11d48; border-color: #e11d48; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .item-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      padding: 11px;
+    }
+    .item-card.locked { opacity: 0.45; }
+
+    /* AI BRIEF BOX */
+    .ai-box {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--r-md);
+      padding: 11px 12px;
+      margin-top: 12px;
+    }
+    .ai-line { font-size: 12px; line-height: 1.4; margin-top: 4px; }
+
+    /* BOTTOM NAVIGATION (4 CORE SPACES) */
     .nav {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.92);
-      border-top: 1px solid var(--bd);
+      z-index: 30;
+      background: var(--surface);
+      border-top: 1px solid var(--line);
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       padding: 8px 0 18px;
-      backdrop-filter: blur(12px);
-      z-index: 99;
     }
     .nav button {
       background: none;
       border: none;
-      color: var(--mut);
-      font-size: 9.5px;
+      color: var(--ink-soft);
+      font-family: var(--font-mono);
+      font-size: 10px;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 3px;
       cursor: pointer;
     }
-    .nav button.active { color: var(--ice); }
-    .nav button i { font-style: normal; font-size: 15px; }
+    .nav button.active { color: var(--accent); }
+    .nav button span { font-size: 15px; }
   </style>
 </head>
-<body>
-  <canvas id="snowCanvas"></canvas>
+<body data-theme="frost-brutal">
+  <canvas id="snowLayer"></canvas>
 
-  <div class="topbar">
-    <span>❄️ WINTER ARC // ДЕНЬ <b id="arcDay">1</b></span>
-    <span>ДО 16.12: <b id="daysLeft">--</b> ДН.</span>
-    <span>СОН: <b id="topSleep">6.5ч</b></span>
-  </div>
+  <header class="hud">
+    <span class="hud-tag">WINTER ARC // <b>D<span id="hudDay">1</span></b></span>
+    <span class="hud-tag">POOL DEADLINE: <b><span id="hudDeadline">--</span>D</b></span>
+    <span class="hud-tag" id="hudSync">LOCAL</span>
+  </header>
 
-  <div class="wrap">
-    <!-- TAB 1: TERMINAL -->
-    <div id="t-term" class="tab active">
-      <div class="card">
-        <div class="meta">
-          <div class="badge" id="rankName">LVL 1 // WINTER INITIATE</div>
-          <div class="pills">
-            <div class="pill">🛡 <span id="shCnt">0</span></div>
-            <div class="pill" style="color:var(--ice)" id="multVal">x1.0</div>
-            <div class="pill">❄️ <span id="strVal">1D</span></div>
+  <main class="shell">
+    <!-- ==================== 1. TODAY ==================== -->
+    <section id="v-today" class="view active">
+      <div id="recoveryBanner" class="panel recovery-panel" style="display:none">
+        <div class="kicker" style="color:var(--warn)">RECOVERY PROTOCOL // ВОЗВРАЩЕНИЕ</div>
+        <div style="font-size:12.5px;margin-top:4px;line-height:1.35" id="recoveryText"></div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button class="btn primary sm" onclick="acceptReturnQuest()">ПРИНЯТЬ RETURN QUEST</button>
+          <button class="btn ghost sm" onclick="dismissRecovery()">ПРОДОЛЖИТЬ ОБЫЧНО</button>
+        </div>
+      </div>
+
+      <div class="hero-grid">
+        <div class="panel accent-border">
+          <div class="kicker" id="heroTitle">LVL 1 // INITIATE</div>
+          <div class="display-num" style="margin-top:4px"><span id="heroLvl">1</span> <span style="font-size:13px;font-weight:700;color:var(--ink-soft)">LVL</span></div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-top:4px">
+            <span id="heroXp">0</span> / <span id="heroNextXp">1000</span> XP
           </div>
+          <div class="bar-track"><div class="bar-fill" id="heroBar"></div></div>
         </div>
-        <div class="aura" id="auraVal">1 000 000</div>
-        <div class="sub">
-          <span id="dateSub">CYCLE // TODAY</span>
-          <span id="cloudStatus" style="color:var(--ice)">☁️ CLOUD</span>
-        </div>
-        <div class="p-lbl"><span id="pPct">0.0%</span><span id="pNext">NEXT: 2 500 000</span></div>
-        <div class="p-bar"><div class="p-fill" id="pFill"></div></div>
-      </div>
 
-      <div class="penalty-box" id="penaltyBox">
-        <div class="row">
-          <div>
-            <div style="font-size:12px;font-weight:900;color:var(--bad)">⚠️ PENALTY LOCK (МНОЖИТЕЛЬ x0.5)</div>
-            <div style="font-size:11px;color:var(--txt);margin-top:2px">Искупление: 80 отжиманий + 40 мин без телефона</div>
-          </div>
-          <button class="btn red sm" onclick="clearPenalty()">ИСКУПИТЬ</button>
+        <div class="panel mini-stats">
+          <div class="stat-row"><span>DISCIPLINE</span><b id="stDisc">12</b></div>
+          <div class="stat-row"><span>FOCUS</span><b id="stFoc">12</b></div>
+          <div class="stat-row"><span>INDEPENDENCE</span><b id="stInd">12</b></div>
         </div>
       </div>
 
-      <div class="box row">
-        <span style="font-size:11px;font-weight:800;color:var(--mut)">ЭНЕРГИЯ ДНЯ:</span>
-        <div style="display:flex;gap:5px" id="energyBox">
-          <button class="t-opt" onclick="setEnergy('LOW',this)">LOW</button>
-          <button class="t-opt" onclick="setEnergy('MID',this)">MID</button>
-          <button class="t-opt" onclick="setEnergy('PEAK',this)">PEAK</button>
+      <!-- PRIMARY DIRECTIVE -->
+      <div class="panel" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="kicker">ГЛАВНЫЙ ВЕКТОР ДНЯ</span>
+          <span class="xp-tag" id="primaryBadge">КАМПАНИЯ</span>
         </div>
+        <div style="font-size:14px;font-weight:800;margin-top:5px" id="primaryTitle">Бассейн: закрыть следующий сеанс (0/8)</div>
+        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px" id="primarySub">Абонемент активен до 16.12.2026</div>
       </div>
 
-      <div class="sec"><h3>❄️ ЗИМНИЙ ВЫЗОВ НА ВЫБОР</h3></div>
-      <div id="challengeArea" style="margin-bottom:12px"></div>
-
-      <div class="sec"><h3>⚡ КОНТРАКТ ДНЯ (АВТО-РОТАЦИЯ)</h3></div>
-      <div class="list" id="dailySpecBox" style="margin-bottom:12px"></div>
-
-      <div class="sec">
-        <h3>ДЕТАЛЬНЫЙ ПРОТОКОЛ</h3>
-        <button class="btn ghost sm" onclick="toggleForm('addForm')">+ ПУНКТ</button>
+      <!-- CORE DAILY QUEUE -->
+      <div class="sec-head">
+        <span class="kicker">БАЗОВЫЙ КОНТУР (CORE)</span>
+        <button class="btn ghost sm" onclick="toggleDrawer('taskDrawer')">+ ШАГ</button>
       </div>
 
-      <div class="form" id="addForm">
-        <input id="inTitle" placeholder="Задача (напр. Повторить физику 25 мин)">
-        <input id="inDesc" placeholder="Уточнение или критерий готовности">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <select id="inStat">
-            <option value="STR">STR (Тело)</option>
-            <option value="CRF">CRF (Навык/Учёба)</option>
-            <option value="MND">MND (Разум/Общение)</option>
-          </select>
-          <select id="inPts">
-            <option value="120000">+120K (Быстро)</option>
-            <option value="200000" selected>+200K (Основа)</option>
-            <option value="320000">+320K (Плотно)</option>
+      <div id="taskDrawer" class="drawer">
+        <input id="inTaskTitle" placeholder="Конкретное действие (напр. Физика: 2 задачи)">
+        <div class="grid-2">
+          <select id="inTaskVector"></select>
+          <select id="inTaskTier">
+            <option value="core">Core (Обязательно)</option>
+            <option value="extended">Extended (Резерв)</option>
           </select>
         </div>
-        <button class="btn ice" onclick="addQuest()">ДОБАВИТЬ В СПИСОК</button>
-      </div>
-
-      <div class="list" id="qList"></div>
-
-      <div class="box" style="margin-top:12px">
-        <div style="font-size:11px;font-weight:900;color:var(--ice);letter-spacing:0.8px">🧭 БУФЕР СВОБОДНОГО ВРЕМЕНИ</div>
-        <div style="font-size:11px;color:var(--mut);margin-top:2px">Закрыл базу и пошёл в ПК/отдых — отметь статус и лимит экрана:</div>
-        <div class="buffer-tags" id="bufChips">
-          <button class="buf-chip" onclick="setBuffer('BASE_DONE',this)">✓ База закрыта</button>
-          <button class="buf-chip" onclick="setBuffer('CALM_REST',this)">❄️ Осознанный отдых</button>
-          <button class="buf-chip" onclick="setBuffer('STOP_2300',this)">🌙 Стоп-экран 23:00</button>
-          <button class="buf-chip" onclick="setBuffer('STOP_2330',this)">🌙 Стоп-экран 23:30</button>
+        <div class="grid-2">
+          <select id="inTaskStat">
+            <option value="discipline">Discipline (+DSC)</option>
+            <option value="focus">Focus (+FOC)</option>
+            <option value="independence">Independence (+IND)</option>
+          </select>
+          <select id="inTaskXp">
+            <option value="90">Лёгкий (+90 XP)</option>
+            <option value="150" selected>Средний (+150 XP)</option>
+            <option value="240">Сложный (+240 XP)</option>
+          </select>
         </div>
+        <button class="btn primary" onclick="createTask()">ДОБАВИТЬ В ПЛАН</button>
       </div>
 
-      <button class="btn" style="width:100%;margin-top:6px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.35);color:var(--bad);padding:12px" onclick="relapse()">ЗАФИКСИРОВАТЬ СРЫВ (-400K / PENALTY)</button>
-    </div>
+      <div class="task-list" id="coreList"></div>
 
-    <!-- TAB 2: SLEEP GATE -->
-    <div id="t-sleep" class="tab">
-      <div class="card">
-        <div class="badge" style="display:inline-block;margin-bottom:6px">🌙 НОЧНОЙ ШЛЮЗ // СОН</div>
-        <div style="font-size:12.5px;color:var(--mut)">Настрой время отбоя и подъёма. Если недосып (&lt;6.5ч) или поздний заход в терминал после отбоя — включается штраф.</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+      <!-- EXTENDED QUEUE (COLLAPSIBLE) -->
+      <div class="sec-head">
+        <span class="kicker">РЕЗЕРВ ВРЕМЕНИ (<span id="extCount">0</span>)</span>
+        <button class="btn ghost sm" id="extToggleBtn" onclick="toggleExtended()">ПОКАЗАТЬ</button>
+      </div>
+      <div id="extWrap" style="display:none">
+        <div class="task-list" id="extList"></div>
+      </div>
+
+      <!-- RHYTHM: SLEEP GATE & FREE-TIME BUFFER -->
+      <div class="sec-head"><span class="kicker">РЕЖИМ СНА И БУФЕР ВРЕМЕНИ</span></div>
+      <div class="panel">
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end">
           <div>
-            <div style="font-size:10px;font-weight:800;color:var(--mut);margin-bottom:4px">ОТБОЙ</div>
-            <input id="sleepBed" type="time" value="00:15" onchange="updateSleepPlan()" style="background:#fff;border:1px solid var(--bd);color:var(--txt);padding:8px;border-radius:8px;width:100%;font-family:monospace">
+            <div class="kicker" style="margin-bottom:4px">ОТБОЙ</div>
+            <input type="time" id="bedInput" value="00:15" onchange="recalcSleep()">
           </div>
           <div>
-            <div style="font-size:10px;font-weight:800;color:var(--mut);margin-bottom:4px">ПОДЪЁМ</div>
-            <input id="sleepWake" type="time" value="07:00" onchange="updateSleepPlan()" style="background:#fff;border:1px solid var(--bd);color:var(--txt);padding:8px;border-radius:8px;width:100%;font-family:monospace">
+            <div class="kicker" style="margin-bottom:4px">ПОДЪЁМ</div>
+            <input type="time" id="wakeInput" value="07:00" onchange="recalcSleep()">
+          </div>
+          <button class="btn primary" onclick="confirmSleepWindow()">ОК (<span id="sleepHrsLbl">6.8ч</span>)</button>
+        </div>
+        <div class="chip-row" style="margin-top:10px">
+          <button class="chip" id="chipBase" onclick="toggleBuffer('baseClosed')">✓ База дня закрыта</button>
+          <button class="chip" id="chipRest" onclick="toggleBuffer('consciousRest')">❄️ Осознанный отдых (CS2 / музыка)</button>
+          <button class="chip" id="chipCutoff" onclick="toggleBuffer('cutoffSet')">🌙 Стоп-экран 23:30</button>
+        </div>
+      </div>
+
+      <!-- AI BRIEF -->
+      <div class="ai-box">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="kicker" style="color:var(--accent)">AI BRIEF // РЕКОМЕНДАЦИЯ</span>
+          <button class="btn ghost sm" onclick="aiSuggestTasks()">ДОБРАТЬ ШАГИ</button>
+        </div>
+        <div class="ai-line" id="aiBriefText"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. CAMPAIGNS & TELEMETRY ==================== -->
+    <section id="v-campaigns" class="view">
+      <div class="sec-head" style="margin-top:0">
+        <span class="kicker">АКТИВНЫЕ КАМПАНИИ (BOSSES)</span>
+        <button class="btn ghost sm" onclick="toggleDrawer('campDrawer')">+ КАМПАНИЯ</button>
+      </div>
+
+      <div id="campDrawer" class="drawer">
+        <input id="inCampTitle" placeholder="Название цели (напр. 15 тренировок на турнике)">
+        <input id="inCampDesc" placeholder="Конечный результат и смысл цели">
+        <div class="grid-2">
+          <input id="inCampTarget" type="number" placeholder="Этапов (напр. 15)">
+          <input id="inCampDeadline" type="date" value="2026-12-31">
+        </div>
+        <button class="btn primary" onclick="createCampaign()">ЗАПУСТИТЬ КАМПАНИЮ</button>
+      </div>
+
+      <div id="campaignList"></div>
+
+      <div class="sec-head">
+        <span class="kicker">НАПРАВЛЕНИЯ РАЗВИТИЯ</span>
+        <button class="btn ghost sm" onclick="toggleDrawer('vecDrawer')">+ ВЕКТОР</button>
+      </div>
+
+      <div id="vecDrawer" class="drawer">
+        <input id="inVecName" placeholder="Новое направление (напр. Вокал / Английский)">
+        <button class="btn primary" onclick="createVector()">ДОБАВИТЬ НАПРАВЛЕНИЕ</button>
+      </div>
+
+      <div class="chip-row" id="vectorChips"></div>
+
+      <div class="sec-head">
+        <span class="kicker">LIFE TELEMETRY</span>
+        <div class="chip-row">
+          <button class="chip on" onclick="setTelRange('week',this)">7D</button>
+          <button class="chip" onclick="setTelRange('month',this)">30D</button>
+          <button class="chip" onclick="setTelRange('lifetime',this)">ALL</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700">
+          <span id="telSummary">Выполнено действий: 0</span>
+          <span style="color:var(--accent)" id="telConsistency">Ритм: 0%</span>
+        </div>
+        <div class="tel-bars" id="telBars"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. WORLD & AI ==================== -->
+    <section id="v-world" class="view">
+      <div class="panel accent-border" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="kicker">CHRONICLE // ГЛАВА <span id="worldChap">1</span></span>
+          <span class="xp-tag" id="worldMoodTag">CALM FROST</span>
+        </div>
+        <div style="font-size:14px;font-weight:800;margin-top:5px" id="chapTitle">Северный Контур</div>
+        <div style="font-size:12px;color:var(--ink-soft);margin-top:4px;line-height:1.4" id="chapText"></div>
+      </div>
+
+      <div id="eventPanel" class="panel" style="margin-bottom:12px;border-color:var(--accent)">
+        <div class="kicker" style="color:var(--accent)">⚡ СОБЫТИЕ МИРА</div>
+        <div style="font-size:13px;font-weight:800;margin-top:4px" id="evTitle"></div>
+        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:3px" id="evDesc"></div>
+        <div style="margin-top:8px;display:flex;gap:8px" id="evActions"></div>
+      </div>
+
+      <div class="sec-head">
+        <span class="kicker">КАНОН И ПЕРСОНАЖИ</span>
+        <button class="btn ghost sm" onclick="toggleDrawer('charDrawer')">+ ПЕРСОНАЖ</button>
+      </div>
+
+      <div id="charDrawer" class="drawer">
+        <input id="inCharName" placeholder="Имя персонажа">
+        <input id="inCharRole" placeholder="Роль / архетип в мире">
+        <input id="inCharTrait" placeholder="Ключевая черта (фиксируется в каноне)">
+        <button class="btn primary" onclick="createCharacter()">ЗАФИКСИРОВАТЬ В КАНОНЕ</button>
+      </div>
+
+      <div class="task-list" id="charList"></div>
+
+      <div class="sec-head"><span class="kicker">AI-АНАЛИТИК И ПЛАНИРОВЩИК</span></div>
+      <div class="panel">
+        <div style="font-size:11.5px;color:var(--ink-soft);line-height:1.35">
+          AI опирается только на подтверждённые факты из твоей истории и разделяет факты, оценки и рекомендации.
+        </div>
+        <div class="chip-row" style="margin-top:9px">
+          <button class="chip" onclick="runAiAction('plan')">Собрать план дня</button>
+          <button class="chip" onclick="runAiAction('analyze')">Разбор прогресса</button>
+          <button class="chip" onclick="runAiAction('pool')">План под бассейн 8/8</button>
+        </div>
+        <div id="aiConsoleOut" style="margin-top:10px;font-size:12px;line-height:1.45;background:var(--bg);padding:10px;border-radius:var(--r-sm);border:1px solid var(--line)"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. IDENTITY & VAULT ==================== -->
+    <section id="v-identity" class="view">
+      <div class="panel accent-border" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="kicker">DIGITAL IDENTITY // WINTER ARC</span>
+          <span class="xp-tag" id="idCurrency">0 SHARDS · 0 RELICS</span>
+        </div>
+        <div style="font-size:20px;font-weight:900;margin-top:6px" id="idActiveTitle">WINTER INITIATE</div>
+        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px" id="idSummaryLine">Уровень 1 · 0 выполненных действий</div>
+        <div style="margin-top:10px">
+          <div class="kicker" style="margin-bottom:5px">АТМОСФЕРА ИНТЕРФЕЙСА</div>
+          <div class="chip-row">
+            <button class="chip" onclick="setTheme('frost-brutal')">Frost Brutal</button>
+            <button class="chip" onclick="setTheme('glacier-steel')">Glacier Steel</button>
+            <button class="chip" onclick="setTheme('night-protocol')">Night Protocol</button>
           </div>
         </div>
-        <div class="p-lbl" style="margin-top:12px">
-          <span id="sleepSummary">Длительность: 6ч 45м</span>
-          <span id="sleepVerdict" style="color:var(--ice)">НОРМА</span>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn ice" onclick="logSleepCheck()">ЗАФИКСИРОВАТЬ РЕЖИМ СНА</button>
-          <button class="btn ghost sm" onclick="simulateLateCheck()">ТЕСТ ПОЗДНЕГО ЗАХОДА</button>
-        </div>
       </div>
 
-      <div class="box">
-        <div style="font-size:11px;font-weight:900;color:var(--mut);letter-spacing:1px">ПРАВИЛА ШЛЮЗА</div>
-        <div class="it-d" style="margin-top:6px">
-          • Меньше <b>6ч 30м</b> сна при фиксации режима — штраф <b>-150K Ауры</b>.<br>
-          • Заход в терминал позже времени отбоя (до 05:00) — штраф <b>-100K Ауры</b>.<br>
-          • Сон <b>7ч–9ч</b> и вовремя — бонус <b>+150K Ауры</b> и <b>+2 MND</b>.
+      <div class="sec-head"><span class="kicker">ДОСТИЖЕНИЯ (PERMANENT)</span></div>
+      <div class="grid-2" id="achList"></div>
+
+      <div class="sec-head"><span class="kicker">ИНВЕНТАРЬ И КОЛЛЕКЦИЯ</span></div>
+      <div class="grid-2" id="invList"></div>
+
+      <div class="sec-head"><span class="kicker">СИСТЕМА И РЕЗЕРВНЫЙ СЕЙВ</span></div>
+      <div class="panel">
+        <div class="chip-row" style="margin-bottom:8px">
+          <button class="chip" id="sndChip" onclick="toggleSetting('sound')">Звук: ВКЛ</button>
+          <button class="chip" id="hapChip" onclick="toggleSetting('haptics')">Вибрация: ВКЛ</button>
+          <button class="chip" onclick="syncCloud(false)">Обновить Cloud</button>
+        </div>
+        <textarea id="snapshotBox" rows="3" readonly></textarea>
+        <div class="grid-2" style="margin-top:8px">
+          <button class="btn ghost" onclick="copySnapshot()">КОПИРОВАТЬ СЕЙВ</button>
+          <button class="btn primary" onclick="importSnapshot()">ВОССТАНОВИТЬ</button>
         </div>
       </div>
-    </div>
-
-    <!-- TAB 3: BOSSES & STATS -->
-    <div id="t-stats" class="tab">
-      <div class="sec" style="margin-top:0">
-        <h3>💀 ЦЕЛИ И БОССЫ</h3>
-        <button class="btn ghost sm" onclick="toggleForm('bossForm')">+ БОСС</button>
-      </div>
-
-      <div class="form" id="bossForm">
-        <input id="bTitle" placeholder="Цель (напр. 20 спокойных разговоров)">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <input id="bMax" type="number" placeholder="Всего (напр. 20)">
-          <input id="bStep" type="number" placeholder="Шаг (напр. 1)">
-        </div>
-        <button class="btn ice" onclick="addBoss()">СОЗДАТЬ БОССА</button>
-      </div>
-
-      <div class="list" id="bossList" style="margin-bottom:12px"></div>
-
-      <div class="card" style="text-align:center">
-        <div class="badge" style="display:inline-block;margin-bottom:8px">АТРИБУТЫ WINTER ARC</div>
-        <svg viewBox="0 0 200 200" width="180" height="180" style="display:block;margin:0 auto">
-          <polygon points="100,20 169,140 31,140" fill="none" stroke="#c6dcef" stroke-width="1.2"/>
-          <polygon points="100,50 143,125 57,125" fill="none" stroke="#dbeaf7" stroke-width="1.2"/>
-          <polygon id="rPoly" points="100,80 117,110 83,110" fill="rgba(2,132,199,0.22)" stroke="#0284c7" stroke-width="2"/>
-          <text x="100" y="13" fill="#475569" font-size="10" font-weight="bold" text-anchor="middle">STR (ТЕЛО)</text>
-          <text x="176" y="154" fill="#475569" font-size="10" font-weight="bold" text-anchor="middle">CRF (НАВЫК)</text>
-          <text x="24" y="154" fill="#475569" font-size="10" font-weight="bold" text-anchor="middle">MND (РАЗУМ/СОЦ)</text>
-        </svg>
-        <div class="stat-grid">
-          <div class="stat-box"><b id="sSTR">14</b><span>STRENGTH</span></div>
-          <div class="stat-box"><b id="sCRF">12</b><span>CRAFT</span></div>
-          <div class="stat-box"><b id="sMND">16</b><span>MINDSET</span></div>
-        </div>
-      </div>
-
-      <div class="sec"><h3>ТРОФЕИ</h3></div>
-      <div class="ach-grid" id="achGrid"></div>
-    </div>
-
-    <!-- TAB 4: MARKET -->
-    <div id="t-mkt" class="tab">
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="badge" style="display:inline-block;margin-bottom:5px">BLACK MARKET</div>
-            <div style="font-size:12px;color:var(--mut)">Щиты стрика и твои реальные награды.</div>
-          </div>
-          <button class="btn ghost sm" onclick="toggleForm('mktForm')">+ НАГРАДА</button>
-        </div>
-      </div>
-
-      <div class="form" id="mktForm">
-        <input id="mTitle" placeholder="Награда (напр. Катка в CS2 / Вкусняшка)">
-        <input id="mDesc" placeholder="Условие или примечание">
-        <input id="mCost" type="number" placeholder="Цена в Ауре (напр. 1000000)">
-        <button class="btn ice" onclick="addMarket()">ДОБАВИТЬ</button>
-      </div>
-
-      <div class="list" id="mList"></div>
-    </div>
-
-    <!-- TAB 5: CALENDAR & CLOUD -->
-    <div id="t-arch" class="tab">
-      <div class="card">
-        <div class="row">
-          <div class="badge" id="calMonth">КАЛЕНДАРЬ</div>
-          <span style="font-size:10px;color:var(--mut)" id="calStats">ИДЕАЛЬНЫХ ДНЕЙ: 0</span>
-        </div>
-        <div class="cal-head"><div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div></div>
-        <div class="cal-grid" id="calGrid"></div>
-      </div>
-
-      <div class="box">
-        <div class="row" style="margin-bottom:8px">
-          <span style="font-size:11px;font-weight:800;color:var(--mut)">CLOUD + РЕЗЕРВНЫЙ СЕЙВ</span>
-          <button class="btn ghost sm" onclick="forceCloudLoad()">ОБНОВИТЬ</button>
-        </div>
-        <textarea id="bkArea" rows="3" readonly></textarea>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-          <button class="btn ghost" onclick="copyBk()">КОПИРОВАТЬ</button>
-          <button class="btn ice" onclick="loadBk()">ВОССТАНОВИТЬ</button>
-        </div>
-      </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <nav class="nav">
-    <button class="active" onclick="go('t-term',this)"><i>❄️</i>ARC</button>
-    <button onclick="go('t-sleep',this)"><i>🌙</i>SLEEP</button>
-    <button onclick="go('t-stats',this)"><i>💀</i>BOSSES</button>
-    <button onclick="go('t-mkt',this)"><i>🏴</i>MARKET</button>
-    <button onclick="go('t-arch',this)"><i>📅</i>LOG</button>
+    <button class="active" onclick="switchView('v-today',this)"><span>❄️</span>TODAY</button>
+    <button onclick="switchView('v-campaigns',this)"><span>🎯</span>CAMPAIGNS</button>
+    <button onclick="switchView('v-world',this)"><span>🧭</span>WORLD</button>
+    <button onclick="switchView('v-identity',this)"><span>🪪</span>IDENTITY</button>
   </nav>
 
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#eef5fb'); }
+    if (tg) { tg.ready(); tg.expand(); }
 
-    const actx = new (window.AudioContext || window.webkitAudioContext)();
-    function beep(t) {
+    /* AUDIO & HAPTICS */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(type) {
+      if (!state?.meta?.settings?.sound) return;
       try {
-        if (actx.state === 'suspended') actx.resume();
-        const o = actx.createOscillator(), g = actx.createGain(), n = actx.currentTime;
-        o.connect(g); g.connect(actx.destination);
-        if (t === 'ok') {
-          o.type = 'triangle'; o.frequency.setValueAtTime(520, n); o.frequency.exponentialRampToValueAtTime(780, n + 0.16);
-          g.gain.setValueAtTime(0.25, n); g.gain.exponentialRampToValueAtTime(0.01, n + 0.18);
-          o.start(n); o.stop(n + 0.18);
-        } else if (t === 'bad') {
-          o.type = 'sawtooth'; o.frequency.setValueAtTime(140, n); o.frequency.linearRampToValueAtTime(65, n + 0.35);
-          g.gain.setValueAtTime(0.28, n); g.gain.exponentialRampToValueAtTime(0.01, n + 0.38);
-          o.start(n); o.stop(n + 0.38);
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain(), now = audioCtx.currentTime;
+        o.connect(g); g.connect(audioCtx.destination);
+        if (type === 'done') {
+          o.type = 'triangle';
+          o.frequency.setValueAtTime(520, now);
+          o.frequency.exponentialRampToValueAtTime(760, now + 0.14);
+          g.gain.setValueAtTime(0.18, now);
+          g.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
+          o.start(now); o.stop(now + 0.16);
         } else {
-          o.type = 'sine'; o.frequency.setValueAtTime(640, n); o.frequency.exponentialRampToValueAtTime(320, n + 0.06);
-          g.gain.setValueAtTime(0.14, n); g.gain.exponentialRampToValueAtTime(0.01, n + 0.06);
-          o.start(n); o.stop(n + 0.06);
+          o.type = 'sine';
+          o.frequency.setValueAtTime(600, now);
+          o.frequency.exponentialRampToValueAtTime(340, now + 0.05);
+          g.gain.setValueAtTime(0.1, now);
+          g.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+          o.start(now); o.stop(now + 0.05);
         }
       } catch (e) {}
     }
 
-    function vibrate(kind = 'light') {
+    function buzz(kind = 'light') {
+      if (!state?.meta?.settings?.haptics) return;
       try {
         if (tg?.HapticFeedback) {
-          if (kind === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
-          else if (kind === 'success') tg.HapticFeedback.notificationOccurred('success');
-          else if (kind === 'error') tg.HapticFeedback.notificationOccurred('error');
+          if (kind === 'success') tg.HapticFeedback.notificationOccurred('success');
           else tg.HapticFeedback.impactOccurred('light');
         }
       } catch (e) {}
     }
 
-    // Лёгкий снежок Winter Arc
-    const canvas = document.getElementById('snowCanvas');
-    const ctx = canvas.getContext('2d');
+    /* SUBTLE SNOW ATMOSPHERE */
+    const snowCanvas = document.getElementById('snowLayer');
+    const sctx = snowCanvas.getContext('2d');
     let flakes = [];
-    function initSnow() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      const count = Math.min(42, Math.floor(canvas.width / 10));
+    function resizeSnow() {
+      snowCanvas.width = window.innerWidth;
+      snowCanvas.height = window.innerHeight;
+      const count = Math.min(34, Math.floor(snowCanvas.width / 12));
       flakes = Array.from({ length: count }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: 1.2 + Math.random() * 2.2,
-        sp: 0.35 + Math.random() * 0.75,
-        dr: -0.25 + Math.random() * 0.5
+        x: Math.random() * snowCanvas.width,
+        y: Math.random() * snowCanvas.height,
+        r: 1.1 + Math.random() * 1.9,
+        vy: 0.3 + Math.random() * 0.65,
+        vx: -0.2 + Math.random() * 0.4
       }));
     }
-    function drawSnow() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    function tickSnow() {
+      sctx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+      const isDark = document.body.getAttribute('data-theme') === 'night-protocol';
+      sctx.fillStyle = isDark ? 'rgba(226, 240, 255, 0.55)' : 'rgba(255, 255, 255, 0.9)';
       for (const f of flakes) {
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-        ctx.fill();
-        f.y += f.sp;
-        f.x += f.dr;
-        if (f.y > canvas.height) { f.y = -5; f.x = Math.random() * canvas.width; }
-        if (f.x > canvas.width) f.x = 0;
-        if (f.x < 0) f.x = canvas.width;
+        sctx.beginPath();
+        sctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        sctx.fill();
+        f.y += f.vy; f.x += f.vx;
+        if (f.y > snowCanvas.height) { f.y = -4; f.x = Math.random() * snowCanvas.width; }
+        if (f.x > snowCanvas.width) f.x = 0;
+        if (f.x < 0) f.x = snowCanvas.width;
       }
-      requestAnimationFrame(drawSnow);
+      requestAnimationFrame(tickSnow);
     }
-    window.addEventListener('resize', initSnow);
-    initSnow();
-    drawSnow();
+    window.addEventListener('resize', resizeSnow);
+    resizeSnow(); tickSnow();
 
-    const RANKS = [
-      { min: 0, max: 2500000, n: "LVL 1 // WINTER INITIATE" },
-      { min: 2500000, max: 6000000, n: "LVL 2 // FROST WALKER" },
-      { min: 6000000, max: 15000000, n: "LVL 3 // ICE DISCIPLINE" },
-      { min: 15000000, max: 35000000, n: "LVL 4 // WHITE WOLF" },
-      { min: 35000000, max: 70000000, n: "LVL 5 // SOVEREIGN" }
-    ];
-
-    const DAILY_POOL = [
-      { stat: 'STR', t: "ХОЛОДНЫЙ ФИНИШ", d: "30–60 сек прохладной воды в конце душа", p: 250000 },
-      { stat: 'CRF', t: "ЧИСТЫЙ ФОКУС", d: "40 мин учёбы/дела без отвлечений на ленту", p: 280000 },
-      { stat: 'MND', t: "СПОКОЙНЫЙ ОТКЛИК", d: "Без резкости и лишних эмоций в диалогах сегодня", p: 250000 },
-      { stat: 'STR', t: "КАРКАС ДНЯ", d: "Подходы на турник или отжимания в течение дня", p: 240000 }
-    ];
-
-    const WINTER_CHOICES = [
-      { id: 'c1', stat: 'STR', t: "Пойти в бассейн / сделать силовой сет", p: 220000 },
-      { id: 'c2', stat: 'CRF', t: "Закрыть сложный учебный/рабочий блок до вечера", p: 220000 },
-      { id: 'c3', stat: 'MND', t: "Сделать 1 спокойный шаг в общении без давления", p: 220000 }
-    ];
-
-    function todayKey() {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    /* DATE HELPERS */
+    function getDateKey(d = new Date()) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+    function daysBetween(k1, k2) {
+      const a = new Date(k1 + 'T00:00:00');
+      const b = new Date(k2 + 'T00:00:00');
+      return Math.round((b - a) / 86400000);
     }
 
-    const DEF = {
-      aura: 1000000, streak: 1, shields: 0, totalDone: 0, updatedAt: 0,
-      penalty: false, energy: '', bufferTags: [],
-      lastDate: todayKey(),
-      chosenChallengeId: '', challengeDone: false,
-      sleepBed: '00:15', sleepWake: '07:00', sleepHours: 6.75, sleepLoggedToday: false,
-      stats: { STR: 14, CRF: 12, MND: 16 },
-      calLog: {},
-      dailySpec: { ...DAILY_POOL[0], done: false },
-      bosses: [
-        { id: 1, t: "БАССЕЙН (8 СЕАНСОВ ДО 16.12)", cur: 0, max: 8, step: 1, reward: 1500000, done: false },
-        { id: 2, t: "1000 ПОДТЯГИВАНИЙ", cur: 0, max: 1000, step: 10, reward: 1500000, done: false }
-      ],
-      quests: [
-        { id: 1, stat: 'STR', t: "ТУРНИК / ОТЖИМАНИЯ", d: "Подходы до хорошего рабочего утомления", p: 180000, done: false },
-        { id: 2, stat: 'CRF', t: "УЧЁБА / ПРОЕКТ", d: "Деловой блок без лишних вкладок и чатов", p: 220000, done: false },
-        { id: 3, stat: 'MND', t: "КОММУНИКАЦИЯ БЕЗ СУЕТЫ", d: "Короткий живой контакт или честный ответ без спешки", p: 200000, done: false },
-        { id: 4, stat: 'CRF', t: "ПОРЯДОК НА СТОЛЕ И В ФАЙЛАХ", d: "Убрать лишнее, чтобы завтра стартовать чисто", p: 140000, done: false }
-      ],
-      market: [
-        { id: 201, t: "🛡 ЩИТ ЗАМОРОЗКИ СТРИКА", d: "Спасёт стрик и множитель при срыве или пропуске", c: 1200000, sys: true },
-        { id: 202, t: "🎮 КАТКА В CS2", d: "Осознанный отдых после закрытых дел", c: 650000, sys: false },
-        { id: 203, t: "🍫 ВКУСНЯШКА / НАПИТОК", d: "Награда за собранный день", c: 450000, sys: false }
-      ]
-    };
+    /* DEFAULT SCHEMA v2 */
+    const DEFAULT_VECTORS = [
+      { id: 'pool', name: 'Pool / Плавание', active: true },
+      { id: 'fitness', name: 'Fitness / Турник', active: true },
+      { id: 'education', name: 'College / Учёба', active: true },
+      { id: 'music', name: 'Music / Битмейкинг', active: true },
+      { id: 'books', name: 'Books / Чтение', active: true },
+      { id: 'independence', name: 'Independence / Быт', active: true },
+      { id: 'character', name: 'Character / Дисциплина', active: true },
+      { id: 'social', name: 'Social / Общение', active: true },
+      { id: 'finance', name: 'Finance / Бюджет', active: false },
+      { id: 'projects', name: 'Personal Projects', active: true }
+    ];
 
-    let st = JSON.parse(localStorage.getItem('viperr_winter_v1')) || JSON.parse(localStorage.getItem('viperr_v6')) || DEF;
-    if (!st.bosses) st.bosses = DEF.bosses;
-    if (!Array.isArray(st.bufferTags)) st.bufferTags = [];
-    if (!st.bosses.some(b => b.t.includes('БАССЕЙН'))) {
-      st.bosses.unshift({ id: Date.now(), t: "БАССЕЙН (8 СЕАНСОВ ДО 16.12)", cur: 0, max: 8, step: 1, reward: 1500000, done: false });
+    function buildDefaultState() {
+      const tk = getDateKey();
+      return {
+        meta: {
+          schemaVersion: 2,
+          arcStartDate: '2026-11-22',
+          updatedAt: Date.now(),
+          activeTheme: 'frost-brutal',
+          settings: { sound: true, haptics: true }
+        },
+        identity: {
+          level: 1,
+          xp: 0,
+          activeTitle: 'WINTER INITIATE',
+          stats: { discipline: 12, focus: 12, independence: 12 },
+          economy: { shards: 120, relics: 0 }
+        },
+        vectors: JSON.parse(JSON.stringify(DEFAULT_VECTORS)),
+        daily: {
+          dateKey: tk,
+          showExtended: false,
+          quests: [
+            { id: 'q1', vectorId: 'pool', title: 'Подготовить сумку / сходить на сеанс бассейна', tier: 'core', stat: 'discipline', xp: 180, done: false },
+            { id: 'q2', vectorId: 'education', title: 'Закрыть учебный блок по колледжу (40 мин без отвлечений)', tier: 'core', stat: 'focus', xp: 160, done: false },
+            { id: 'q3', vectorId: 'fitness', title: 'Подходы на турник / отжимания до рабочего утомления', tier: 'core', stat: 'discipline', xp: 140, done: false },
+            { id: 'q4', vectorId: 'social', title: 'Сделать 1 спокойный шаг в общении без лишнего давления', tier: 'extended', stat: 'independence', xp: 130, done: false },
+            { id: 'q5', vectorId: 'music', title: 'Поработать над битом или текстом в FL Studio (30 мин)', tier: 'extended', stat: 'focus', xp: 140, done: false },
+            { id: 'q6', vectorId: 'independence', title: 'Навести порядок на столе и в рабочих файлах', tier: 'extended', stat: 'independence', xp: 100, done: false }
+          ],
+          sleep: { bedTime: '00:15', wakeTime: '07:00', hours: 6.75, confirmed: false },
+          buffer: { baseClosed: false, consciousRest: false, cutoffSet: false },
+          recovery: { active: false, missedDays: 0 }
+        },
+        campaigns: [
+          {
+            id: 'camp_pool_8',
+            vectorId: 'pool',
+            title: 'Абонемент в бассейн: 8 сеансов',
+            desc: 'График Пн/Чт + финал 16.12.2026. Полное закрытие абонемента без сгорания занятий.',
+            deadline: '2026-12-16',
+            current: 0,
+            target: 8,
+            step: 1,
+            xpReward: 650,
+            completed: false
+          },
+          {
+            id: 'camp_pullups',
+            vectorId: 'fitness',
+            title: 'Зимний каркас: 600 подтягиваний',
+            desc: 'Накопительный объём за зимний цикл без пропуска базовых недель.',
+            deadline: '2026-12-31',
+            current: 0,
+            target: 600,
+            step: 15,
+            xpReward: 500,
+            completed: false
+          }
+        ],
+        collection: {
+          achievements: [
+            { id: 'ach_first', name: 'Первый след на льду', desc: 'Выполнить первое реальное действие в WINTER ARC', rarity: 'Common', unlocked: false },
+            { id: 'ach_pool_half', name: 'Экватор дорожки', desc: 'Закрыть 4 из 8 сеансов бассейна', rarity: 'Uncommon', unlocked: false },
+            { id: 'ach_pool_full', name: 'Ледяная вода 8/8', desc: 'Полностью закрыть абонемент в бассейн до срока', rarity: 'Rare', unlocked: false },
+            { id: 'ach_lvl5', name: 'Северный закал', desc: 'Достичь 5 уровня аккаунта', rarity: 'Epic', unlocked: false }
+          ],
+          inventory: [
+            { id: 'inv_pass', name: 'Жетон Северного Контура', rarity: 'Common', source: 'Старт WINTER ARC', obtainedAt: tk }
+          ]
+        },
+        world: {
+          chapter: 1,
+          mood: 'CALM FROST',
+          title: 'Глава I — Тишина перед первым шагом',
+          text: 'Внешний шум приглушён. В мире WINTER ARC прогресс движется только от подтверждённых действий в реальности — каждая закрытая тренировка или учебный блок укрепляет контур.',
+          characters: [
+            { id: 'ch_archivist', name: 'Архивариус Снега', role: 'Хранитель телеметрии', trait: 'Фиксирует только факты, не терпит самообмана, иногда шутит про ночные катки.' },
+            { id: 'ch_courier', name: 'Ледовый Курьер', role: 'Связной кампаний', trait: 'Напоминает о дедлайнах и приносит редкие жетоны за закрытые этапы.' }
+          ],
+          activeEvent: {
+            id: 'ev_1',
+            title: 'Сигнал с северного пирса',
+            desc: 'Архивариус заметил старт цикла бассейна. Подтверди готовность к первому заплыву, чтобы получить +40 Shards.',
+            claimed: false
+          }
+        },
+        history: {
+          totalCompleted: 0,
+          days: {}
+        }
+      };
     }
 
-    function saveState() {
-      st.updatedAt = Date.now();
-      const raw = JSON.stringify(st);
-      localStorage.setItem('viperr_winter_v1', raw);
-      document.getElementById('bkArea').value = raw;
+    /* MIGRATION & STORAGE */
+    function loadAndMigrate() {
+      const v2Raw = localStorage.getItem('winter_arc_v2');
+      if (v2Raw) {
+        try {
+          const parsed = JSON.parse(v2Raw);
+          if (parsed?.meta?.schemaVersion === 2) return parsed;
+        } catch (e) {}
+      }
+      const base = buildDefaultState();
+      // Мягкая миграция из старого прототипа, если он был
+      const oldRaw = localStorage.getItem('viperr_winter_v1') || localStorage.getItem('viperr_v6');
+      if (oldRaw) {
+        try {
+          const old = JSON.parse(oldRaw);
+          if (typeof old.totalDone === 'number') {
+            base.history.totalCompleted = old.totalDone;
+            base.identity.xp = old.totalDone * 110;
+            recalcLevel(base);
+          }
+          if (Array.isArray(old.bosses)) {
+            const oldPool = old.bosses.find(b => b.t && b.t.includes('БАССЕЙН'));
+            if (oldPool) base.campaigns[0].current = Math.min(8, oldPool.cur || 0);
+          }
+        } catch (e) {}
+      }
+      return base;
+    }
+
+    let state = loadAndMigrate();
+    let telRange = 'week';
+
+    function xpForLevel(lvl) {
+      return 800 + (lvl - 1) * 350;
+    }
+
+    function recalcLevel(stObj = state) {
+      let lvl = 1;
+      let rem = stObj.identity.xp;
+      while (rem >= xpForLevel(lvl)) {
+        rem -= xpForLevel(lvl);
+        lvl++;
+      }
+      stObj.identity.level = lvl;
+      if (lvl >= 7) stObj.identity.activeTitle = 'SOVEREIGN OF WINTER';
+      else if (lvl >= 5) stObj.identity.activeTitle = 'WHITE WOLF';
+      else if (lvl >= 3) stObj.identity.activeTitle = 'ICE DISCIPLINE';
+      else stObj.identity.activeTitle = 'WINTER INITIATE';
+    }
+
+    function saveAll() {
+      state.meta.updatedAt = Date.now();
+      const raw = JSON.stringify(state);
+      localStorage.setItem('winter_arc_v2', raw);
+      const snap = document.getElementById('snapshotBox');
+      if (snap) snap.value = raw;
       if (tg?.CloudStorage) {
-        tg.CloudStorage.setItem('viperr_winter_save', raw, (err) => {
-          document.getElementById('cloudStatus').innerText = err ? '⚠️ LOCAL' : '☁️ SYNCED';
+        tg.CloudStorage.setItem('winter_arc_v2_cloud', raw, (err) => {
+          document.getElementById('hudSync').innerText = err ? 'LOCAL' : 'CLOUD OK';
         });
       }
     }
 
-    function forceCloudLoad(silent = false) {
-      if (!tg?.CloudStorage) { if (!silent) alert('Облако доступно внутри Telegram.'); return; }
-      tg.CloudStorage.getItem('viperr_winter_save', (err, val) => {
+    function syncCloud(silent = false) {
+      if (!tg?.CloudStorage) {
+        if (!silent) alert('Облачная синхронизация работает внутри Telegram.');
+        return;
+      }
+      tg.CloudStorage.getItem('winter_arc_v2_cloud', (err, val) => {
         if (!err && val) {
           try {
-            const cloud = JSON.parse(val);
-            if (!silent || (cloud.updatedAt && cloud.updatedAt > (st.updatedAt || 0))) {
-              st = cloud;
-              autoSyncDay();
-              render(false);
-              if (!silent) alert('Сейв обновлён из облака.');
+            const remote = JSON.parse(val);
+            if (remote?.meta?.schemaVersion === 2 && (!silent || remote.meta.updatedAt > state.meta.updatedAt)) {
+              state = remote;
+              handleDayTransition();
+              renderAll(false);
+              if (!silent) alert('Данные обновлены из Telegram Cloud.');
             }
           } catch (e) {}
         }
       });
     }
 
-    function autoSyncDay() {
-      const tk = todayKey();
-      if (st.lastDate !== tk) {
-        const yStatus = st.calLog[st.lastDate] || 0;
-        if (yStatus >= 1) {
-          st.streak += 1;
-        } else {
-          if (st.shields > 0) st.shields -= 1;
-          else { st.streak = 0; st.calLog[st.lastDate] = -1; st.penalty = true; }
+    /* DAY TRANSITION & RECOVERY SYSTEM */
+    function handleDayTransition() {
+      const tk = getDateKey();
+      if (state.daily.dateKey !== tk) {
+        const gap = daysBetween(state.daily.dateKey, tk);
+        // Сохраняем сводку прошлого дня
+        const prevDone = state.daily.quests.filter(q => q.done).length;
+        state.history.days[state.daily.dateKey] = {
+          completed: prevDone,
+          total: state.daily.quests.length
+        };
+        // Перезагрузка дневного контура без обнуления уровня или достижений
+        state.daily.quests.forEach(q => { q.done = false; });
+        state.daily.sleep.confirmed = false;
+        state.daily.buffer = { baseClosed: false, consciousRest: false, cutoffSet: false };
+        if (gap > 1) {
+          state.daily.recovery = { active: true, missedDays: gap - 1 };
         }
-        st.quests.forEach(q => q.done = false);
-        const rnd = DAILY_POOL[Math.floor(Math.random() * DAILY_POOL.length)];
-        st.dailySpec = { ...rnd, done: false };
-        st.chosenChallengeId = '';
-        st.challengeDone = false;
-        st.energy = '';
-        st.bufferTags = [];
-        st.sleepLoggedToday = false;
-        st.lastDate = tk;
+        state.daily.dateKey = tk;
       }
-      checkLateNightEntry();
-      updateTodayCal();
+      recordTodayHistory();
     }
 
-    function timeToMins(str) {
-      const [h, m] = (str || '00:00').split(':').map(Number);
-      return (h || 0) * 60 + (m || 0);
+    function recordTodayHistory() {
+      const tk = getDateKey();
+      state.history.days[tk] = {
+        completed: state.daily.quests.filter(q => q.done).length,
+        total: state.daily.quests.length
+      };
     }
 
-    function calcSleepHours(bedStr, wakeStr) {
-      let bed = timeToMins(bedStr);
-      let wake = timeToMins(wakeStr);
-      if (wake <= bed) wake += 24 * 60;
-      return (wake - bed) / 60;
-    }
-
-    function checkLateNightEntry() {
-      const now = new Date();
-      const curMins = now.getHours() * 60 + now.getMinutes();
-      const bedMins = timeToMins(st.sleepBed || '00:15');
-      // Если текущее время в ночном окне после отбоя (до 05:00) и отбой задан вечером/ночью
-      if (bedMins >= 18 * 60 && curMins >= bedMins && curMins < 23 * 60 + 59) {
-        if (!st.lateWarnedToday) {
-          st.lateWarnedToday = todayKey();
-          st.aura = Math.max(0, st.aura - 100000);
-          st.penalty = true;
-          beep('bad');
-          vibrate('error');
-        }
-      }
-    }
-
-    function updateSleepPlan() {
-      st.sleepBed = document.getElementById('sleepBed').value || '00:15';
-      st.sleepWake = document.getElementById('sleepWake').value || '07:00';
-      const hrs = calcSleepHours(st.sleepBed, st.sleepWake);
-      st.sleepHours = hrs;
-      const whole = Math.floor(hrs);
-      const mins = Math.round((hrs - whole) * 60);
-      document.getElementById('sleepSummary').innerText = `Длительность: ${whole}ч ${mins}м`;
-      const vEl = document.getElementById('sleepVerdict');
-      if (hrs < 6.5) { vEl.innerText = 'НЕДОСЫП (ШТРАФ)'; vEl.style.color = 'var(--bad)'; }
-      else if (hrs <= 9.5) { vEl.innerText = 'ОПТИМУМ'; vEl.style.color = 'var(--ice)'; }
-      else { vEl.innerText = 'ПЕРЕБОР'; vEl.style.color = 'var(--warn)'; }
-      saveState();
-      renderTopBar();
-    }
-
-    function logSleepCheck() {
-      updateSleepPlan();
-      const hrs = st.sleepHours;
-      if (hrs < 6.5) {
-        st.aura = Math.max(0, st.aura - 150000);
-        st.penalty = true;
-        beep('bad'); vibrate('error');
-        alert('🌙 Зафиксирован недосып (<6.5ч): -150K Ауры и активирован PENALTY LOCK.');
-      } else {
-        if (!st.sleepLoggedToday) {
-          st.sleepLoggedToday = true;
-          st.aura += 150000;
-          st.stats.MND += 2;
-        }
-        beep('ok'); vibrate('success');
-        alert('❄️ Режим сна зафиксирован: +150K Ауры и +2 MND.');
-      }
-      render();
-    }
-
-    function simulateLateCheck() {
-      st.aura = Math.max(0, st.aura - 100000);
-      st.penalty = true;
-      beep('bad'); vibrate('error');
-      alert('🌙 Фиксация позднего захода: -100K Ауры и включён PENALTY LOCK.');
-      render();
-    }
-
-    function updateTodayCal() {
-      const tk = todayKey();
-      if (st.calLog[tk] === -1) return;
-      const doneCnt = st.quests.filter(q => q.done).length + (st.dailySpec.done ? 1 : 0) + (st.challengeDone ? 1 : 0);
-      const totalCnt = st.quests.length + 2;
-      if (doneCnt === 0) st.calLog[tk] = 0;
-      else if (doneCnt >= totalCnt) st.calLog[tk] = 2;
-      else st.calLog[tk] = 1;
-    }
-
-    function mult() {
-      if (st.penalty) return 0.5;
-      if (st.streak >= 30) return 2.0;
-      if (st.streak >= 14) return 1.5;
-      if (st.streak >= 7) return 1.3;
-      if (st.streak >= 3) return 1.15;
-      return 1.0;
-    }
-
-    function go(id, el) {
-      beep('click'); vibrate('light');
-      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-      document.querySelectorAll('.nav button').forEach(x => x.classList.remove('active'));
+    /* NAVIGATION & THEME */
+    function switchView(id, btn) {
+      playTone('click'); buzz('light');
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-      el.classList.add('active');
-      render(false);
+      btn.classList.add('active');
+      renderAll(false);
     }
 
-    function renderTopBar() {
-      const startArc = new Date('2026-11-22T00:00:00');
-      const endPass = new Date('2026-12-16T23:59:59');
-      const now = new Date();
-      const arcDay = Math.max(1, Math.floor((now - startArc) / 86400000) + 1);
-      const daysLeft = Math.max(0, Math.ceil((endPass - now) / 86400000));
-      document.getElementById('arcDay').innerText = arcDay;
-      document.getElementById('daysLeft').innerText = daysLeft;
-      document.getElementById('topSleep').innerText = (st.sleepHours || 6.75).toFixed(1) + 'ч';
+    function setTheme(themeName) {
+      state.meta.activeTheme = themeName;
+      document.body.setAttribute('data-theme', themeName);
+      playTone('click');
+      renderAll();
     }
 
-    function render(doSave = true) {
-      updateTodayCal();
-      renderTopBar();
-      const m = mult();
-      document.getElementById('auraVal').innerText = Math.floor(st.aura).toLocaleString('ru-RU');
-      document.getElementById('strVal').innerText = st.streak + 'D';
-      document.getElementById('multVal').innerText = 'x' + m.toFixed(1);
-      document.getElementById('shCnt').innerText = st.shields;
-      document.getElementById('dateSub').innerText = 'CYCLE // ' + st.lastDate;
-
-      document.getElementById('penaltyBox').classList.toggle('on', !!st.penalty);
-
-      document.querySelectorAll('#energyBox .t-opt').forEach(b => {
-        b.classList.toggle('on', b.innerText === st.energy);
-      });
-
-      document.querySelectorAll('#bufChips .buf-chip').forEach(b => {
-        const key = b.getAttribute('onclick').match(/'([^']+)'/)[1];
-        b.classList.toggle('on', st.bufferTags.includes(key));
-      });
-
-      let rk = RANKS[0];
-      for (const r of RANKS) if (st.aura >= r.min) rk = r;
-      document.getElementById('rankName').innerText = rk.n;
-      document.getElementById('pNext').innerText = 'NEXT: ' + rk.max.toLocaleString('ru-RU');
-      const pct = Math.max(0, Math.min(100, ((st.aura - rk.min) / (rk.max - rk.min)) * 100));
-      document.getElementById('pFill').style.width = pct + '%';
-      document.getElementById('pPct').innerText = pct.toFixed(1) + '%';
-
-      // Зимний вызов на выбор
-      const chArea = document.getElementById('challengeArea');
-      if (!st.chosenChallengeId) {
-        chArea.innerHTML = `<div class="choice-grid">` + WINTER_CHOICES.map(c => `
-          <button class="choice-btn" onclick="pickChallenge('${c.id}')">
-            <div><div class="it-t">[${c.stat}] ${c.t}</div></div>
-            <span class="pts">+${Math.round((c.p * m)/1000)}K</span>
-          </button>
-        `).join('') + `</div>`;
-      } else {
-        const ch = WINTER_CHOICES.find(x => x.id === st.chosenChallengeId) || WINTER_CHOICES[0];
-        const pts = Math.floor(ch.p * m);
-        chArea.innerHTML = `
-          <div class="item ${st.challengeDone ? 'done' : ''}" onclick="togChallenge()">
-            <div class="it-main">
-              <div class="it-t">${st.challengeDone ? '◼' : '◻'} [${ch.stat}] ${ch.t}</div>
-              <div class="it-d">Выбранный вызов на сегодня</div>
-            </div>
-            <div class="pts">+${Math.round(pts/1000)}K</div>
-          </div>`;
-      }
-
-      const ds = st.dailySpec, dsPts = Math.floor(ds.p * m);
-      document.getElementById('dailySpecBox').innerHTML = `
-        <div class="item daily-spec ${ds.done ? 'done' : ''}" onclick="togSpec()">
-          <div class="it-main">
-            <div class="it-t">${ds.done ? '◼' : '⚡'} [${ds.stat}] ${ds.t}</div>
-            <div class="it-d">${ds.d}</div>
-          </div>
-          <div class="pts">+${Math.round(dsPts/1000)}K</div>
-        </div>`;
-
-      const ql = document.getElementById('qList'); ql.innerHTML = '';
-      st.quests.forEach((q, i) => {
-        const pts = Math.floor(q.p * m);
-        const d = document.createElement('div');
-        d.className = 'item' + (q.done ? ' done' : '');
-        d.innerHTML = `<div class="it-main" onclick="togQ(${i})"><div class="it-t">${q.done ? '◼' : '◻'} [${q.stat}] ${q.t}</div><div class="it-d">${q.d}</div></div><div style="display:flex;align-items:center"><div class="pts">+${Math.round(pts/1000)}K</div><button class="del" onclick="delQ(${i})">×</button></div>`;
-        ql.appendChild(d);
-      });
-
-      const bl = document.getElementById('bossList'); bl.innerHTML = '';
-      st.bosses.forEach((b, i) => {
-        const bpct = Math.min(100, (b.cur / b.max) * 100);
-        bl.innerHTML += `
-          <div class="boss ${b.done ? 'dead' : ''}">
-            <div class="row">
-              <div class="it-t">${b.done ? '🏆 [ЗАКРЫТО] ' : '❄️ '}${b.t}</div>
-              <button class="del" onclick="delBoss(${i})">×</button>
-            </div>
-            <div class="p-lbl"><span>ПРОГРЕСС: ${b.cur} / ${b.max}</span><span>${bpct.toFixed(0)}%</span></div>
-            <div class="p-bar"><div class="p-fill" style="width:${bpct}%"></div></div>
-            ${!b.done ? `<div class="b-btns">
-              <button class="btn ghost sm" onclick="hitBoss(${i},1)">+1</button>
-              <button class="btn ice sm" onclick="hitBoss(${i},${b.step})">+${b.step}</button>
-              <span style="margin-left:auto;font-size:10px;color:var(--mut)">НАГРАДА: +${Math.round(b.reward/1000)}K</span>
-            </div>` : ''}
-          </div>`;
-      });
-
-      const { STR, CRF, MND } = st.stats;
-      document.getElementById('sSTR').innerText = STR;
-      document.getElementById('sCRF').innerText = CRF;
-      document.getElementById('sMND').innerText = MND;
-      const cl = v => Math.min(100, Math.max(15, v));
-      const r1 = (cl(STR)/100)*78, r2 = (cl(CRF)/100)*78, r3 = (cl(MND)/100)*78;
-      document.getElementById('rPoly').setAttribute('points', `100,${100-r1} ${100+r2*0.866},${100+r2*0.5} ${100-r3*0.866},${100+r3*0.5}`);
-
-      const achs = [
-        { t: "❄️ ПЕРВЫЙ ШАГ", d: "Закрыть первый пункт протокола", ok: st.totalDone >= 1 },
-        { t: "🧊 НЕДЕЛЯ ЛЬДА", d: "Держать серию 7 дней подряд", ok: st.streak >= 7 },
-        { t: "🏊 БАССЕЙН 8/8", d: "Закрыть цель по абонементу", ok: st.bosses.some(b => b.t.includes('БАССЕЙН') && b.done) },
-        { t: "🗣️ УВЕРЕННЫЙ ГОЛОС", d: "Прокачать MND до 30", ok: MND >= 30 }
-      ];
-      const ag = document.getElementById('achGrid'); ag.innerHTML = '';
-      achs.forEach(a => ag.innerHTML += `<div class="ach ${a.ok ? 'open' : ''}"><b>${a.t}</b><span>${a.d}</span></div>`);
-
-      const ml = document.getElementById('mList'); ml.innerHTML = '';
-      st.market.forEach((it, i) => {
-        const d = document.createElement('div');
-        d.className = 'item';
-        d.innerHTML = `<div class="it-main"><div class="it-t">${it.t}</div><div class="it-d">${it.d}</div></div><div style="display:flex;align-items:center"><button class="btn ice" onclick="buy(${i})">${Math.round(it.c/1000)}K</button>${!it.sys ? `<button class="del" onclick="delMkt(${i})">×</button>` : ''}</div>`;
-        ml.appendChild(d);
-      });
-
-      document.getElementById('sleepBed').value = st.sleepBed || '00:15';
-      document.getElementById('sleepWake').value = st.sleepWake || '07:00';
-      renderCalendar();
-      if (doSave) saveState();
-      else document.getElementById('bkArea').value = JSON.stringify(st);
+    function toggleDrawer(id) {
+      playTone('click');
+      document.getElementById(id).classList.toggle('open');
     }
 
-    function renderCalendar() {
-      const now = new Date(), y = now.getFullYear(), m = now.getMonth(), todayD = now.getDate();
-      const months = ['ЯНВАРЬ','ФЕВРАЛЬ','МАРТ','АПРЕЛЬ','МАЙ','ИЮНЬ','ИЮЛЬ','АВГУСТ','СЕНТЯБРЬ','ОКТЯБРЬ','НОЯБРЬ','ДЕКАБРЬ'];
-      document.getElementById('calMonth').innerText = `${months[m]} ${y}`;
-      const firstDay = new Date(y, m, 1).getDay(), offset = firstDay === 0 ? 6 : firstDay - 1;
-      const daysInMonth = new Date(y, m + 1, 0).getDate();
-      const cg = document.getElementById('calGrid'); cg.innerHTML = '';
-      let perfectCount = 0;
-      for (let e = 0; e < offset; e++) cg.innerHTML += `<div class="cal-day empty"></div>`;
-      for (let d = 1; d <= daysInMonth; d++) {
-        const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const val = st.calLog[key] || 0;
-        if (val === 2) perfectCount++;
-        let cls = 'cal-day';
-        if (val === 1) cls += ' part';
-        if (val === 2) cls += ' full';
-        if (val === -1) cls += ' fail';
-        if (d === todayD) cls += ' today';
-        cg.innerHTML += `<div class="${cls}">${d}</div>`;
-      }
-      document.getElementById('calStats').innerText = `ИДЕАЛЬНЫХ ДНЕЙ: ${perfectCount}`;
-    }
-
-    function pickChallenge(id) {
-      st.chosenChallengeId = id;
-      beep('click'); vibrate('light');
-      render();
-    }
-
-    function togChallenge() {
-      const ch = WINTER_CHOICES.find(x => x.id === st.chosenChallengeId);
-      if (!ch) return;
-      const pts = Math.floor(ch.p * mult());
-      if (!st.challengeDone) {
-        st.challengeDone = true; st.aura += pts; st.stats[ch.stat] += 2; st.totalDone += 1;
-        beep('ok'); vibrate('heavy');
-      } else {
-        st.challengeDone = false; st.aura = Math.max(0, st.aura - pts); st.stats[ch.stat] = Math.max(1, st.stats[ch.stat] - 2);
-        beep('click'); vibrate('light');
-      }
-      render();
-    }
-
-    function setEnergy(lvl) {
-      if (st.energy === lvl) return;
-      const firstTime = !st.energy;
-      st.energy = lvl;
-      if (firstTime) st.aura += 40000;
-      beep('click'); vibrate('light');
-      render();
-    }
-
-    function setBuffer(tag) {
-      const idx = st.bufferTags.indexOf(tag);
-      if (idx >= 0) st.bufferTags.splice(idx, 1);
-      else st.bufferTags.push(tag);
-      beep('click'); vibrate('light');
-      render();
-    }
-
-    function clearPenalty() {
-      if (!confirm('Подтверждаешь, что сделал 80 отжиманий и 40 минут без телефона?')) return;
-      st.penalty = false;
-      beep('ok'); vibrate('success');
-      alert('❄️ PENALTY LOCK снят.');
-      render();
-    }
-
-    function togSpec() {
-      const ds = st.dailySpec, pts = Math.floor(ds.p * mult());
-      if (!ds.done) {
-        ds.done = true; st.aura += pts; st.stats[ds.stat] += 2; st.totalDone += 1;
-        beep('ok'); vibrate('heavy');
-      } else {
-        ds.done = false; st.aura = Math.max(0, st.aura - pts); st.stats[ds.stat] = Math.max(1, st.stats[ds.stat] - 2);
-        beep('click'); vibrate('light');
-      }
-      render();
-    }
-
-    function togQ(i) {
-      const q = st.quests[i], pts = Math.floor(q.p * mult());
+    /* TASKS & PROGRESSION */
+    function toggleTask(id) {
+      const q = state.daily.quests.find(x => x.id === id);
+      if (!q) return;
       if (!q.done) {
-        q.done = true; st.aura += pts; st.stats[q.stat] += 2; st.totalDone += 1;
-        beep('ok'); vibrate('heavy');
+        q.done = true;
+        state.identity.xp += q.xp;
+        state.identity.stats[q.stat] += 1;
+        state.identity.economy.shards += Math.round(q.xp / 10);
+        state.history.totalCompleted += 1;
+        playTone('done'); buzz('success');
       } else {
-        q.done = false; st.aura = Math.max(0, st.aura - pts); st.stats[q.stat] = Math.max(1, st.stats[q.stat] - 2);
-        beep('click'); vibrate('light');
+        q.done = false;
+        state.identity.xp = Math.max(0, state.identity.xp - q.xp);
+        state.identity.stats[q.stat] = Math.max(1, state.identity.stats[q.stat] - 1);
+        state.identity.economy.shards = Math.max(0, state.identity.economy.shards - Math.round(q.xp / 10));
+        state.history.totalCompleted = Math.max(0, state.history.totalCompleted - 1);
+        playTone('click'); buzz('light');
       }
-      render();
+      recalcLevel();
+      evaluateAchievements();
+      renderAll();
     }
 
-    function addBoss() {
-      const t = document.getElementById('bTitle').value.trim().toUpperCase();
-      const max = parseInt(document.getElementById('bMax').value);
-      const step = parseInt(document.getElementById('bStep').value) || 1;
-      if (!t || !max || max <= 0) return;
-      st.bosses.push({ id: Date.now(), t, cur: 0, max, step, reward: 1500000, done: false });
-      document.getElementById('bTitle').value = ''; document.getElementById('bMax').value = ''; document.getElementById('bStep').value = '';
-      document.getElementById('bossForm').classList.remove('open');
-      beep('click'); vibrate('light'); render();
+    function createTask() {
+      const title = document.getElementById('inTaskTitle').value.trim();
+      if (!title) return;
+      const vectorId = document.getElementById('inTaskVector').value;
+      const tier = document.getElementById('inTaskTier').value;
+      const stat = document.getElementById('inTaskStat').value;
+      const xp = parseInt(document.getElementById('inTaskXp').value, 10) || 150;
+      state.daily.quests.push({
+        id: 'q_' + Date.now(),
+        vectorId, title, tier, stat, xp, done: false
+      });
+      document.getElementById('inTaskTitle').value = '';
+      document.getElementById('taskDrawer').classList.remove('open');
+      playTone('click');
+      renderAll();
     }
 
-    function hitBoss(i, amt) {
-      const b = st.bosses[i];
-      if (b.done) return;
-      b.cur = Math.min(b.max, b.cur + amt);
-      beep('click'); vibrate('light');
-      if (b.cur >= b.max) {
-        b.done = true; st.aura += b.reward; st.stats.STR += 4; st.stats.MND += 4;
-        beep('ok'); vibrate('success');
-        alert(`🏆 Цель закрыта: ${b.t}! +${(b.reward/1000000).toFixed(1)}M Ауры.`);
+    function toggleExtended() {
+      state.daily.showExtended = !state.daily.showExtended;
+      playTone('click');
+      renderAll(false);
+    }
+
+    /* SLEEP & BUFFER */
+    function recalcSleep() {
+      const bed = document.getElementById('bedInput').value || '00:15';
+      const wake = document.getElementById('wakeInput').value || '07:00';
+      const [bh, bm] = bed.split(':').map(Number);
+      const [wh, wm] = wake.split(':').map(Number);
+      let bMin = bh * 60 + bm;
+      let wMin = wh * 60 + wm;
+      if (wMin <= bMin) wMin += 1440;
+      const hrs = Number(((wMin - bMin) / 60).toFixed(1));
+      state.daily.sleep.bedTime = bed;
+      state.daily.sleep.wakeTime = wake;
+      state.daily.sleep.hours = hrs;
+      document.getElementById('sleepHrsLbl').innerText = hrs + 'ч';
+      saveAll();
+    }
+
+    function confirmSleepWindow() {
+      recalcSleep();
+      if (!state.daily.sleep.confirmed) {
+        state.daily.sleep.confirmed = true;
+        if (state.daily.sleep.hours >= 6.5) {
+          state.identity.xp += 100;
+          state.identity.stats.discipline += 1;
+          recalcLevel();
+          playTone('done'); buzz('success');
+        } else {
+          playTone('click');
+        }
       }
-      render();
-    }
-    function delBoss(i) { beep('click'); st.bosses.splice(i, 1); render(); }
-
-    function addMarket() {
-      const t = document.getElementById('mTitle').value.trim().toUpperCase();
-      const c = parseInt(document.getElementById('mCost').value);
-      if (!t || !c || c <= 0) return;
-      const d = document.getElementById('mDesc').value.trim() || 'Личная награда';
-      st.market.push({ id: Date.now(), t, d, c, sys: false });
-      document.getElementById('mTitle').value = ''; document.getElementById('mDesc').value = ''; document.getElementById('mCost').value = '';
-      document.getElementById('mktForm').classList.remove('open');
-      beep('click'); render();
-    }
-    function delMkt(i) { beep('click'); st.market.splice(i, 1); render(); }
-
-    function buy(i) {
-      const it = st.market[i];
-      if (st.aura < it.c) { alert('Недостаточно Ауры.'); return; }
-      st.aura -= it.c;
-      if (it.id === 201) st.shields += 1;
-      beep('ok'); vibrate('success');
-      alert('АКТИВИРОВАНО: ' + it.t);
-      render();
+      renderAll();
     }
 
-    function toggleForm(id) { beep('click'); document.getElementById(id).classList.toggle('open'); }
-    function addQuest() {
-      const t = document.getElementById('inTitle').value.trim().toUpperCase();
-      if (!t) return;
-      const d = document.getElementById('inDesc').value.trim() || 'Пункт протокола';
-      const stat = document.getElementById('inStat').value;
-      const p = parseInt(document.getElementById('inPts').value);
-      st.quests.push({ id: Date.now(), stat, t, d, p, done: false });
-      document.getElementById('inTitle').value = ''; document.getElementById('inDesc').value = '';
-      document.getElementById('addForm').classList.remove('open');
-      beep('click'); render();
+    function toggleBuffer(key) {
+      state.daily.buffer[key] = !state.daily.buffer[key];
+      playTone('click'); buzz('light');
+      renderAll();
     }
-    function delQ(i) { beep('click'); st.quests.splice(i, 1); render(); }
 
-    function relapse() {
-      if (st.shields > 0) {
-        st.shields -= 1; beep('ok'); vibrate('success');
-        alert('🛡 ЩИТ ЗАМОРОЗКИ сработал — серия и множитель спасены.');
-        render(); return;
+    /* RECOVERY */
+    function acceptReturnQuest() {
+      state.daily.quests.unshift({
+        id: 'ret_' + Date.now(),
+        vectorId: 'character',
+        title: 'Return Quest: 20 минут спокойного фокуса без лишнего шума',
+        tier: 'core',
+        stat: 'discipline',
+        xp: 180,
+        done: false
+      });
+      state.daily.recovery.active = false;
+      playTone('done');
+      renderAll();
+    }
+
+    function dismissRecovery() {
+      state.daily.recovery.active = false;
+      renderAll();
+    }
+
+    /* CAMPAIGNS & VECTORS */
+    function advanceCampaign(id, delta) {
+      const c = state.campaigns.find(x => x.id === id);
+      if (!c || c.completed) return;
+      c.current = Math.min(c.target, c.current + delta);
+      state.identity.xp += 70;
+      state.identity.stats.discipline += 1;
+      if (c.current >= c.target) {
+        c.completed = true;
+        state.identity.xp += c.xpReward;
+        state.identity.economy.relics += 1;
+        state.collection.inventory.push({
+          id: 'inv_' + Date.now(),
+          name: 'Печать кампании: ' + c.title,
+          rarity: 'Rare',
+          source: 'Завершение кампании',
+          obtainedAt: getDateKey()
+        });
+        playTone('done'); buzz('success');
+      } else {
+        playTone('click'); buzz('light');
       }
-      beep('bad'); vibrate('error');
-      document.body.classList.add('red-flash');
-      setTimeout(() => document.body.classList.remove('red-flash'), 400);
-      st.aura = Math.max(0, st.aura - 400000);
-      st.streak = 0;
-      st.calLog[todayKey()] = -1;
-      st.penalty = true;
-      render();
+      recalcLevel();
+      evaluateAchievements();
+      renderAll();
     }
 
-    function copyBk() { const a = document.getElementById('bkArea'); a.select(); navigator.clipboard?.writeText(a.value); alert('Код сейва скопирован.'); }
-    function loadBk() {
-      const v = prompt('Вставь код сохранения:');
+    function createCampaign() {
+      const title = document.getElementById('inCampTitle').value.trim();
+      const target = parseInt(document.getElementById('inCampTarget').value, 10);
+      if (!title || !target || target <= 0) return;
+      const desc = document.getElementById('inCampDesc').value.trim() || 'Долгосрочная кампания развития';
+      const deadline = document.getElementById('inCampDeadline').value || '2026-12-31';
+      state.campaigns.push({
+        id: 'camp_' + Date.now(),
+        vectorId: 'projects',
+        title, desc, deadline,
+        current: 0, target, step: 1, xpReward: 500, completed: false
+      });
+      document.getElementById('inCampTitle').value = '';
+      document.getElementById('inCampDesc').value = '';
+      document.getElementById('inCampTarget').value = '';
+      document.getElementById('campDrawer').classList.remove('open');
+      playTone('click');
+      renderAll();
+    }
+
+    function toggleVector(id) {
+      const v = state.vectors.find(x => x.id === id);
       if (!v) return;
-      try { const p = JSON.parse(v); if (typeof p.aura === 'number') { st = p; render(); alert('Сейв загружен.'); } } catch (e) { alert('Неверный код.'); }
+      v.active = !v.active;
+      playTone('click');
+      renderAll();
     }
 
-    autoSyncDay();
-    updateSleepPlan();
-    render(false);
-    forceCloudLoad(true);
+    function createVector() {
+      const name = document.getElementById('inVecName').value.trim();
+      if (!name) return;
+      state.vectors.push({ id: 'vec_' + Date.now(), name, active: true });
+      document.getElementById('inVecName').value = '';
+      document.getElementById('vecDrawer').classList.remove('open');
+      playTone('click');
+      renderAll();
+    }
+
+    function setTelRange(r, btn) {
+      telRange = r;
+      document.querySelectorAll('#v-campaigns .chip-row .chip').forEach(c => c.classList.remove('on'));
+      btn.classList.add('on');
+      renderTelemetry();
+    }
+
+    /* WORLD, CHARACTERS & AI ENGINE */
+    function claimWorldEvent() {
+      if (!state.world.activeEvent || state.world.activeEvent.claimed) return;
+      state.world.activeEvent.claimed = true;
+      state.identity.economy.shards += 40;
+      playTone('done'); buzz('success');
+      renderAll();
+    }
+
+    function createCharacter() {
+      const name = document.getElementById('inCharName').value.trim();
+      if (!name) return;
+      const role = document.getElementById('inCharRole').value.trim() || 'Участник мира';
+      const trait = document.getElementById('inCharTrait').value.trim() || 'Пользовательский канон';
+      state.world.characters.push({ id: 'ch_' + Date.now(), name, role, trait });
+      document.getElementById('inCharName').value = '';
+      document.getElementById('inCharRole').value = '';
+      document.getElementById('inCharTrait').value = '';
+      document.getElementById('charDrawer').classList.remove('open');
+      playTone('click');
+      renderAll();
+    }
+
+    function aiSuggestTasks() {
+      const activeVecs = state.vectors.filter(v => v.active);
+      const poolCamp = state.campaigns.find(c => c.id === 'camp_pool_8' && !c.completed);
+      const ideas = [
+        { vectorId: 'books', title: 'Прочитать 15 страниц книги без телефона рядом', stat: 'focus', xp: 120 },
+        { vectorId: 'character', title: 'Вечерний чек-ин: записать 1 вывод дня в заметки', stat: 'discipline', xp: 100 },
+        { vectorId: 'social', title: 'Задать 1 открытый вопрос собеседнику без спешки', stat: 'independence', xp: 130 }
+      ];
+      if (poolCamp) {
+        ideas.unshift({ vectorId: 'pool', title: `Бассейн: сеанс ${poolCamp.current + 1} из ${poolCamp.target}`, stat: 'discipline', xp: 190 });
+      }
+      const pick = ideas.find(i => !state.daily.quests.some(q => q.title === i.title)) || ideas[0];
+      state.daily.quests.push({
+        id: 'ai_' + Date.now(),
+        vectorId: activeVecs.some(v => v.id === pick.vectorId) ? pick.vectorId : 'character',
+        title: pick.title,
+        tier: 'extended',
+        stat: pick.stat,
+        xp: pick.xp,
+        done: false
+      });
+      state.daily.showExtended = true;
+      playTone('done');
+      renderAll();
+    }
+
+    function runAiAction(mode) {
+      const out = document.getElementById('aiConsoleOut');
+      const doneToday = state.daily.quests.filter(q => q.done).length;
+      const totalToday = state.daily.quests.length;
+      const pool = state.campaigns.find(c => c.id === 'camp_pool_8');
+      if (mode === 'plan') {
+        out.innerHTML = `<b>Факт:</b> закрыто ${doneToday} из ${totalToday} пунктов дня.<br><b>Рекомендация:</b> сначала закрой Core-контур (2–3 ключевых шага), а резерв оставь на свободное окно перед игровым вечером.`;
+      } else if (mode === 'analyze') {
+        out.innerHTML = `<b>Факт:</b> уровень ${state.identity.level}, всего выполнено ${state.history.totalCompleted} действий. Сон настроен на ${state.daily.sleep.hours}ч.<br><b>Оценка:</b> устойчивый темп без перегруза; при длительности сна ниже 6.5ч приоритет лучше отдавать восстановлению.`;
+      } else {
+        const cur = pool ? pool.current : 0;
+        out.innerHTML = `<b>Факт:</b> прогресс бассейна ${cur}/8 до 16.12.2026.<br><b>Рекомендация:</b> придерживайся ритма Пн/Чт (2 раза в неделю) — это закрывает все 8 посещений ровно в срок без сгорания.`;
+      }
+      playTone('click');
+    }
+
+    /* ACHIEVEMENTS & SNAPSHOT */
+    function evaluateAchievements() {
+      const list = state.collection.achievements;
+      const pool = state.campaigns.find(c => c.id === 'camp_pool_8');
+      if (state.history.totalCompleted >= 1) list[0].unlocked = true;
+      if (pool && pool.current >= 4) list[1].unlocked = true;
+      if (pool && pool.current >= 8) list[2].unlocked = true;
+      if (state.identity.level >= 5) list[3].unlocked = true;
+    }
+
+    function toggleSetting(k) {
+      state.meta.settings[k] = !state.meta.settings[k];
+      playTone('click');
+      renderAll();
+    }
+
+    function copySnapshot() {
+      const box = document.getElementById('snapshotBox');
+      box.select();
+      navigator.clipboard?.writeText(box.value);
+      alert('Сейв скопирован в буфер.');
+    }
+
+    function importSnapshot() {
+      const raw = prompt('Вставь JSON-сейв WINTER ARC:');
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.meta?.schemaVersion === 2) {
+          state = parsed;
+          renderAll();
+          alert('Сейв успешно восстановлен.');
+        } else {
+          alert('Несовместимый формат сейва.');
+        }
+      } catch (e) {
+        alert('Ошибка чтения JSON.');
+      }
+    }
+
+    /* RENDER PIPELINE */
+    function renderTelemetry() {
+      const barsEl = document.getElementById('telBars');
+      const keys = Object.keys(state.history.days).sort();
+      const sliceCount = telRange === 'week' ? 7 : telRange === 'month' ? 14 : Math.max(7, keys.length);
+      const recent = [];
+      for (let i = sliceCount - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const k = getDateKey(d);
+        const rec = state.history.days[k] || { completed: 0, total: 3 };
+        recent.push({ label: k.slice(8), pct: rec.total ? Math.round((rec.completed / rec.total) * 100) : 0 });
+      }
+      const displaySlice = recent.slice(-7);
+      barsEl.innerHTML = displaySlice.map(item => `
+        <div class="tel-col">
+          <div class="tel-fill" style="height:${Math.max(6, item.pct)}%"></div>
+          <span class="tel-lbl">${item.label}</span>
+        </div>
+      `).join('');
+      const avg = Math.round(recent.reduce((s, x) => s + x.pct, 0) / recent.length);
+      document.getElementById('telSummary').innerText = `Выполнено действий: ${state.history.totalCompleted}`;
+      document.getElementById('telConsistency').innerText = `Ритм: ${avg}%`;
+    }
+
+    function renderAll(doSave = true) {
+      document.body.setAttribute('data-theme', state.meta.activeTheme || 'frost-brutal');
+      recordTodayHistory();
+
+      // HUD
+      const arcDays = Math.max(1, daysBetween(state.meta.arcStartDate, getDateKey()) + 1);
+      const poolLeft = Math.max(0, daysBetween(getDateKey(), '2026-12-16'));
+      document.getElementById('hudDay').innerText = arcDays;
+      document.getElementById('hudDeadline').innerText = poolLeft;
+
+      // Recovery
+      const recBanner = document.getElementById('recoveryBanner');
+      if (state.daily.recovery.active) {
+        recBanner.style.display = 'block';
+        document.getElementById('recoveryText').innerText = `Пауза составила ${state.daily.recovery.missedDays} дн. Весь твой уровень, характеристики и кампании сохранены. Начни с одного спокойного шага.`;
+      } else {
+        recBanner.style.display = 'none';
+      }
+
+      // Hero & Stats
+      const needXp = xpForLevel(state.identity.level);
+      let remXp = state.identity.xp;
+      for (let l = 1; l < state.identity.level; l++) remXp -= xpForLevel(l);
+      remXp = Math.max(0, remXp);
+      document.getElementById('heroTitle').innerText = `LVL ${state.identity.level} // ${state.identity.activeTitle}`;
+      document.getElementById('heroLvl').innerText = state.identity.level;
+      document.getElementById('heroXp').innerText = remXp;
+      document.getElementById('heroNextXp').innerText = needXp;
+      document.getElementById('heroBar').style.width = Math.min(100, (remXp / needXp) * 100) + '%';
+
+      document.getElementById('stDisc').innerText = state.identity.stats.discipline;
+      document.getElementById('stFoc').innerText = state.identity.stats.focus;
+      document.getElementById('stInd').innerText = state.identity.stats.independence;
+
+      // Primary Directive
+      const activeCamp = state.campaigns.find(c => !c.completed) || state.campaigns[0];
+      if (activeCamp) {
+        document.getElementById('primaryTitle').innerText = `${activeCamp.title} (${activeCamp.current}/${activeCamp.target})`;
+        document.getElementById('primarySub').innerText = `Дедлайн: ${activeCamp.deadline} · Награда: +${activeCamp.xpReward} XP`;
+      }
+
+      // Vector Select
+      const vecSel = document.getElementById('inTaskVector');
+      vecSel.innerHTML = state.vectors.filter(v => v.active).map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+
+      // Tasks (Core & Extended)
+      const coreTasks = state.daily.quests.filter(q => q.tier === 'core');
+      const extTasks = state.daily.quests.filter(q => q.tier !== 'core');
+      const renderTaskItem = (q) => {
+        const vec = state.vectors.find(v => v.id === q.vectorId);
+        return `
+          <div class="task ${q.done ? 'done' : ''}">
+            <div class="t-check" onclick="toggleTask('${q.id}')">${q.done ? '✓' : ''}</div>
+            <div class="t-body" onclick="toggleTask('${q.id}')">
+              <div class="t-title">${q.title}</div>
+              <div class="t-meta">${vec ? vec.name : 'General'} · +1 ${q.stat.toUpperCase()}</div>
+            </div>
+            <span class="xp-tag">+${q.xp} XP</span>
+          </div>`;
+      };
+      document.getElementById('coreList').innerHTML = coreTasks.map(renderTaskItem).join('');
+      document.getElementById('extCount').innerText = extTasks.length;
+      document.getElementById('extList').innerHTML = extTasks.map(renderTaskItem).join('');
+      document.getElementById('extWrap').style.display = state.daily.showExtended ? 'block' : 'none';
+      document.getElementById('extToggleBtn').innerText = state.daily.showExtended ? 'СКРЫТЬ' : 'ПОКАЗАТЬ';
+
+      // Sleep & Buffer
+      document.getElementById('bedInput').value = state.daily.sleep.bedTime;
+      document.getElementById('wakeInput').value = state.daily.sleep.wakeTime;
+      document.getElementById('sleepHrsLbl').innerText = state.daily.sleep.hours + 'ч';
+      document.getElementById('chipBase').classList.toggle('on', state.daily.buffer.baseClosed);
+      document.getElementById('chipRest').classList.toggle('on', state.daily.buffer.consciousRest);
+      document.getElementById('chipCutoff').classList.toggle('on', state.daily.buffer.cutoffSet);
+
+      // AI Brief
+      const coreLeft = coreTasks.filter(q => !q.done).length;
+      document.getElementById('aiBriefText').innerText = coreLeft > 0
+        ? `В базовом контуре осталось ${coreLeft} шаг(а). Закрой их до вечера, чтобы освободить чистый буфер под отдых.`
+        : `Базовый контур дня закрыт. Можешь добрать 1 шаг из резерва или спокойно зафиксировать вечерний отдых.`;
+
+      // Campaigns
+      document.getElementById('campaignList').innerHTML = state.campaigns.map(c => {
+        const pct = Math.min(100, Math.round((c.current / c.target) * 100));
+        return `
+          <div class="camp ${c.completed ? 'completed' : ''}">
+            <div class="camp-top">
+              <div>
+                <div class="camp-title">${c.completed ? '🏆 ' : ''}${c.title}</div>
+                <div class="camp-sub">${c.desc}</div>
+              </div>
+              <span class="xp-tag">${c.current}/${c.target}</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+            <div class="camp-actions">
+              ${!c.completed ? `<button class="btn primary sm" onclick="advanceCampaign('${c.id}',1)">+1 ЭТАП</button>` : ''}
+              ${!c.completed && c.step > 1 ? `<button class="btn ghost sm" onclick="advanceCampaign('${c.id}',${c.step})">+${c.step}</button>` : ''}
+              <span style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--ink-soft)">ДО ${c.deadline}</span>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Vectors
+      document.getElementById('vectorChips').innerHTML = state.vectors.map(v => `
+        <button class="chip ${v.active ? 'on' : ''}" onclick="toggleVector('${v.id}')">${v.name}</button>
+      `).join('');
+
+      renderTelemetry();
+
+      // World
+      document.getElementById('worldChap').innerText = state.world.chapter;
+      document.getElementById('worldMoodTag').innerText = state.world.mood;
+      document.getElementById('chapTitle').innerText = state.world.title;
+      document.getElementById('chapText').innerText = state.world.text;
+
+      const ev = state.world.activeEvent;
+      if (ev && !ev.claimed) {
+        document.getElementById('eventPanel').style.display = 'block';
+        document.getElementById('evTitle').innerText = ev.title;
+        document.getElementById('evDesc').innerText = ev.desc;
+        document.getElementById('evActions').innerHTML = `<button class="btn primary sm" onclick="claimWorldEvent()">ПРИНЯТЬ СИГНАЛ (+40 SHARDS)</button>`;
+      } else {
+        document.getElementById('eventPanel').style.display = 'none';
+      }
+
+      document.getElementById('charList').innerHTML = state.world.characters.map(ch => `
+        <div class="task">
+          <div class="t-body">
+            <div class="t-title">${ch.name} <span style="font-weight:500;color:var(--ink-soft)">· ${ch.role}</span></div>
+            <div class="t-meta">${ch.trait}</div>
+          </div>
+        </div>`).join('');
+
+      if (!document.getElementById('aiConsoleOut').innerText) {
+        runAiAction('plan');
+      }
+
+      // Identity
+      document.getElementById('idActiveTitle').innerText = state.identity.activeTitle;
+      document.getElementById('idCurrency').innerText = `${state.identity.economy.shards} SHARDS · ${state.identity.economy.relics} RELICS`;
+      document.getElementById('idSummaryLine').innerText = `Уровень ${state.identity.level} · ${state.history.totalCompleted} подтверждённых действий`;
+      document.getElementById('sndChip').innerText = `Звук: ${state.meta.settings.sound ? 'ВКЛ' : 'ВЫКЛ'}`;
+      document.getElementById('hapChip').innerText = `Вибрация: ${state.meta.settings.haptics ? 'ВКЛ' : 'ВЫКЛ'}`;
+
+      document.getElementById('achList').innerHTML = state.collection.achievements.map(a => `
+        <div class="item-card ${a.unlocked ? '' : 'locked'}">
+          <div class="kicker rarity-${a.rarity}">${a.rarity}</div>
+          <div style="font-size:12px;font-weight:800;margin-top:3px">${a.name}</div>
+          <div style="font-size:10.5px;color:var(--ink-soft);margin-top:2px">${a.desc}</div>
+        </div>`).join('');
+
+      document.getElementById('invList').innerHTML = state.collection.inventory.map(it => `
+        <div class="item-card">
+          <div class="kicker rarity-${it.rarity}">${it.rarity}</div>
+          <div style="font-size:12px;font-weight:800;margin-top:3px">${it.name}</div>
+          <div style="font-size:10.5px;color:var(--ink-soft);margin-top:2px">${it.source} · ${it.obtainedAt}</div>
+        </div>`).join('');
+
+      if (doSave) saveAll();
+      else document.getElementById('snapshotBox').value = JSON.stringify(state);
+    }
+
+    recalcLevel();
+    evaluateAchievements();
+    handleDayTransition();
+    renderAll();
+    syncCloud(true);
   </script>
 </body>
 </html>
