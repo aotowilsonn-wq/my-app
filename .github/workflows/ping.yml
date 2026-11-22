@@ -1,0 +1,15 @@
+name: Auto Reminders
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 08:00 по Минску
+    - cron: '30 11 * * *' # 14:30 по Минску
+    - cron: '0 16 * * *'  # 19:00 по Минску
+    - cron: '15 19 * * *' # 22:15 по Минску
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Telegram Reminder
+        run: curl -s https://my-app-iota-virid-17.vercel.app/api/notify
