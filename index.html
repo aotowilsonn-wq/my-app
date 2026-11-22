@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VIPERR OS v3.0</title>
+  <title>VIPERR OS v4.0</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root { --bg:#030304; --s1:#0a0a0d; --s2:#131319; --bd:#1e1e26; --red:#ff002b; --txt:#f4f4f6; --mut:#636370; }
@@ -13,50 +13,64 @@
     .ticker { background:var(--red); color:#000; font-size:10px; font-weight:900; letter-spacing:2px; padding:5px 0; overflow:hidden; white-space:nowrap; }
     .ticker span { display:inline-block; animation:mq 16s linear infinite; }
     @keyframes mq { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-    .wrap { max-width:440px; margin:0 auto; padding:16px; }
+    .wrap { max-width:440px; margin:0 auto; padding:14px 16px; }
     .tab { display:none; } .tab.active { display:block; }
-    .card { background:radial-gradient(circle at top right,#1b0409 0%,var(--s1) 65%); border:1px solid var(--bd); border-radius:18px; padding:18px; margin-bottom:16px; }
-    .meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:6px; }
+    .card { background:radial-gradient(circle at top right,#1b0409 0%,var(--s1) 65%); border:1px solid var(--bd); border-radius:18px; padding:16px; margin-bottom:14px; }
+    .meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:6px; }
     .badge { font-size:10px; font-weight:900; letter-spacing:1.2px; color:var(--red); border:1px solid rgba(255,0,43,.4); padding:4px 9px; border-radius:6px; background:rgba(255,0,43,.08); }
-    .pills { display:flex; gap:6px; font-family:monospace; font-size:11px; font-weight:800; }
-    .pill { background:var(--s2); border:1px solid var(--bd); padding:4px 8px; border-radius:6px; }
-    .aura { font-size:42px; font-weight:900; letter-spacing:-1.5px; background:linear-gradient(135deg,#fff 0%,#8c8c96 50%,#fff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.05; }
+    .pills { display:flex; gap:5px; font-family:monospace; font-size:11px; font-weight:800; }
+    .pill { background:var(--s2); border:1px solid var(--bd); padding:4px 7px; border-radius:6px; }
+    .aura { font-size:40px; font-weight:900; letter-spacing:-1.5px; background:linear-gradient(135deg,#fff 0%,#8c8c96 50%,#fff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.05; }
     .sub { font-size:10px; color:var(--mut); letter-spacing:2px; margin-top:4px; font-weight:700; }
-    .p-lbl { display:flex; justify-content:space-between; font-size:10px; color:var(--mut); font-family:monospace; margin:14px 0 5px; }
+    .p-lbl { display:flex; justify-content:space-between; font-size:10px; color:var(--mut); font-family:monospace; margin:12px 0 5px; }
     .p-bar { height:6px; background:#15151b; border-radius:99px; overflow:hidden; }
     .p-fill { height:100%; background:var(--red); box-shadow:0 0 10px var(--red); width:0%; transition:width .35s; }
-    .box { background:var(--s1); border:1px solid var(--bd); border-radius:15px; padding:14px; margin-bottom:14px; }
+    .drop-btn { width:100%; background:linear-gradient(90deg,#ff002b 0%,#9e001b 100%); color:#fff; border:none; border-radius:13px; padding:13px; font-size:12px; font-weight:900; letter-spacing:1.2px; margin-bottom:14px; cursor:pointer; box-shadow:0 6px 20px rgba(255,0,43,.25); display:flex; justify-content:space-between; align-items:center; }
+    .drop-btn.claimed { background:var(--s1); border:1px solid var(--bd); color:var(--mut); box-shadow:none; }
+    .box { background:var(--s1); border:1px solid var(--bd); border-radius:15px; padding:13px; margin-bottom:14px; }
     .row { display:flex; justify-content:space-between; align-items:center; }
-    .t-opts { display:flex; gap:6px; margin-top:8px; }
+    .t-opts { display:flex; gap:6px; margin-top:7px; }
     .t-opt { background:var(--s2); border:1px solid var(--bd); color:var(--mut); font-size:11px; font-weight:800; padding:4px 9px; border-radius:6px; cursor:pointer; }
     .t-opt.on { border-color:var(--red); color:#fff; }
-    .timer { font-family:monospace; font-size:21px; font-weight:900; margin-right:10px; }
-    .btn { background:#fff; color:#000; border:none; padding:8px 14px; border-radius:8px; font-size:11px; font-weight:900; letter-spacing:1px; cursor:pointer; }
+    .timer { font-family:monospace; font-size:20px; font-weight:900; margin-right:10px; }
+    .btn { background:#fff; color:#000; border:none; padding:8px 13px; border-radius:8px; font-size:11px; font-weight:900; letter-spacing:1px; cursor:pointer; }
     .btn.red { background:var(--red); color:#fff; }
     .btn.ghost { background:var(--s2); color:#fff; border:1px solid var(--bd); }
-    .sec { display:flex; justify-content:space-between; align-items:center; margin:16px 0 10px; }
+    .sec { display:flex; justify-content:space-between; align-items:center; margin:14px 0 9px; }
     .sec h3 { font-size:11px; color:var(--mut); letter-spacing:2px; font-weight:800; }
     .form { display:none; flex-direction:column; gap:8px; background:var(--s2); border:1px solid var(--bd); border-radius:14px; padding:12px; margin-bottom:12px; }
     .form.open { display:flex; }
     .form input,.form select,textarea { background:#060608; border:1px solid #262630; color:#fff; padding:10px; border-radius:8px; font-size:13px; outline:none; width:100%; }
-    .list { display:flex; flex-direction:column; gap:9px; }
-    .item { background:var(--s1); border:1px solid var(--bd); border-radius:13px; padding:13px; display:flex; justify-content:space-between; align-items:center; }
+    .list { display:flex; flex-direction:column; gap:8px; }
+    .item { background:var(--s1); border:1px solid var(--bd); border-radius:13px; padding:12px; display:flex; justify-content:space-between; align-items:center; }
+    .item.daily-spec { border-color:rgba(255,255,255,.22); background:linear-gradient(90deg,rgba(255,255,255,.04) 0%,var(--s1) 100%); }
     .item.done { border-color:rgba(255,0,43,.45); background:linear-gradient(90deg,rgba(255,0,43,.08) 0%,var(--s1) 100%); }
     .item.done .it-t { text-decoration:line-through; color:var(--mut); }
     .it-main { flex:1; cursor:pointer; padding-right:8px; }
     .it-t { font-size:14px; font-weight:800; }
     .it-d { font-size:11px; color:var(--mut); margin-top:3px; }
-    .pts { font-family:monospace; font-size:11px; font-weight:900; color:var(--red); background:rgba(255,0,43,.1); padding:4px 7px; border-radius:6px; }
+    .pts { font-family:monospace; font-size:11px; font-weight:900; color:var(--red); background:rgba(255,0,43,.1); padding:4px 7px; border-radius:6px; white-space:nowrap; }
     .del { background:none; border:none; color:#454552; font-size:18px; padding:2px 6px; cursor:pointer; margin-left:4px; }
-    .oracle { background:var(--s1); border:1px solid var(--bd); border-left:3px solid var(--red); border-radius:12px; padding:13px; margin-top:16px; }
-    .oracle p { font-size:13px; line-height:1.4; color:#d8d8e0; margin-top:6px; }
-    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:16px; }
-    .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; margin-top:12px; }
-    .stat-box { background:var(--s2); border:1px solid var(--bd); border-radius:10px; padding:10px 6px; }
-    .stat-box b { font-size:20px; color:var(--red); display:block; font-family:monospace; }
-    .stat-box span { font-size:10px; color:var(--mut); font-weight:800; letter-spacing:1px; }
-    .heat { display:grid; grid-template-columns:repeat(10,1fr); gap:5px; margin-top:10px; }
-    .cell { aspect-ratio:1; border-radius:4px; background:#14141a; border:1px solid #1f1f27; }
+    .oracle { background:var(--s1); border:1px solid var(--bd); border-left:3px solid var(--red); border-radius:12px; padding:12px; margin-top:14px; }
+    .oracle p { font-size:12.5px; line-height:1.4; color:#d8d8e0; margin-top:5px; }
+    .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; margin-top:10px; }
+    .stat-box { background:var(--s2); border:1px solid var(--bd); border-radius:10px; padding:9px 6px; }
+    .stat-box b { font-size:19px; color:var(--red); display:block; font-family:monospace; }
+    .stat-box span { font-size:9px; color:var(--mut); font-weight:800; letter-spacing:1px; }
+    /* Исправленный календарь с днями недели */
+    .cal-head { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; text-align:center; font-size:10px; font-weight:800; color:var(--mut); margin:10px 0 6px; }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+    .cal-day { aspect-ratio:1; border-radius:7px; background:#121218; border:1px solid #1d1d26; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; font-family:monospace; color:#5a5a68; }
+    .cal-day.empty { background:transparent; border:none; }
+    .cal-day.part { background:#59000f; border-color:#8a0018; color:#fff; }
+    .cal-day.full { background:#ff002b; border-color:#ff4d6d; color:#fff; box-shadow:0 0 8px rgba(255,0,43,.4); }
+    .cal-day.fail { background:#23232c; border-color:#3a3a48; color:#888; text-decoration:line-through; }
+    .cal-day.today { outline:2px solid #fff; outline-offset:-2px; color:#fff; }
+    .ach-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+    .ach { background:var(--s1); border:1px solid var(--bd); border-radius:12px; padding:11px; opacity:.45; }
+    .ach.open { opacity:1; border-color:rgba(255,0,43,.5); background:linear-gradient(135deg,rgba(255,0,43,.09) 0%,var(--s1) 100%); }
+    .ach b { font-size:12px; display:block; margin-bottom:3px; }
+    .ach span { font-size:10.5px; color:var(--mut); display:block; line-height:1.3; }
     .nav { position:fixed; bottom:0; left:0; right:0; background:rgba(8,8,11,.96); border-top:1px solid var(--bd); display:grid; grid-template-columns:repeat(4,1fr); padding:8px 0 18px; backdrop-filter:blur(12px); z-index:99; }
     .nav button { background:none; border:none; color:var(--mut); font-size:10px; font-weight:800; letter-spacing:1px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; }
     .nav button.active { color:var(--red); }
@@ -64,7 +78,7 @@
   </style>
 </head>
 <body>
-  <div class="ticker"><span>NO NPC MOVES // SILENCE IS POWER // ZERO VALIDATION // VIPERR PROTOCOL // HEAVY METAL DISCIPLINE // NO NPC MOVES // SILENCE IS POWER // ZERO VALIDATION //&nbsp;</span></div>
+  <div class="ticker"><span>AUTO-SYNC ACTIVE // ZERO VALIDATION // VIPERR PROTOCOL // NO NPC MOVES // SILENCE IS POWER // AUTO-SYNC ACTIVE // ZERO VALIDATION //&nbsp;</span></div>
 
   <div class="wrap">
     <!-- TAB 1: TERMINAL -->
@@ -79,11 +93,18 @@
           </div>
         </div>
         <div class="aura" id="auraVal">1 000 000</div>
-        <div class="sub">AURA OVERDRIVE BALANCE</div>
+        <div class="sub" id="dateSub">AUTO-SYNC // TODAY</div>
         <div class="p-lbl"><span id="pPct">0.0%</span><span id="pNext">NEXT: 2 500 000</span></div>
         <div class="p-bar"><div class="p-fill" id="pFill"></div></div>
       </div>
 
+      <!-- Ежедневный сундук/дроп -->
+      <button class="drop-btn" id="dropBtn" onclick="claimDrop()">
+        <span>🎁 DAILY SUPPLY DROP (НАЖМИ ЧТОБЫ ЗАБРАТЬ)</span>
+        <span>+LOOT</span>
+      </button>
+
+      <!-- Таймер фокуса -->
       <div class="box row">
         <div>
           <div style="font-size:13px;font-weight:900;letter-spacing:.5px">DEEP ISOLATION</div>
@@ -99,9 +120,14 @@
         </div>
       </div>
 
+      <!-- Автоматический Контракт Дня -->
+      <div class="sec"><h3>⚡ КОНТРАКТ ДНЯ (АВТО-РОТАЦИЯ)</h3></div>
+      <div class="list" id="dailySpecBox" style="margin-bottom:14px"></div>
+
+      <!-- Основные контракты -->
       <div class="sec">
-        <h3>ЕЖЕДНЕВНЫЕ КОНТРАКТЫ</h3>
-        <button class="btn ghost" style="padding:5px 10px" onclick="toggleForm()">+ КОНТРАКТ</button>
+        <h3>ПОСТОЯННЫЙ ПРОТОКОЛ</h3>
+        <button class="btn ghost" style="padding:5px 10px" onclick="toggleForm()">+ СВОЙ</button>
       </div>
 
       <div class="form" id="addForm">
@@ -129,20 +155,17 @@
           <span style="font-size:10px;font-weight:900;color:var(--red);letter-spacing:1.5px">CODEX // ТРУ АДАМ</span>
           <button onclick="newQuote()" style="background:none;border:none;color:var(--red);font-size:10px;font-weight:800;text-decoration:underline;cursor:pointer">ОБНОВИТЬ</button>
         </div>
-        <p id="qText">Твоё молчание стоит дороже, чем чужие оправдания. Закрой контракты.</p>
+        <p id="qText">Сброс задач теперь идёт автоматически в 00:00. Твоя задача — не оставлять пустых клеток.</p>
       </div>
 
-      <div class="grid2">
-        <button class="btn ghost" style="padding:13px" onclick="closeDay()">ЗАКРЫТЬ ДЕНЬ (+СТРИК)</button>
-        <button class="btn" style="background:rgba(255,0,43,.1);border:1px solid rgba(255,0,43,.35);color:var(--red);padding:13px" onclick="relapse()">Я СОРВАЛСЯ (-500K)</button>
-      </div>
+      <button class="btn" style="width:100%;margin-top:14px;background:rgba(255,0,43,.1);border:1px solid rgba(255,0,43,.35);color:var(--red);padding:13px" onclick="relapse()">ЗАФИКСИРОВАТЬ СРЫВ (-500K / ЩИТ)</button>
     </div>
 
-    <!-- TAB 2: STATS & BOSSES -->
+    <!-- TAB 2: STATS & ACHIEVEMENTS -->
     <div id="t-stats" class="tab">
       <div class="card" style="text-align:center">
-        <div class="badge" style="display:inline-block;margin-bottom:10px">АТРИБУТЫ ТИТАНА</div>
-        <svg viewBox="0 0 200 200" width="210" height="210" style="display:block;margin:0 auto">
+        <div class="badge" style="display:inline-block;margin-bottom:8px">АТРИБУТЫ ТИТАНА</div>
+        <svg viewBox="0 0 200 200" width="200" height="200" style="display:block;margin:0 auto">
           <polygon points="100,20 169,140 31,140" fill="none" stroke="#22222b" stroke-width="1"/>
           <polygon points="100,50 143,125 57,125" fill="none" stroke="#1a1a22" stroke-width="1"/>
           <polygon id="rPoly" points="100,80 117,110 83,110" fill="rgba(255,0,43,0.28)" stroke="#ff002b" stroke-width="2"/>
@@ -156,33 +179,37 @@
           <div class="stat-box"><b id="sMND">10</b><span>MINDSET</span></div>
         </div>
       </div>
-      <div class="sec"><h3>НЕДЕЛЬНЫЕ БОСС-КОНТРАКТЫ</h3></div>
-      <div class="list" id="bList"></div>
+      <div class="sec"><h3>ТРОФЕИ И ДОСТИЖЕНИЯ</h3></div>
+      <div class="ach-grid" id="achGrid"></div>
     </div>
 
     <!-- TAB 3: BLACK MARKET -->
     <div id="t-mkt" class="tab">
       <div class="card">
         <div class="badge" style="display:inline-block;margin-bottom:6px">BLACK MARKET</div>
-        <div style="font-size:12px;color:var(--mut)">Трать нафармленную Ауру на легальные награды и защиту стрика.</div>
+        <div style="font-size:12px;color:var(--mut)">Покупай защиту стрика и легальные награды за заработанную Ауру.</div>
       </div>
       <div class="list" id="mList"></div>
     </div>
 
-    <!-- TAB 4: ARCHIVE -->
+    <!-- TAB 4: CALENDAR & BACKUP -->
     <div id="t-arch" class="tab">
       <div class="card">
-        <div class="row" style="margin-bottom:8px">
-          <div class="badge">КАЛЕНДАРЬ ДИСЦИПЛИНЫ (30Д)</div>
-          <span style="font-size:10px;color:var(--mut)">КРАСНЫЙ = ИДЕАЛ</span>
+        <div class="row">
+          <div class="badge" id="calMonth">КАЛЕНДАРЬ</div>
+          <span style="font-size:10px;color:var(--mut)" id="calStats">ИДЕАЛЬНЫХ ДНЕЙ: 0</span>
         </div>
-        <div class="heat" id="hGrid"></div>
+        <div class="cal-head"><div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div></div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div style="display:flex;gap:12px;margin-top:12px;font-size:10px;color:var(--mut);justify-content:center">
+          <span>🟥 100% дня</span><span>🟫 Частично</span><span>⬜ Сегодня</span>
+        </div>
       </div>
       <div class="box">
         <div style="font-size:11px;font-weight:800;color:var(--mut);letter-spacing:1.5px;margin-bottom:8px">БЭКАП ПРОГРЕССА (СЕЙВ)</div>
         <textarea id="bkArea" rows="3" readonly></textarea>
-        <div class="grid2" style="margin-top:10px">
-          <button class="btn ghost" onclick="copyBk()">КОПИРОВАТЬ СЕЙВ</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <button class="btn ghost" onclick="copyBk()">КОПИРОВАТЬ</button>
           <button class="btn red" onclick="loadBk()">ВОССТАНОВИТЬ</button>
         </div>
       </div>
@@ -193,7 +220,7 @@
     <button class="active" onclick="go('t-term',this)"><i>⚡</i>TERMINAL</button>
     <button onclick="go('t-stats',this)"><i>🕸</i>STATS</button>
     <button onclick="go('t-mkt',this)"><i>🏴</i>MARKET</button>
-    <button onclick="go('t-arch',this)"><i>📅</i>ARCHIVE</button>
+    <button onclick="go('t-arch',this)"><i>📅</i>CALENDAR</button>
   </nav>
 
   <script>
@@ -231,6 +258,15 @@
       { min:70000000, max:150000000, n:"LVL ∞ // VIPERR OVERLORD" }
     ];
 
+    const DAILY_POOL = [
+      { stat:'STR', t:"ЛЕДЯНОЙ КОНТРАСТ", d:"Закончить душ 60 секундами холодной воды", p:350000 },
+      { stat:'CRF', t:"ЧАС В ТИШИНЕ", d:"60 мин работы/учёбы без музыки и уведомлений", p:400000 },
+      { stat:'STR', t:"СОТКА ЗА ДЕНЬ", d:"100 приседаний или 50 отжиманий подходами за день", p:350000 },
+      { stat:'MND', t:"ЦИФРОВОЙ ДЕТОКС", d:"Ни одного захода в TikTok / Shorts до вечера", p:450000 },
+      { stat:'CRF', t:"ЧИСТЫЙ СТОЛ", d:"Навести идеальный порядок на столе и в файлах ПК", p:300000 },
+      { stat:'MND', t:"ЖЕЛЕЗНЫЙ СТОИК", d:"Ни одной жалобы и ноль негатива за весь день", p:350000 }
+    ];
+
     const QUOTES = [
       "Ты не бесплатный Wi-Fi на вокзале. Отзываем лицензию на доступ к твоей голове.",
       "Слабость — это когда эмоция садится за руль, а ты отдаёшь ей ключи и документы.",
@@ -239,28 +275,67 @@
       "Не ищи скрытый смысл там, где человек просто слился. Уважай своё время."
     ];
 
+    function todayKey() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
     const DEF = {
-      aura: 1000000, streak: 1, shields: 0,
+      aura: 1000000, streak: 1, shields: 0, totalDone: 0,
+      lastDate: todayKey(), dropClaimed: false,
       stats: { STR: 14, CRF: 12, MND: 16 },
-      hist: Array(30).fill(0),
+      calLog: {}, // { '2026-11-22': 2 } -> 1: part, 2: full, -1: fail
+      dailySpec: { ...DAILY_POOL[0], done: false },
       quests: [
         { id:1, stat:'STR', t:"ЖЕЛЕЗНЫЙ КАРКАС", d:"Турник / отжимания до жжения (10+ мин)", p:200000, done:false },
         { id:2, stat:'CRF', t:"HEAVY CRAFT", d:"30 мин в FL Studio, коде или учёбе без телефона", p:250000, done:false },
         { id:3, stat:'MND', t:"ТИШИНА В ЭФИРЕ", d:"Ноль заходов в старые чаты и ноль оправданий", p:250000, done:false },
         { id:4, stat:'STR', t:"РЕЖИМ ХИЩНИКА", d:"Отбой до 00:30, подъём без залипания в экран", p:150000, done:false }
       ],
-      bosses: [
-        { id:101, t:"НЕДЕЛЯ ПОЛНОЙ ТИШИНЫ", d:"7 дней без мониторинга чужих соцсетей", p:2000000, done:false },
-        { id:102, t:"СТАЛЬНАЯ СПИНА", d:"300 подтягиваний суммарно за неделю", p:2500000, done:false }
-      ],
       market: [
-        { id:201, t:"🛡 ЩИТ ЗАМОРОЗКИ СТРИКА", d:"Автоматически спасёт стрик и ауру при одном срыве", c:1200000 },
+        { id:201, t:"🛡 ЩИТ ЗАМОРОЗКИ СТРИКА", d:"Автоматически спасёт стрик при пропуске дня или срыве", c:1200000 },
         { id:202, t:"🎮 2 ЧАСА КАТКИ В CS2", d:"Легальный чит-тайм без угрызений совести", c:750000 },
-        { id:203, t:"🍔 ЧИТ-МИЛ / ЭНЕРГЕТИК", d:"Награда за закрытую серию контрактов", c:500000 }
+        { id:203, t:"🍔 ЧИТ-МИЛ / ЭНЕРГЕТИК", d:"Награда за закрытую серию контрактов", c:500000 },
+        { id:204, t:"⚡ БУСТ СТАТОВ (+5 ALL)", d:"Мгновенная прокачка всех трёх атрибутов на +5", c:2000000 }
       ]
     };
 
-    let st = JSON.parse(localStorage.getItem('viperr_v3_clean')) || DEF;
+    let st = JSON.parse(localStorage.getItem('viperr_v4')) || DEF;
+
+    // Автоматическая проверка смены суток при каждом открытии
+    function autoSyncDay() {
+      const tk = todayKey();
+      if (st.lastDate !== tk) {
+        const yStatus = st.calLog[st.lastDate] || 0;
+        if (yStatus >= 1) {
+          st.streak += 1;
+        } else {
+          if (st.shields > 0) {
+            st.shields -= 1;
+          } else {
+            st.streak = 0;
+            st.calLog[st.lastDate] = -1;
+          }
+        }
+        // Сброс дневных задач и генерация нового Контракта Дня
+        st.quests.forEach(q => q.done = false);
+        const rnd = DAILY_POOL[Math.floor(Math.random() * DAILY_POOL.length)];
+        st.dailySpec = { ...rnd, done: false };
+        st.dropClaimed = false;
+        st.lastDate = tk;
+      }
+      updateTodayCal();
+    }
+
+    function updateTodayCal() {
+      const tk = todayKey();
+      if (st.calLog[tk] === -1) return;
+      const doneCnt = st.quests.filter(q => q.done).length + (st.dailySpec.done ? 1 : 0);
+      const totalCnt = st.quests.length + 1;
+      if (doneCnt === 0) st.calLog[tk] = 0;
+      else if (doneCnt >= totalCnt) st.calLog[tk] = 2;
+      else st.calLog[tk] = 1;
+    }
 
     function mult() {
       if (st.streak >= 30) return 2.0;
@@ -280,11 +355,13 @@
     }
 
     function render() {
+      updateTodayCal();
       const m = mult();
       document.getElementById('auraVal').innerText = Math.floor(st.aura).toLocaleString('ru-RU');
       document.getElementById('strVal').innerText = st.streak + 'D';
       document.getElementById('multVal').innerText = 'x' + m.toFixed(1);
       document.getElementById('shCnt').innerText = st.shields;
+      document.getElementById('dateSub').innerText = 'AUTO-SYNC // ' + st.lastDate;
 
       let rk = RANKS[0];
       for (let r of RANKS) if (st.aura >= r.min) rk = r;
@@ -294,7 +371,30 @@
       document.getElementById('pFill').style.width = pct + '%';
       document.getElementById('pPct').innerText = pct.toFixed(1) + '%';
 
-      // Quests
+      // Daily Drop button
+      const db = document.getElementById('dropBtn');
+      if (st.dropClaimed) {
+        db.className = 'drop-btn claimed';
+        db.innerHTML = '<span>✓ ДНЕВНОЙ ДРОП ЗАБРАН (ЖДИ 00:00)</span><span>CLAIMED</span>';
+      } else {
+        db.className = 'drop-btn';
+        db.innerHTML = '<span>🎁 DAILY SUPPLY DROP (ЗАБРАТЬ НАГРАДУ)</span><span>+LOOT</span>';
+      }
+
+      // Daily Special Quest
+      const ds = st.dailySpec;
+      const dsPts = Math.floor(ds.p * m);
+      document.getElementById('dailySpecBox').innerHTML = `
+        <div class="item daily-spec ${ds.done ? 'done' : ''}" onclick="togSpec()">
+          <div class="it-main">
+            <div class="it-t">${ds.done?'◼':'⚡'} [${ds.stat}] ${ds.t}</div>
+            <div class="it-d">${ds.d}</div>
+          </div>
+          <div class="pts">+${Math.round(dsPts/1000)}K</div>
+        </div>
+      `;
+
+      // Permanent Quests
       const ql = document.getElementById('qList'); ql.innerHTML = '';
       st.quests.forEach((q, i) => {
         const pts = Math.floor(q.p * m);
@@ -313,14 +413,18 @@
       const r1 = (cl(STR)/100)*78, r2 = (cl(CRF)/100)*78, r3 = (cl(MND)/100)*78;
       document.getElementById('rPoly').setAttribute('points', `100,${100-r1} ${100+r2*.866},${100+r2*.5} ${100-r3*.866},${100+r3*.5}`);
 
-      // Bosses
-      const bl = document.getElementById('bList'); bl.innerHTML = '';
-      st.bosses.forEach((b, i) => {
-        const d = document.createElement('div');
-        d.className = 'item' + (b.done ? ' done' : '');
-        d.onclick = () => togB(i);
-        d.innerHTML = `<div class="it-main"><div class="it-t">${b.done?'🏆':'💀'} ${b.t}</div><div class="it-d">${b.d}</div></div><div class="pts">+${Math.round(b.p/1000)}K</div>`;
-        bl.appendChild(d);
+      // Achievements
+      const achs = [
+        { t:"🩸 ПЕРВАЯ КРОВЬ", d:"Закрыть первый контракт", ok: st.totalDone >= 1 },
+        { t:"🔥 НЕДЕЛЯ СТАЛИ", d:"Держать стрик 7 дней подряд", ok: st.streak >= 7 },
+        { t:"💎 МИЛЛИОНЕР", d:"Накопить 5 000 000 Ауры", ok: st.aura >= 5000000 },
+        { t:"🦍 ТИТАН ТЕЛА", d:"Прокачать STR до 40", ok: STR >= 40 },
+        { t:"🎧 АРХИТЕКТОР", d:"Прокачать CRF до 40", ok: CRF >= 40 },
+        { t:"👑 VIPERR GOD", d:"Достичь 25 000 000 Ауры", ok: st.aura >= 25000000 }
+      ];
+      const ag = document.getElementById('achGrid'); ag.innerHTML = '';
+      achs.forEach(a => {
+        ag.innerHTML += `<div class="ach ${a.ok?'open':''}"><b>${a.t}</b><span>${a.d}</span></div>`;
       });
 
       // Market
@@ -332,26 +436,78 @@
         ml.appendChild(d);
       });
 
-      // Heatmap
-      const hg = document.getElementById('hGrid'); hg.innerHTML = '';
-      st.hist.forEach(v => {
-        const c = document.createElement('div');
-        c.className = 'cell';
-        if (v === 1) c.style.background = '#5e0010';
-        if (v === 2) c.style.background = '#ff002b';
-        if (v === -1) c.style.background = '#2c2c38';
-        hg.appendChild(c);
-      });
+      // Real Calendar Grid
+      renderCalendar();
 
       const raw = JSON.stringify(st);
-      localStorage.setItem('viperr_v3_clean', raw);
+      localStorage.setItem('viperr_v4', raw);
       document.getElementById('bkArea').value = raw;
+    }
+
+    function renderCalendar() {
+      const now = new Date();
+      const y = now.getFullYear(), m = now.getMonth(), todayD = now.getDate();
+      const months = ['ЯНВАРЬ','ФЕВРАЛЬ','МАРТ','АПРЕЛЬ','МАЙ','ИЮНЬ','ИЮЛЬ','АВГУСТ','СЕНТЯБРЬ','ОКТЯБРЬ','НОЯБРЬ','ДЕКАБРЬ'];
+      document.getElementById('calMonth').innerText = `${months[m]} ${y}`;
+
+      const firstDay = new Date(y, m, 1).getDay(); // 0=Sun
+      const offset = firstDay === 0 ? 6 : firstDay - 1;
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+      const cg = document.getElementById('calGrid'); cg.innerHTML = '';
+      let perfectCount = 0;
+
+      for (let e = 0; e < offset; e++) {
+        cg.innerHTML += `<div class="cal-day empty"></div>`;
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const val = st.calLog[key] || 0;
+        if (val === 2) perfectCount++;
+        let cls = 'cal-day';
+        if (val === 1) cls += ' part';
+        if (val === 2) cls += ' full';
+        if (val === -1) cls += ' fail';
+        if (d === todayD) cls += ' today';
+        cg.innerHTML += `<div class="${cls}">${d}</div>`;
+      }
+      document.getElementById('calStats').innerText = `ИДЕАЛЬНЫХ ДНЕЙ: ${perfectCount}`;
+    }
+
+    function claimDrop() {
+      if (st.dropClaimed) return;
+      st.dropClaimed = true;
+      const roll = Math.random();
+      beep('ok');
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      if (roll < 0.2) {
+        st.shields += 1;
+        alert('🎁 ДРОП: +1 ЩИТ ЗАМОРОЗКИ СТРИКА!');
+      } else if (roll < 0.6) {
+        st.aura += 250000;
+        alert('🎁 ДРОП: +250 000 АУРЫ В КОПИЛКУ!');
+      } else {
+        st.aura += 150000; st.stats.STR += 2; st.stats.CRF += 2; st.stats.MND += 2;
+        alert('🎁 ДРОП: +150 000 АУРЫ И +2 КО ВСЕМ СТАТАМ!');
+      }
+      render();
+    }
+
+    function togSpec() {
+      const ds = st.dailySpec, pts = Math.floor(ds.p * mult());
+      if (!ds.done) {
+        ds.done = true; st.aura += pts; st.stats[ds.stat] += 3; st.totalDone += 1; beep('ok');
+        if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+      } else {
+        ds.done = false; st.aura = Math.max(0, st.aura - pts); st.stats[ds.stat] = Math.max(1, st.stats[ds.stat] - 3); beep('click');
+      }
+      render();
     }
 
     function togQ(i) {
       const q = st.quests[i], pts = Math.floor(q.p * mult());
       if (!q.done) {
-        q.done = true; st.aura += pts; st.stats[q.stat] += 2; beep('ok');
+        q.done = true; st.aura += pts; st.stats[q.stat] += 2; st.totalDone += 1; beep('ok');
         if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
         newQuote();
       } else {
@@ -360,20 +516,12 @@
       render();
     }
 
-    function togB(i) {
-      const b = st.bosses[i];
-      if (!b.done) {
-        b.done = true; st.aura += b.p; beep('ok');
-        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        render();
-      }
-    }
-
     function buy(i) {
       const it = st.market[i];
-      if (st.aura < it.c) { alert('Недостаточно Ауры. Закрой контракты.'); return; }
+      if (st.aura < it.c) { alert('Недостаточно Ауры.'); return; }
       st.aura -= it.c;
       if (it.id === 201) st.shields += 1;
+      if (it.id === 204) { st.stats.STR += 5; st.stats.CRF += 5; st.stats.MND += 5; }
       beep('ok');
       alert('АКТИВИРОВАНО: ' + it.t);
       render();
@@ -393,27 +541,17 @@
     }
     function delQ(i) { beep('click'); st.quests.splice(i, 1); render(); }
 
-    function closeDay() {
-      const done = st.quests.filter(q => q.done).length;
-      if (!done) { alert('Закрой хотя бы один контракт перед завершением дня.'); return; }
-      st.streak += 1;
-      st.hist.shift(); st.hist.push(done === st.quests.length ? 2 : 1);
-      if (done === st.quests.length) st.aura += 300000;
-      st.quests.forEach(q => q.done = false);
-      beep('ok'); render();
-    }
-
     function relapse() {
       if (st.shields > 0) {
         st.shields -= 1; beep('ok');
-        alert('ЩИТ ЗАМОРОЗКИ СРАБОТАЛ! Стрик и Аура спасены.');
+        alert('🛡 ЩИТ ЗАМОРОЗКИ СРАБОТАЛ! Стрик и Аура спасены.');
         render(); return;
       }
       beep('bad');
       document.body.classList.add('red-flash'); setTimeout(() => document.body.classList.remove('red-flash'), 400);
       st.aura = Math.max(0, st.aura - 500000); st.streak = 0;
-      st.hist.shift(); st.hist.push(-1);
-      document.getElementById('qText').innerText = 'СРЫВ ЗАФИКСИРОВАН. -500K АУРЫ. Стрик обнулён. Вставай.';
+      st.calLog[todayKey()] = -1;
+      document.getElementById('qText').innerText = 'СРЫВ ЗАФИКСИРОВАН. -500K АУРЫ. Стрик обнулён.';
       render();
     }
 
@@ -460,6 +598,7 @@
       try { const p = JSON.parse(v); if (typeof p.aura === 'number') { st = p; render(); alert('Сейв загружен.'); } } catch(e) { alert('Неверный код.'); }
     }
 
+    autoSyncDay();
     render();
   </script>
 </body>
