@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>WINTER ARC — Личный альманах</title>
+  <title>WINTER ARC — Персональная система развития</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       --paper: #f6f4ef;
       --paper-2: #ede9e0;
-      --paper-3: #e4ded2;
+      --paper-3: #e3ddd0;
       --ink: #141413;
       --ink-2: #5c5a55;
       --hairline: rgba(20, 20, 19, 0.14);
@@ -26,7 +26,7 @@
     body[data-issue="frost-folio"] {
       --paper: #eff3f5;
       --paper-2: #e3e9ed;
-      --paper-3: #d7e0e6;
+      --paper-3: #d6e0e6;
       --ink: #12181d;
       --ink-2: #52606d;
       --hairline: rgba(18, 24, 29, 0.14);
@@ -40,7 +40,7 @@
     body[data-issue="nocturne"] {
       --paper: #171614;
       --paper-2: #211f1c;
-      --paper-3: #2a2723;
+      --paper-3: #2b2824;
       --ink: #f3efe6;
       --ink-2: #a39d92;
       --hairline: rgba(243, 239, 230, 0.14);
@@ -58,12 +58,12 @@
       color: var(--ink);
       font-family: var(--sans);
       min-height: 100vh;
-      padding-bottom: 78px;
+      padding-bottom: 82px;
       transition: background 0.25s ease, color 0.25s ease;
     }
 
     .masthead {
-      max-width: 860px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 12px 16px;
       border-bottom: 1px solid var(--hairline-strong);
@@ -71,11 +71,17 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
-    .masthead-title {
-      font-family: var(--serif);
-      font-size: 20px;
-      letter-spacing: -0.02em;
+    .masthead-left { display: flex; align-items: baseline; gap: 10px; }
+    .masthead-title { font-family: var(--serif); font-size: 20px; letter-spacing: -0.02em; }
+    .equipped-badge {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 2px 7px;
+      border: 1px solid rgba(184, 74, 39, 0.28);
     }
     .masthead-meta {
       font-family: var(--mono);
@@ -95,9 +101,9 @@
     }
 
     .container {
-      max-width: 860px;
+      max-width: 920px;
       margin: 0 auto;
-      padding: 14px 16px 20px;
+      padding: 14px 16px 24px;
     }
     .section { display: none; }
     .section.active { display: block; animation: rise 0.2s ease; }
@@ -114,15 +120,24 @@
       color: var(--accent);
       font-weight: 700;
     }
-    .serif-head {
-      font-family: var(--serif);
-      font-weight: 400;
-      letter-spacing: -0.02em;
-    }
+    .serif-head { font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em; }
     .muted { color: var(--ink-2); }
     .mono { font-family: var(--mono); }
 
-    /* Компактная верхняя полоса главной */
+    .toast-banner {
+      display: none;
+      margin-bottom: 12px;
+      padding: 10px 13px;
+      background: var(--paper-2);
+      border: 1px solid var(--hairline-strong);
+      border-left: 3px solid var(--pine);
+      font-size: 12.5px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast-banner.show { display: flex; }
+
     .top-digest {
       display: grid;
       grid-template-columns: 1fr;
@@ -130,25 +145,12 @@
       padding-bottom: 14px;
       border-bottom: 1px solid var(--hairline-strong);
     }
-    @media (min-width: 700px) {
-      .top-digest {
-        grid-template-columns: 1.25fr 0.95fr;
-        gap: 20px;
-        align-items: stretch;
-      }
+    @media (min-width: 720px) {
+      .top-digest { grid-template-columns: 1.25fr 0.95fr; gap: 22px; }
     }
 
-    .issue-hero {
-      font-size: clamp(25px, 5.5vw, 34px);
-      line-height: 1.1;
-      margin-top: 4px;
-    }
-    .issue-sub {
-      font-size: 13px;
-      line-height: 1.45;
-      color: var(--ink-2);
-      margin-top: 6px;
-    }
+    .issue-hero { font-size: clamp(24px, 5vw, 34px); line-height: 1.12; margin-top: 4px; }
+    .issue-sub { font-size: 13px; line-height: 1.45; color: var(--ink-2); margin-top: 6px; }
 
     .folio-box {
       background: var(--paper-2);
@@ -159,27 +161,10 @@
       justify-content: space-between;
       gap: 10px;
     }
-    .folio-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-    .folio-level {
-      font-family: var(--serif);
-      font-size: 26px;
-      line-height: 1;
-    }
-    .xp-track {
-      height: 3px;
-      background: var(--hairline);
-      margin-top: 6px;
-    }
-    .xp-track > i {
-      display: block;
-      height: 100%;
-      background: var(--accent);
-      transition: width 0.25s ease;
-    }
+    .folio-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .folio-level { font-family: var(--serif); font-size: 26px; line-height: 1; }
+    .xp-track { height: 3px; background: var(--hairline); margin-top: 6px; }
+    .xp-track > i { display: block; height: 100%; background: var(--accent); transition: width 0.25s ease; }
 
     .mini-pillars {
       display: grid;
@@ -188,19 +173,9 @@
       padding-top: 8px;
       border-top: 1px solid var(--hairline);
     }
-    .mini-pillar b {
-      font-family: var(--serif);
-      font-size: 17px;
-      font-weight: 400;
-      display: block;
-      line-height: 1.1;
-    }
-    .mini-pillar span {
-      font-size: 11px;
-      color: var(--ink-2);
-    }
+    .mini-pillar b { font-family: var(--serif); font-size: 17px; font-weight: 400; display: block; line-height: 1.1; }
+    .mini-pillar span { font-size: 11px; color: var(--ink-2); }
 
-    /* Главная цель в центре внимания */
     .flagship-goal {
       margin-top: 14px;
       padding: 14px 16px;
@@ -208,48 +183,20 @@
       border: 1px solid var(--hairline-strong);
       border-left: 4px solid var(--accent);
     }
-    .flagship-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .flagship-title {
-      font-family: var(--serif);
-      font-size: 20px;
-      line-height: 1.2;
-      margin-top: 3px;
-    }
-    .flagship-metric {
-      font-family: var(--serif);
-      font-size: 24px;
-      color: var(--accent);
-      white-space: nowrap;
-    }
-    .progress-bar {
-      height: 5px;
-      background: var(--hairline);
-      margin-top: 10px;
-    }
-    .progress-bar > i {
-      display: block;
-      height: 100%;
-      background: var(--pine);
-      transition: width 0.25s ease;
-    }
+    .flagship-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .flagship-title { font-family: var(--serif); font-size: 20px; line-height: 1.2; margin-top: 3px; }
+    .flagship-metric { font-family: var(--serif); font-size: 24px; color: var(--accent); white-space: nowrap; }
+    .progress-bar { height: 5px; background: var(--hairline); margin-top: 10px; }
+    .progress-bar > i { display: block; height: 100%; background: var(--pine); transition: width 0.25s ease; }
 
-    /* Сетка разделов */
     .content-split {
       display: grid;
       grid-template-columns: 1fr;
       gap: 18px;
       margin-top: 16px;
     }
-    @media (min-width: 700px) {
-      .content-split {
-        grid-template-columns: 1.3fr 0.85fr;
-        gap: 24px;
-      }
+    @media (min-width: 720px) {
+      .content-split { grid-template-columns: 1.28fr 0.92fr; gap: 24px; }
     }
 
     .sec-bar {
@@ -259,24 +206,19 @@
       padding-bottom: 8px;
       border-bottom: 1px solid var(--hairline-strong);
       margin-bottom: 8px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
-    .sec-title {
-      font-family: var(--serif);
-      font-size: 19px;
-      font-weight: 400;
-    }
+    .sec-title { font-family: var(--serif); font-size: 19px; font-weight: 400; }
 
     .task-line {
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      padding: 9px 0;
+      padding: 10px 0;
       border-bottom: 1px solid var(--hairline);
     }
-    .task-line.done .task-label {
-      text-decoration: line-through;
-      color: var(--ink-2);
-    }
+    .task-line.done .task-label { text-decoration: line-through; color: var(--ink-2); }
     .tick-btn {
       width: 18px;
       height: 18px;
@@ -292,19 +234,12 @@
       align-items: center;
       justify-content: center;
     }
-    .task-line.done .tick-btn {
-      background: var(--pine);
-      border-color: var(--pine);
-    }
+    .task-line.done .tick-btn { background: var(--pine); border-color: var(--pine); }
     .task-info { flex: 1; min-width: 0; cursor: pointer; }
     .task-label { font-size: 13.5px; font-weight: 600; line-height: 1.35; }
-    .task-sub { font-size: 11.5px; color: var(--ink-2); margin-top: 1px; }
+    .task-sub { font-size: 11.5px; color: var(--ink-2); margin-top: 2px; }
     .task-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .pts {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--accent);
-    }
+    .pts { font-family: var(--mono); font-size: 11px; color: var(--accent); }
 
     .btn {
       background: var(--ink);
@@ -315,16 +250,9 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .btn.terracotta {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-    .btn.outline {
-      background: transparent;
-      color: var(--ink);
-      border-color: var(--hairline-strong);
-    }
+    .btn.terracotta { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.pine { background: var(--pine); border-color: var(--pine); color: #fff; }
+    .btn.outline { background: transparent; color: var(--ink); border-color: var(--hairline-strong); }
     .btn.sm { padding: 4px 8px; font-size: 11px; }
     .del-x {
       background: none;
@@ -359,15 +287,10 @@
     .story-item {
       padding: 9px 0;
       border-bottom: 1px solid var(--hairline);
-      font-size: 13px;
+      font-size: 12.5px;
       line-height: 1.42;
     }
-    .story-date {
-      font-family: var(--mono);
-      font-size: 10.5px;
-      color: var(--accent);
-      margin-right: 6px;
-    }
+    .story-date { font-family: var(--mono); font-size: 10.5px; color: var(--accent); margin-right: 6px; }
 
     .camp-card {
       background: var(--paper-2);
@@ -375,8 +298,26 @@
       padding: 13px 14px;
       margin-bottom: 10px;
     }
-    .camp-card.done-camp {
-      border-left: 3px solid var(--pine);
+    .camp-card.done-camp { border-left: 3px solid var(--pine); }
+
+    .milestone-strip {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .ms-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border: 1px solid var(--hairline);
+      background: var(--paper);
+      color: var(--ink-2);
+    }
+    .ms-pill.done {
+      border-color: var(--pine);
+      background: var(--pine-soft);
+      color: var(--pine);
+      font-weight: 600;
     }
 
     .chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -395,32 +336,16 @@
       font-weight: 600;
     }
 
-    /* Профиль и характеристики */
     .identity-banner {
       background: var(--paper-2);
       border: 1px solid var(--hairline-strong);
       padding: 16px;
       margin-bottom: 14px;
     }
-    .stat-meter-row {
-      margin-bottom: 10px;
-    }
-    .stat-meter-head {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12.5px;
-      margin-bottom: 4px;
-    }
-    .stat-meter-bar {
-      height: 6px;
-      background: var(--paper-3);
-    }
-    .stat-meter-bar > i {
-      display: block;
-      height: 100%;
-      background: var(--accent);
-      transition: width 0.25s ease;
-    }
+    .stat-meter-row { margin-bottom: 10px; }
+    .stat-meter-head { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px; }
+    .stat-meter-bar { height: 6px; background: var(--paper-3); }
+    .stat-meter-bar > i { display: block; height: 100%; background: var(--accent); transition: width 0.25s ease; }
 
     .ach-card {
       padding: 10px 12px;
@@ -432,9 +357,22 @@
       align-items: center;
       gap: 10px;
     }
-    .ach-card.locked { opacity: 0.5; }
+    .ach-card.locked { opacity: 0.55; }
 
-    /* Единая нижняя навигация */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+    .stat-cell {
+      background: var(--paper-2);
+      border: 1px solid var(--hairline);
+      padding: 10px;
+    }
+    .stat-cell b { font-family: var(--serif); font-size: 20px; font-weight: 400; display: block; }
+    .stat-cell span { font-size: 11px; color: var(--ink-2); }
+
     .nav-dock {
       position: fixed;
       left: 0;
@@ -444,27 +382,27 @@
       background: var(--paper);
       border-top: 1px solid var(--hairline-strong);
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      padding: 8px 4px 16px;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 8px 2px 16px;
     }
     .nav-dock button {
       background: none;
       border: none;
       color: var(--ink-2);
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 600;
       cursor: pointer;
       padding: 4px 2px;
     }
-    .nav-dock button.active {
-      color: var(--accent);
-      font-weight: 700;
-    }
+    .nav-dock button.active { color: var(--accent); font-weight: 700; }
   </style>
 </head>
 <body data-issue="folio">
   <header class="masthead">
-    <div class="masthead-title">WINTER ARC</div>
+    <div class="masthead-left">
+      <div class="masthead-title">WINTER ARC</div>
+      <span class="equipped-badge" id="headerEquipped">Титул: Новичок зимы</span>
+    </div>
     <div class="masthead-meta">
       <span>День <strong id="topDay">1</strong></span>
       <span>Осколков: <strong id="topShards">120</strong></span>
@@ -473,25 +411,30 @@
   </header>
 
   <main class="container">
+    <div id="eventToast" class="toast-banner">
+      <span id="eventToastText"></span>
+      <button class="btn outline sm" onclick="hideToast()">Закрыть</button>
+    </div>
+
     <!-- 1. ГЛАВНАЯ -->
     <section id="view-today" class="section active">
       <div id="recoveryBanner" class="flagship-goal" style="display:none;margin-top:0;margin-bottom:14px">
         <div class="eyebrow">Возвращение в ритм</div>
         <div id="recoveryText" style="font-size:13px;margin-top:3px"></div>
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button class="btn terracotta sm" onclick="acceptReturnStep()">Лёгкий шаг сегодня</button>
-          <button class="btn outline sm" onclick="closeRecovery()">Скрыть</button>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn terracotta sm" onclick="acceptReturnStep()">Принять мягкий шаг</button>
+          <button class="btn outline sm" onclick="closeRecovery()">Оставить план как есть</button>
         </div>
       </div>
 
       <div class="top-digest">
         <div>
-          <div class="eyebrow" id="issueTag">Выпуск 1 · Зимняя глава</div>
+          <div class="eyebrow" id="issueTag">Сезон I · Зимний контур</div>
           <h1 class="serif-head issue-hero" id="heroHeadline">Собранность вместо суеты</h1>
           <p class="issue-sub" id="heroLead">
-            Личный дневник действий, долгих целей и живого зимнего мира. Каждая отметка здесь опирается на реальный шаг дня.
+            Единая система дел, целей, навыков и зимнего мира. Выполнение задач автоматически двигает кампании, навыки и хронику.
           </p>
-          <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span class="mono" style="font-size:12px;font-weight:700" id="focusClock">25:00</span>
             <button class="btn sm" id="focusBtn" onclick="toggleFocus()">Фокус-старт</button>
             <button class="btn outline sm" onclick="completeFocusSession()">Зачесть сессию</button>
@@ -505,7 +448,7 @@
               <span class="eyebrow" id="rankLabel">Новичок зимы</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-2);margin-top:6px">
-              <span>Опыт цикла</span>
+              <span>Опыт уровня</span>
               <span class="mono"><span id="xpCur">0</span> / <span id="xpNeed">800</span></span>
             </div>
             <div class="xp-track"><i id="xpBar" style="width:0%"></i></div>
@@ -522,9 +465,9 @@
       <div class="flagship-goal">
         <div class="flagship-top">
           <div>
-            <div class="eyebrow">Главная цель кампании</div>
+            <div class="eyebrow">Главная кампания сезона</div>
             <div class="flagship-title" id="mainGoalTitle">Абонемент в бассейн: 8 сеансов</div>
-            <div class="muted" style="font-size:12px;margin-top:2px" id="mainGoalNote">Плавное закрытие абонемента без потери ритма</div>
+            <div class="muted" style="font-size:12px;margin-top:2px" id="mainGoalNote"></div>
           </div>
           <div class="flagship-metric" id="mainGoalProgress">0 / 8</div>
         </div>
@@ -534,35 +477,33 @@
       <div class="content-split">
         <div>
           <div class="sec-bar">
-            <h2 class="sec-title">Задачи дня</h2>
-            <div style="display:flex;gap:6px">
-              <button class="btn outline sm" onclick="suggestSmartTask()">Идея шага</button>
+            <h2 class="sec-title">Задачи и квесты дня</h2>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn outline sm" onclick="directorPlanDay()">AI-план</button>
               <button class="btn terracotta sm" onclick="toggleDrawer('taskDrawer')">+ Задача</button>
             </div>
           </div>
 
           <div id="taskDrawer" class="drawer-form">
-            <input id="tTitleInput" placeholder="Что сделаешь сегодня (например: 40 мин по колледжу)" />
+            <input id="tTitleInput" placeholder="Что нужно сделать (напр. 40 мин по колледжу)" />
             <div class="two-inputs">
               <select id="tAreaSelect"></select>
-              <select id="tPillarSelect">
-                <option value="discipline">Дисциплина</option>
-                <option value="focus">Фокус</option>
-                <option value="independence">Опора</option>
-              </select>
+              <select id="tSkillSelect"></select>
             </div>
             <div class="two-inputs">
               <select id="tKindSelect">
-                <option value="core">Основная</option>
-                <option value="extra">Дополнительная</option>
+                <option value="main">Main Quest (Цель)</option>
+                <option value="skill">Skill Quest (Навык)</option>
+                <option value="side">Side Quest (Доп)</option>
               </select>
               <select id="tXpSelect">
-                <option value="90">Короткая (+90 опыта)</option>
-                <option value="150" selected>Обычная (+150 опыта)</option>
-                <option value="240">Глубокая (+240 опыта)</option>
+                <option value="90">Лёгкий (+90 XP)</option>
+                <option value="150" selected>Средний (+150 XP)</option>
+                <option value="240">Сложный (+240 XP)</option>
               </select>
             </div>
-            <button class="btn terracotta" onclick="createTask()">Сохранить задачу</button>
+            <select id="tCampaignSelect"></select>
+            <button class="btn terracotta" onclick="createTask()">Создать задание</button>
           </div>
 
           <div id="taskList"></div>
@@ -570,36 +511,50 @@
 
         <div>
           <div class="sec-bar">
-            <h2 class="sec-title">Хроника пути</h2>
+            <h2 class="sec-title">AI-директор и хроника</h2>
             <span class="mono" style="font-size:11px;color:var(--ink-2)" id="dayProgressText">0 из 3</span>
           </div>
-          <p class="issue-sub" style="margin-top:0;margin-bottom:8px" id="dailyGuidance"></p>
+          <p class="issue-sub" style="margin-top:0;margin-bottom:8px" id="directorInsight"></p>
           <div id="chronicleFeed"></div>
         </div>
       </div>
     </section>
 
-    <!-- 2. КАМПАНИИ -->
+    <!-- 2. ЦЕЛИ, КАМПАНИИ И НАВЫКИ -->
     <section id="view-campaigns" class="section">
       <div class="sec-bar">
-        <h2 class="sec-title">Кампании и этапы</h2>
-        <button class="btn terracotta sm" onclick="toggleDrawer('campDrawer')">+ Кампания</button>
+        <h2 class="sec-title">AI Goal Architect — новая цель и кампания</h2>
+        <button class="btn terracotta sm" onclick="toggleDrawer('goalArchDrawer')">+ Цель</button>
       </div>
 
-      <div id="campDrawer" class="drawer-form">
-        <input id="cTitleInput" placeholder="Название кампании" />
-        <input id="cNoteInput" placeholder="Какой результат станет победой" />
+      <div id="goalArchDrawer" class="drawer-form">
+        <input id="gIntentInput" placeholder="Напиши цель обычными словами (напр. Научиться уверенно делать биты)" />
         <div class="two-inputs">
-          <input id="cTargetInput" type="number" placeholder="Всего шагов (напр. 8)" />
-          <input id="cRewardInput" type="number" placeholder="Опыт за финал" value="500" />
+          <select id="gAreaInput"></select>
+          <select id="gSkillInput"></select>
         </div>
-        <button class="btn terracotta" onclick="createCampaign()">Запустить кампанию</button>
+        <div class="two-inputs">
+          <input id="gStepsInput" type="number" placeholder="Этапов (напр. 4)" value="4" />
+          <input id="gRewardInput" type="number" placeholder="Награда XP" value="500" />
+        </div>
+        <button class="btn terracotta" onclick="architectGoal()">Собрать цель, этапы и задачи</button>
       </div>
 
       <div id="campaignsWrap"></div>
 
       <div class="sec-bar" style="margin-top:20px">
-        <h2 class="sec-title">Направления развития</h2>
+        <h2 class="sec-title">Навыки и направления</h2>
+        <button class="btn outline sm" onclick="toggleDrawer('skillDrawer')">+ Навык</button>
+      </div>
+      <div id="skillDrawer" class="drawer-form">
+        <input id="skNameInput" placeholder="Название навыка (напр. Монтаж и звук)" />
+        <input id="skAreaInput" placeholder="Направление (напр. Музыка и творчество)" value="Музыка и творчество" />
+        <button class="btn" onclick="createSkill()">Добавить навык</button>
+      </div>
+      <div id="skillsWrap"></div>
+
+      <div class="sec-bar" style="margin-top:20px">
+        <h2 class="sec-title">Направления жизни</h2>
         <button class="btn outline sm" onclick="toggleDrawer('areaDrawer')">+ Направление</button>
       </div>
       <div id="areaDrawer" class="drawer-form">
@@ -609,21 +564,36 @@
       <div class="chips-wrap" id="areasWrap"></div>
     </section>
 
-    <!-- 3. МИР И ЛОР -->
+    <!-- 3. МИР, СОБЫТИЯ И СЕЗОНЫ -->
     <section id="view-world" class="section">
       <div class="flagship-goal" style="margin-top:0">
-        <div class="eyebrow" id="chapterEyebrow">Глава 1</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="eyebrow" id="chapterEyebrow">Глава 1 · Сезон I</span>
+          <button class="btn outline sm" onclick="archiveCurrentSeason()">Завершить и архивировать сезон</button>
+        </div>
         <h2 class="serif-head flagship-title" id="chapterTitle">Собранность вместо суеты</h2>
         <p class="issue-sub" id="chapterBody"></p>
+      </div>
+
+      <div id="worldEventBox" class="camp-card" style="margin-top:12px;border-left:3px solid var(--accent)">
+        <div class="eyebrow">Событие мира</div>
+        <div style="font-size:14px;font-weight:700;margin-top:2px" id="wEventTitle"></div>
+        <div class="muted" style="font-size:12.5px;margin-top:2px" id="wEventDesc"></div>
+        <div style="margin-top:8px" id="wEventAction"></div>
       </div>
 
       <div class="content-split">
         <div>
           <div class="sec-bar">
-            <h2 class="sec-title">Рубежи мира</h2>
+            <h2 class="sec-title">Локации мира</h2>
             <span class="mono" style="font-size:11px;color:var(--ink-2)" id="worldShardsLbl">120 осколков</span>
           </div>
           <div id="regionsWrap"></div>
+
+          <div class="sec-bar" style="margin-top:18px">
+            <h2 class="sec-title">Архив сезонов</h2>
+          </div>
+          <div id="seasonsArchiveWrap"></div>
         </div>
 
         <div>
@@ -642,7 +612,37 @@
       </div>
     </section>
 
-    <!-- 4. ПРОФИЛЬ -->
+    <!-- 4. МАГАЗИН, ИНВЕНТАРЬ И КОЛЛЕКЦИЯ -->
+    <section id="view-vault" class="section">
+      <div class="content-split" style="margin-top:0">
+        <div>
+          <div class="sec-bar">
+            <h2 class="sec-title">Магазин осколков</h2>
+            <span class="mono" style="font-size:11px;color:var(--accent)" id="shopShardsLbl">120 осколков</span>
+          </div>
+          <div id="shopCatalogWrap"></div>
+
+          <div class="sec-bar" style="margin-top:18px">
+            <h2 class="sec-title">Достижения</h2>
+          </div>
+          <div id="achievementsWrap"></div>
+        </div>
+
+        <div>
+          <div class="sec-bar">
+            <h2 class="sec-title">Инвентарь и экипировка</h2>
+          </div>
+          <div id="inventoryWrap"></div>
+
+          <div class="sec-bar" style="margin-top:18px">
+            <h2 class="sec-title">Коллекция</h2>
+          </div>
+          <div id="collectionsWrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. ПРОФИЛЬ, СТАТИСТИКА И БАЗА -->
     <section id="view-profile" class="section">
       <div class="identity-banner">
         <div class="eyebrow">Личный аккаунт</div>
@@ -650,9 +650,7 @@
           <h2 class="serif-head" style="font-size:26px" id="profileRankHeading">Новичок зимы</h2>
           <span class="mono" style="font-size:12px;color:var(--accent)">Уровень <span id="profileLvl">1</span></span>
         </div>
-        <div class="muted" style="font-size:12.5px;margin-top:4px" id="profileStatsSummary">
-          Выполнено шагов: 0 · Предметов в коллекции: 1
-        </div>
+        <div class="muted" style="font-size:12.5px;margin-top:4px" id="profileIdentitySub"></div>
 
         <div style="margin-top:14px">
           <div class="stat-meter-row">
@@ -670,52 +668,51 @@
         </div>
       </div>
 
-      <div class="content-split" style="margin-top:0">
-        <div>
-          <div class="sec-bar">
-            <h2 class="sec-title">Достижения и коллекция</h2>
-          </div>
-          <div id="achievementsWrap"></div>
+      <div class="sec-bar">
+        <h2 class="sec-title">Статистика</h2>
+        <div class="chips-wrap" style="margin-top:0">
+          <button class="chip-btn on" id="sp-day" onclick="setStatPeriod('day')">День</button>
+          <button class="chip-btn" id="sp-week" onclick="setStatPeriod('week')">Неделя</button>
+          <button class="chip-btn" id="sp-all" onclick="setStatPeriod('all')">Всё время</button>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-cell"><b id="stDone">0</b><span>Закрыто задач</span></div>
+        <div class="stat-cell"><b id="stXp">0</b><span>Набрано XP</span></div>
+        <div class="stat-cell"><b id="stCamps">0</b><span>Завершено кампаний</span></div>
+      </div>
+      <div class="muted" style="font-size:12.5px;margin-bottom:14px" id="stPeriodNote"></div>
 
-          <div class="sec-bar" style="margin-top:16px">
-            <h2 class="sec-title">Предметы в коллекции</h2>
-            <button class="btn terracotta sm" onclick="craftKeepake()">+ Предмет (90 оск.)</button>
-          </div>
-          <div id="keepsakesWrap"></div>
+      <div class="sec-bar">
+        <h2 class="sec-title">Оформление и база</h2>
+      </div>
+      <div class="camp-card">
+        <div class="eyebrow">Оттенок издания</div>
+        <div class="chips-wrap" style="margin-bottom:12px">
+          <button class="chip-btn on" id="pal-folio" onclick="setPalette('folio')">Молочный лист</button>
+          <button class="chip-btn" id="pal-frost-folio" onclick="setPalette('frost-folio')">Холодный лён</button>
+          <button class="chip-btn" id="pal-nocturne" onclick="setPalette('nocturne')">Вечерний лист</button>
         </div>
 
-        <div>
-          <div class="sec-bar">
-            <h2 class="sec-title">Бумага и сохранение</h2>
-          </div>
-          <div class="camp-card">
-            <div class="eyebrow">Оттенок издания</div>
-            <div class="chips-wrap" style="margin-bottom:12px">
-              <button class="chip-btn on" id="pal-folio" onclick="setPalette('folio')">Молочный лист</button>
-              <button class="chip-btn" id="pal-frost-folio" onclick="setPalette('frost-folio')">Холодный лён</button>
-              <button class="chip-btn" id="pal-nocturne" onclick="setPalette('nocturne')">Вечерний лист</button>
-            </div>
-
-            <div class="eyebrow">Синхронизация</div>
-            <div class="mono muted" style="font-size:11px;margin:4px 0 8px" id="keyCaption">-</div>
-            <div class="chips-wrap" style="margin-bottom:10px">
-              <button class="btn outline sm" onclick="pullFromServer(false)">Загрузить</button>
-              <button class="btn terracotta sm" onclick="pushToServer(true)">Сохранить</button>
-              <button class="btn outline sm" onclick="copyBackup()">Копировать JSON</button>
-              <button class="btn outline sm" onclick="resetState()">Сброс</button>
-            </div>
-            <textarea id="backupArea" rows="4" readonly></textarea>
-          </div>
+        <div class="eyebrow">Синхронизация и резерв</div>
+        <div class="mono muted" style="font-size:11px;margin:4px 0 8px" id="keyCaption">-</div>
+        <div class="chips-wrap" style="margin-bottom:10px">
+          <button class="btn outline sm" onclick="pullFromServer(false)">Загрузить</button>
+          <button class="btn terracotta sm" onclick="pushToServer(true)">Сохранить</button>
+          <button class="btn outline sm" onclick="copyBackup()">Копировать JSON</button>
+          <button class="btn outline sm" onclick="resetState()">Сброс</button>
         </div>
+        <textarea id="backupArea" rows="4" readonly></textarea>
       </div>
     </section>
   </main>
 
   <nav class="nav-dock">
-    <button class="active" data-tab="today" onclick="openTab('today', this)">Главная</button>
-    <button data-tab="campaigns" onclick="openTab('campaigns', this)">Кампании</button>
-    <button data-tab="world" onclick="openTab('world', this)">Мир</button>
-    <button data-tab="profile" onclick="openTab('profile', this)">Профиль</button>
+    <button class="active" data-tab="today" onclick="openTab('today')">Главная</button>
+    <button data-tab="campaigns" onclick="openTab('campaigns')">Цели</button>
+    <button data-tab="world" onclick="openTab('world')">Мир</button>
+    <button data-tab="vault" onclick="openTab('vault')">Лавка</button>
+    <button data-tab="profile" onclick="openTab('profile')">Профиль</button>
   </nav>
 
   <script>
@@ -725,17 +722,24 @@
     const PROFILE_ID = (() => {
       const id = tg?.initDataUnsafe?.user?.id;
       if (id) return `tg_${id}`;
-      let k = localStorage.getItem('wa_almanac_key');
+      let k = localStorage.getItem('wa_system_key');
       if (!k) {
-        k = 'reader_' + Math.random().toString(36).slice(2, 9);
-        localStorage.setItem('wa_almanac_key', k);
+        k = 'member_' + Math.random().toString(36).slice(2, 9);
+        localStorage.setItem('wa_system_key', k);
       }
       return k;
     })();
 
     const DEFAULT_AREAS = [
-      'Плавание', 'Турник и сила', 'Учёба', 'Битмейкинг', 'Чтение',
-      'Быт и опора', 'Характер', 'Общение', 'Финансы', 'Личные проекты'
+      'Плавание и спорт', 'Учёба и знания', 'Музыка и творчество',
+      'Опора и быт', 'Личные проекты'
+    ];
+
+    const SHOP_ITEMS = [
+      { id: 'itm_title_stride', name: 'Титул «Ровный шаг»', kind: 'title', value: 'Ровный шаг', cost: 80, desc: 'Подчёркивает устойчивый темп без рывков.' },
+      { id: 'itm_title_archivist', name: 'Титул «Хранитель ритма»', kind: 'title', value: 'Хранитель ритма', cost: 140, desc: 'Для тех, кто доводит начатые этапы до конца.' },
+      { id: 'itm_relic_compass', name: 'Зимний компас', kind: 'collectible', collection: 'Артефакты контура', cost: 100, desc: 'Памятный предмет для коллекции и хроники.' },
+      { id: 'itm_relic_lantern', name: 'Фонарь у причала', kind: 'collectible', collection: 'Артефакты контура', cost: 130, desc: 'Свет в конце длинного рабочего вечера.' }
     ];
 
     function isoDay(d = new Date()) {
@@ -746,7 +750,7 @@
       return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }).replace('.', '');
     }
 
-    function initialData() {
+    function makeInitialState() {
       const today = isoDay();
       return {
         meta: { palette: 'folio', start: '2026-11-22', updatedAt: Date.now() },
@@ -754,105 +758,326 @@
           level: 1,
           xp: 0,
           rank: 'Новичок зимы',
+          equippedTitle: null,
           shards: 120,
           pillars: { discipline: 12, focus: 12, independence: 12 }
         },
-        areas: DEFAULT_AREAS.map((name, idx) => ({ id: 'ar_' + idx, name, enabled: true })),
+        areas: DEFAULT_AREAS.map((name, i) => ({ id: 'ar_' + i, name, enabled: true })),
+        skills: [
+          { id: 'sk_swim', name: 'Плавание и выносливость', area: 'Плавание и спорт', xp: 0, level: 1, milestone: 'Закрыть первые 4 сеанса по графику' },
+          { id: 'sk_study', name: 'Глубокий учебный фокус', area: 'Учёба и знания', xp: 0, level: 1, milestone: 'Провести 5 блоков по 40 мин без отвлечений' },
+          { id: 'sk_music', name: 'Музыка и продакшн', area: 'Музыка и творчество', xp: 0, level: 1, milestone: 'Собрать 3 законченных черновика или бита' }
+        ],
         day: {
           date: today,
           tasks: [
-            { id: 'tk1', title: 'Учебный блок 40 минут без отвлечений', area: 'Учёба', pillar: 'focus', kind: 'core', xp: 160, done: false },
-            { id: 'tk2', title: 'Подходы на турник или отжимания', area: 'Турник и сила', pillar: 'discipline', kind: 'core', xp: 140, done: false },
-            { id: 'tk3', title: 'Набросок бита или текста в FL Studio', area: 'Битмейкинг', pillar: 'focus', kind: 'extra', xp: 150, done: false }
+            { id: 'q1', title: 'Учебный блок 40 минут без телефона', area: 'Учёба и знания', skillId: 'sk_study', campaignId: null, kind: 'skill', xp: 150, done: false },
+            { id: 'q2', title: 'Сеанс или тренировка по графику', area: 'Плавание и спорт', skillId: 'sk_swim', campaignId: 'cp_pool', kind: 'main', xp: 180, done: false },
+            { id: 'q3', title: 'Набросок звука / идеи в проекте', area: 'Музыка и творчество', skillId: 'sk_music', campaignId: null, kind: 'side', xp: 120, done: false }
           ],
           recovery: { active: false, days: 0 }
         },
         campaigns: [
-          { id: 'cp1', title: 'Абонемент в бассейн: 8 сеансов', note: 'Плавное закрытие абонемента без потери ритма', current: 0, target: 8, reward: 600, done: false },
-          { id: 'cp2', title: 'Зимний объём: 600 подтягиваний', note: 'Накопительный подход к силе и выносливости', current: 0, target: 600, reward: 500, done: false }
+          {
+            id: 'cp_pool',
+            title: 'Абонемент в бассейн: 8 сеансов',
+            note: 'Регулярный ритм до 16.12.2026 без сгорания занятий',
+            area: 'Плавание и спорт',
+            skillId: 'sk_swim',
+            current: 0,
+            target: 8,
+            reward: 600,
+            done: false,
+            milestones: [
+              { label: '2 сеанса', at: 2, reached: false },
+              { label: '4 сеанса', at: 4, reached: false },
+              { label: '8 сеансов', at: 8, reached: false }
+            ]
+          },
+          {
+            id: 'cp_build',
+            title: 'Личный проект: устойчивая система',
+            note: 'Довести личный проект и привычки до рабочего состояния',
+            area: 'Личные проекты',
+            skillId: 'sk_study',
+            current: 0,
+            target: 5,
+            reward: 450,
+            done: false,
+            milestones: [
+              { label: 'Каркас', at: 2, reached: false },
+              { label: 'Финал этапа', at: 5, reached: false }
+            ]
+          }
         ],
         world: {
+          seasonNum: 1,
           chapter: 1,
           title: 'Собранность вместо суеты',
-          body: 'Зимний контур складывается из спокойных повторяемых действий. Каждый завершённый шаг оставляет след в истории.',
+          body: 'Зимний контур откликается на реальные шаги: закрытые задачи двигают кампании и навыки, а накопленные осколки открывают рубежи мира.',
           regions: [
-            { id: 'rg1', name: 'Северный причал', note: 'Первый берег устойчивого графика', progress: 0, goal: 3, cost: 60, xp: 180, done: false },
-            { id: 'rg2', name: 'Тихий архив', note: 'Место собранных мыслей и заметок', progress: 0, goal: 4, cost: 90, xp: 240, done: false }
+            { id: 'rg_pier', name: 'Северный причал', note: 'Первый берег устойчивого графика', progress: 0, goal: 2, cost: 60, xp: 180, unlocked: true, done: false },
+            { id: 'rg_archive', name: 'Тихий архив', note: 'Открывается после 3 выполненных задач', progress: 0, goal: 3, cost: 90, xp: 240, unlocked: false, done: false },
+            { id: 'rg_beacon', name: 'Маяк зимнего хода', note: 'Открывается после закрытия кампании или 6 задач', progress: 0, goal: 3, cost: 120, xp: 300, unlocked: false, done: false }
           ],
+          event: {
+            id: 'ev_winter_1',
+            title: 'Попутный ветер у причала',
+            desc: 'Сделай один осознанный шаг в выбранном деле или забери +25 осколков на старт.',
+            claimed: false
+          },
           chars: [
-            { id: 'ch1', name: 'Хранитель хроники', role: 'Наблюдатель', detail: 'Отмечает реальные шаги и бережёт ровный темп' }
+            { id: 'ch1', name: 'Хранитель хроники', role: 'Наблюдатель', detail: 'Фиксирует только подтверждённые шаги без лишнего шума' }
           ],
           story: [
-            { date: shortDayLabel(), text: 'Начата первая страница зимнего цикла.' }
-          ]
+            { date: shortDayLabel(), text: 'Открыт Сезон I «Зимний контур».' }
+          ],
+          seasonsArchive: []
         },
         vault: {
           achievements: [
-            { id: 'ac1', title: 'Первый шаг', note: 'Отметить первую выполненную задачу', unlocked: false },
-            { id: 'ac2', title: 'Пять шагов в ритме', note: 'Завершить 5 задач', unlocked: false },
-            { id: 'ac3', title: 'Итог кампании', note: 'Довести любую кампанию до конца', unlocked: false }
+            { id: 'ac_first', title: 'Первый шаг', note: 'Выполнить 1 задачу', target: 1, rewardShards: 30, unlocked: false },
+            { id: 'ac_five', title: 'Ритм контура', note: 'Выполнить 5 задач', target: 5, rewardShards: 70, unlocked: false },
+            { id: 'ac_camp', title: 'Завершённая кампания', note: 'Довести кампанию до финала', target: 1, rewardShards: 120, unlocked: false }
           ],
-          keepsakes: [
-            { id: 'ks1', title: 'Памятный жетон зимы', grade: 'Основа' }
+          inventory: [
+            { id: 'inv_start', itemId: null, name: 'Жетон контура', kind: 'collectible', collection: 'Артефакты контура', source: 'Старт сезона', equipped: false }
           ]
         },
-        summary: { completed: 0, campaignsDone: 0 }
+        stats: {
+          totalDone: 0,
+          totalXpEarned: 0,
+          campaignsDone: 0,
+          byDay: { [today]: { done: 0, xp: 0 } }
+        }
       };
     }
 
     let state = (() => {
       try {
-        const raw = localStorage.getItem('wa_almanac_state');
+        const raw = localStorage.getItem('wa_system_state_v1');
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (parsed && parsed.account && parsed.day && parsed.world) return parsed;
+          if (parsed && parsed.account && parsed.day && parsed.world && parsed.skills) return parsed;
         }
       } catch (e) {}
-      return initialData();
+      return makeInitialState();
     })();
 
-    function addStory(text) {
-      state.world.story.unshift({ date: shortDayLabel(), text });
-      if (state.world.story.length > 20) state.world.story.length = 20;
+    let statPeriod = 'day';
+
+    function showToast(msg) {
+      const el = document.getElementById('eventToast');
+      document.getElementById('eventToastText').textContent = msg;
+      el.classList.add('show');
+    }
+    function hideToast() {
+      document.getElementById('eventToast').classList.remove('show');
     }
 
-    function xpForNext(lvl) {
+    function logChronicle(text) {
+      state.world.story.unshift({ date: shortDayLabel(), text });
+      if (state.world.story.length > 30) state.world.story.length = 30;
+    }
+
+    function xpForLevel(lvl) {
       return 800 + (lvl - 1) * 300;
     }
 
-    function recalcLevel() {
+    function recalcAccountLevel() {
       let lvl = 1, rem = state.account.xp;
-      while (rem >= xpForNext(lvl)) { rem -= xpForNext(lvl); lvl++; }
+      while (rem >= xpForLevel(lvl)) { rem -= xpForLevel(lvl); lvl++; }
       state.account.level = lvl;
       state.account.rank = lvl >= 6 ? 'Мастер зимы' : lvl >= 3 ? 'Уверенный ход' : 'Новичок зимы';
     }
 
-    function refreshAchievements() {
-      if (state.summary.completed >= 1) state.vault.achievements[0].unlocked = true;
-      if (state.summary.completed >= 5) state.vault.achievements[1].unlocked = true;
-      if (state.summary.campaignsDone >= 1) state.vault.achievements[2].unlocked = true;
+    function syncSkillProgress(skillId, gainedXp) {
+      if (!skillId) return;
+      const sk = state.skills.find(s => s.id === skillId);
+      if (!sk) return;
+      sk.xp = Math.max(0, sk.xp + gainedXp);
+      const nextLvl = 1 + Math.floor(sk.xp / 250);
+      if (nextLvl > sk.level) {
+        sk.level = nextLvl;
+        logChronicle(`Навык «${sk.name}» вырос до ур. ${sk.level}.`);
+      }
+    }
+
+    function syncCampaignProgress(campaignId, delta) {
+      if (!campaignId) return;
+      const cp = state.campaigns.find(c => c.id === campaignId);
+      if (!cp || cp.done) return;
+      cp.current = Math.min(cp.target, Math.max(0, cp.current + delta));
+      if (Array.isArray(cp.milestones)) {
+        cp.milestones.forEach(ms => {
+          if (!ms.reached && cp.current >= ms.at) {
+            ms.reached = true;
+            logChronicle(`Этап кампании «${cp.title}»: достигнут рубеж «${ms.label}».`);
+          }
+        });
+      }
+      if (cp.current >= cp.target) {
+        cp.done = true;
+        cp.current = cp.target;
+        state.account.xp += cp.reward;
+        state.stats.campaignsDone += 1;
+        state.vault.inventory.push({
+          id: 'inv_cp_' + Date.now(),
+          itemId: null,
+          name: 'Знак финала: ' + cp.title,
+          kind: 'collectible',
+          collection: 'Награды кампаний',
+          source: 'Кампания',
+          equipped: false
+        });
+        logChronicle(`Кампания «${cp.title}» завершена (+${cp.reward} XP).`);
+      }
+    }
+
+    function unlockRegionsByProgress() {
+      const doneCount = state.stats.totalDone;
+      const campCount = state.stats.campaignsDone;
+      state.world.regions.forEach(rg => {
+        if (rg.id === 'rg_archive' && doneCount >= 3 && !rg.unlocked) {
+          rg.unlocked = true;
+          logChronicle('Открыта локация «Тихий архив».');
+        }
+        if (rg.id === 'rg_beacon' && (doneCount >= 6 || campCount >= 1) && !rg.unlocked) {
+          rg.unlocked = true;
+          logChronicle('Открыта локация «Маяк зимнего хода».');
+        }
+      });
+    }
+
+    function evaluateAchievements() {
+      const newlyUnlocked = [];
+      state.vault.achievements.forEach(ac => {
+        if (ac.unlocked) return;
+        let current = 0;
+        if (ac.id === 'ac_first' || ac.id === 'ac_five') current = state.stats.totalDone;
+        if (ac.id === 'ac_camp') current = state.stats.campaignsDone;
+        if (current >= ac.target) {
+          ac.unlocked = true;
+          state.account.shards += ac.rewardShards;
+          newlyUnlocked.push(ac);
+          logChronicle(`Открыто достижение «${ac.title}» (+${ac.rewardShards} осколков).`);
+        }
+      });
+      if (newlyUnlocked.length) {
+        showToast(`Новое достижение: «${newlyUnlocked[0].title}» (+${newlyUnlocked[0].rewardShards} оск.)`);
+      }
+    }
+
+    /* ЕДИНОЕ СОБЫТИЙНОЕ ЯДРО */
+    function dispatchSystemEvent(type, payload = {}) {
+      const tk = isoDay();
+      if (!state.stats.byDay[tk]) state.stats.byDay[tk] = { done: 0, xp: 0 };
+
+      if (type === 'QUEST_COMPLETED') {
+        const t = payload.task;
+        if (!t || t.done) return;
+        t.done = true;
+        const shardsGain = Math.max(10, Math.round(t.xp / 10));
+        state.account.xp += t.xp;
+        state.account.shards += shardsGain;
+        if (t.kind === 'main') state.account.pillars.discipline += 1;
+        else if (t.kind === 'skill') state.account.pillars.focus += 1;
+        else state.account.pillars.independence += 1;
+
+        state.stats.totalDone += 1;
+        state.stats.totalXpEarned += t.xp;
+        state.stats.byDay[tk].done += 1;
+        state.stats.byDay[tk].xp += t.xp;
+
+        syncSkillProgress(t.skillId, t.xp);
+        syncCampaignProgress(t.campaignId, 1);
+        logChronicle(`Выполнено: «${t.title}» (+${t.xp} XP, +${shardsGain} оск.).`);
+      }
+
+      if (type === 'QUEST_REVERTED') {
+        const t = payload.task;
+        if (!t || !t.done) return;
+        t.done = false;
+        const shardsGain = Math.max(10, Math.round(t.xp / 10));
+        state.account.xp = Math.max(0, state.account.xp - t.xp);
+        state.account.shards = Math.max(0, state.account.shards - shardsGain);
+        state.stats.totalDone = Math.max(0, state.stats.totalDone - 1);
+        state.stats.totalXpEarned = Math.max(0, state.stats.totalXpEarned - t.xp);
+        state.stats.byDay[tk].done = Math.max(0, state.stats.byDay[tk].done - 1);
+        state.stats.byDay[tk].xp = Math.max(0, state.stats.byDay[tk].xp - t.xp);
+        syncSkillProgress(t.skillId, -t.xp);
+      }
+
+      if (type === 'CAMPAIGN_STEPPED') {
+        const cp = state.campaigns.find(c => c.id === payload.campaignId);
+        if (!cp || cp.done) return;
+        state.account.xp += 50;
+        state.stats.totalXpEarned += 50;
+        state.stats.byDay[tk].xp += 50;
+        syncSkillProgress(cp.skillId, 50);
+        syncCampaignProgress(cp.id, 1);
+      }
+
+      if (type === 'ITEM_PURCHASED') {
+        const item = payload.item;
+        if (!item || state.account.shards < item.cost) return;
+        state.account.shards -= item.cost;
+        state.vault.inventory.push({
+          id: 'inv_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
+          itemId: item.id,
+          name: item.name,
+          kind: item.kind,
+          value: item.value || item.name,
+          collection: item.collection || 'Особые предметы',
+          source: 'Лавка',
+          equipped: false
+        });
+        logChronicle(`Приобретено: «${item.name}» (${item.cost} осколков).`);
+      }
+
+      if (type === 'ITEM_EQUIPPED') {
+        const target = state.vault.inventory.find(i => i.id === payload.invId);
+        if (!target) return;
+        if (target.kind === 'title') {
+          const wasEquipped = target.equipped;
+          state.vault.inventory.forEach(i => { if (i.kind === 'title') i.equipped = false; });
+          target.equipped = !wasEquipped;
+          state.account.equippedTitle = target.equipped ? target.value : null;
+          logChronicle(target.equipped ? `Экипирован титул «${target.value}».` : 'Титул снят.');
+        } else {
+          target.equipped = !target.equipped;
+        }
+      }
+
+      unlockRegionsByProgress();
+      evaluateAchievements();
+      recalcAccountLevel();
+      render();
     }
 
     function checkDayRollover() {
       const today = isoDay();
+      if (!state.stats.byDay[today]) state.stats.byDay[today] = { done: 0, xp: 0 };
       if (state.day.date !== today) {
         const gap = Math.floor((new Date(today + 'T00:00:00') - new Date(state.day.date + 'T00:00:00')) / 86400000);
         state.day.tasks.forEach(t => { t.done = false; });
-        if (gap > 1) state.day.recovery = { active: true, days: gap - 1 };
+        if (gap > 1) {
+          state.day.recovery = { active: true, days: gap - 1 };
+        }
         state.day.date = today;
       }
     }
 
-    let syncTimeout = null;
+    let saveTimer = null;
     function saveProgress(remote = true) {
       state.meta.updatedAt = Date.now();
       const raw = JSON.stringify(state);
-      localStorage.setItem('wa_almanac_state', raw);
+      localStorage.setItem('wa_system_state_v1', raw);
       document.getElementById('backupArea').value = raw;
       if (!remote) return;
-      clearTimeout(syncTimeout);
+      clearTimeout(saveTimer);
       document.getElementById('syncLabel').textContent = 'Сохранение…';
-      syncTimeout = setTimeout(() => pushToServer(false), 600);
+      saveTimer = setTimeout(() => pushToServer(false), 600);
     }
 
     async function pushToServer(showNotice = false) {
@@ -881,14 +1106,14 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         const remote = data?.record?.state_json;
-        if (remote?.account && remote?.day && remote?.world) {
+        if (remote?.account && remote?.day && remote?.world && remote?.skills) {
           if (!silent || (remote.meta?.updatedAt || 0) >= (state.meta?.updatedAt || 0)) {
             state = remote;
             checkDayRollover();
             render(false);
           }
           document.getElementById('syncLabel').textContent = 'Синхронно';
-          if (!silent) alert('Данные загружены.');
+          if (!silent) alert('Загружено из базы.');
         } else {
           document.getElementById('syncLabel').textContent = 'На устройстве';
           if (!silent) alert('В базе пока пусто.');
@@ -899,7 +1124,7 @@
       }
     }
 
-    function openTab(tabName, btn) {
+    function openTab(tabName) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.getElementById('view-' + tabName).classList.add('active');
       document.querySelectorAll('.nav-dock button').forEach(b => {
@@ -916,30 +1141,24 @@
       state.meta.palette = name;
       document.body.dataset.issue = name;
       document.querySelectorAll('[id^="pal-"]').forEach(b => b.classList.remove('on'));
-      const activeBtn = document.getElementById('pal-' + name);
-      if (activeBtn) activeBtn.classList.add('on');
+      const btn = document.getElementById('pal-' + name);
+      if (btn) btn.classList.add('on');
       saveProgress(true);
+    }
+
+    function setStatPeriod(period) {
+      statPeriod = period;
+      document.querySelectorAll('[id^="sp-"]').forEach(b => b.classList.remove('on'));
+      const btn = document.getElementById('sp-' + period);
+      if (btn) btn.classList.add('on');
+      render(false);
     }
 
     function toggleTask(id) {
       const t = state.day.tasks.find(x => x.id === id);
       if (!t) return;
-      if (!t.done) {
-        t.done = true;
-        state.account.xp += t.xp;
-        state.account.shards += Math.max(10, Math.round(t.xp / 10));
-        state.account.pillars[t.pillar] += 1;
-        state.summary.completed += 1;
-        addStory(`Закрыт шаг «${t.title}» (+${t.xp} опыта).`);
-      } else {
-        t.done = false;
-        state.account.xp = Math.max(0, state.account.xp - t.xp);
-        state.account.pillars[t.pillar] = Math.max(1, state.account.pillars[t.pillar] - 1);
-        state.summary.completed = Math.max(0, state.summary.completed - 1);
-      }
-      recalcLevel();
-      refreshAchievements();
-      render();
+      if (!t.done) dispatchSystemEvent('QUEST_COMPLETED', { task: t });
+      else dispatchSystemEvent('QUEST_REVERTED', { task: t });
     }
 
     function deleteTask(id, ev) {
@@ -947,24 +1166,21 @@
       const idx = state.day.tasks.findIndex(x => x.id === id);
       if (idx === -1) return;
       const t = state.day.tasks[idx];
-      if (t.done) {
-        state.account.xp = Math.max(0, state.account.xp - t.xp);
-        state.account.pillars[t.pillar] = Math.max(1, state.account.pillars[t.pillar] - 1);
-        state.summary.completed = Math.max(0, state.summary.completed - 1);
-      }
+      if (t.done) dispatchSystemEvent('QUEST_REVERTED', { task: t });
       state.day.tasks.splice(idx, 1);
-      recalcLevel();
       render();
     }
 
     function createTask() {
       const title = document.getElementById('tTitleInput').value.trim();
       if (!title) return;
+      const campVal = document.getElementById('tCampaignSelect').value;
       state.day.tasks.push({
-        id: 'tk_' + Date.now(),
+        id: 'q_' + Date.now(),
         title,
         area: document.getElementById('tAreaSelect').value || 'Личные проекты',
-        pillar: document.getElementById('tPillarSelect').value,
+        skillId: document.getElementById('tSkillSelect').value || null,
+        campaignId: campVal || null,
         kind: document.getElementById('tKindSelect').value,
         xp: parseInt(document.getElementById('tXpSelect').value, 10) || 150,
         done: false
@@ -974,66 +1190,92 @@
       render();
     }
 
-    function suggestSmartTask() {
-      const enabled = state.areas.filter(a => a.enabled).map(a => a.name);
-      const area = enabled[state.summary.completed % Math.max(1, enabled.length)] || 'Учёба';
-      const title = `30 минут спокойной работы по теме «${area}»`;
-      state.day.tasks.push({
-        id: 'sg_' + Date.now(),
-        title,
-        area,
-        pillar: 'focus',
-        kind: 'extra',
-        xp: 130,
-        done: false
-      });
-      render();
-    }
-
-    function createCampaign() {
-      const title = document.getElementById('cTitleInput').value.trim();
-      const target = parseInt(document.getElementById('cTargetInput').value, 10);
-      if (!title || !target || target < 1) return;
-      state.campaigns.push({
-        id: 'cp_' + Date.now(),
-        title,
-        note: document.getElementById('cNoteInput').value.trim() || 'Долгосрочная цель',
-        current: 0,
-        target,
-        reward: parseInt(document.getElementById('cRewardInput').value, 10) || 500,
-        done: false
-      });
-      document.getElementById('cTitleInput').value = '';
-      document.getElementById('cNoteInput').value = '';
-      document.getElementById('cTargetInput').value = '';
-      document.getElementById('campDrawer').classList.remove('open');
-      addStory(`Начата новая кампания: «${title}».`);
-      render();
-    }
-
-    function stepCampaign(id) {
-      const c = state.campaigns.find(x => x.id === id);
-      if (!c || c.done) return;
-      c.current = Math.min(c.target, c.current + 1);
-      state.account.xp += 60;
-      state.account.shards += 20;
-      if (c.current >= c.target) {
-        c.done = true;
-        c.current = c.target;
-        state.account.xp += c.reward;
-        state.summary.campaignsDone += 1;
-        state.vault.keepsakes.push({ id: 'ks_' + Date.now(), title: 'Знак кампании: ' + c.title, grade: 'Редкий' });
-        addStory(`Завершена кампания «${c.title}» (+${c.reward} опыта).`);
-      } else {
-        addStory(`Продвижение в кампании «${c.title}» (${c.current} из ${c.target}).`);
+    function directorPlanDay() {
+      const activeCamp = state.campaigns.find(c => !c.done);
+      const lowestSkill = [...state.skills].sort((a, b) => a.xp - b.xp)[0];
+      const title = activeCamp
+        ? `Шаг к цели «${activeCamp.title}»`
+        : `Практика навыка «${lowestSkill ? lowestSkill.name : 'Фокус'}» (30 мин)`;
+      if (state.day.tasks.some(t => t.title === title && !t.done)) {
+        showToast('Такой шаг уже есть в сегодняшнем списке.');
+        return;
       }
-      recalcLevel();
-      refreshAchievements();
+      state.day.tasks.push({
+        id: 'dir_' + Date.now(),
+        title,
+        area: activeCamp?.area || lowestSkill?.area || 'Личные проекты',
+        skillId: activeCamp?.skillId || lowestSkill?.id || null,
+        campaignId: activeCamp?.id || null,
+        kind: activeCamp ? 'main' : 'skill',
+        xp: 150,
+        done: false
+      });
+      logChronicle(`AI-директор добавил шаг: «${title}».`);
+      render();
+    }
+
+    function architectGoal() {
+      const intent = document.getElementById('gIntentInput').value.trim();
+      if (!intent) return;
+      const steps = Math.max(2, Math.min(12, parseInt(document.getElementById('gStepsInput').value, 10) || 4));
+      const reward = parseInt(document.getElementById('gRewardInput').value, 10) || 500;
+      const area = document.getElementById('gAreaInput').value || 'Личные проекты';
+      const skillId = document.getElementById('gSkillInput').value || null;
+      const campId = 'cp_' + Date.now();
+
+      const mid = Math.max(1, Math.floor(steps / 2));
+      state.campaigns.push({
+        id: campId,
+        title: intent,
+        note: `Маршрут из ${steps} этапов · Направление: ${area}`,
+        area,
+        skillId,
+        current: 0,
+        target: steps,
+        reward,
+        done: false,
+        milestones: [
+          { label: `Этап ${mid}`, at: mid, reached: false },
+          { label: `Финал ${steps}`, at: steps, reached: false }
+        ]
+      });
+
+      state.day.tasks.unshift({
+        id: 'g_act_' + Date.now(),
+        title: `Первый шаг по цели: ${intent}`,
+        area,
+        skillId,
+        campaignId: campId,
+        kind: 'main',
+        xp: 160,
+        done: false
+      });
+
+      document.getElementById('gIntentInput').value = '';
+      document.getElementById('goalArchDrawer').classList.remove('open');
+      logChronicle(`Собрана цель и кампания «${intent}».`);
       render();
     }
 
     function deleteCampaign(id) {
       state.campaigns = state.campaigns.filter(x => x.id !== id);
+      state.day.tasks.forEach(t => { if (t.campaignId === id) t.campaignId = null; });
+      render();
+    }
+
+    function createSkill() {
+      const name = document.getElementById('skNameInput').value.trim();
+      if (!name) return;
+      state.skills.push({
+        id: 'sk_' + Date.now(),
+        name,
+        area: document.getElementById('skAreaInput').value.trim() || 'Личные проекты',
+        xp: 0,
+        level: 1,
+        milestone: 'Закрыть первые 3 задания по навыку'
+      });
+      document.getElementById('skNameInput').value = '';
+      document.getElementById('skillDrawer').classList.remove('open');
       render();
     }
 
@@ -1052,23 +1294,66 @@
     }
 
     function reinforceRegion(id) {
-      const r = state.world.regions.find(x => x.id === id);
-      if (!r || r.done) return;
-      if (state.account.shards < r.cost) { alert('Недостаточно осколков.'); return; }
-      state.account.shards -= r.cost;
-      r.progress = Math.min(r.goal, r.progress + 1);
-      if (r.progress >= r.goal) {
-        r.done = true;
-        state.account.xp += r.xp;
-        state.world.chapter += 1;
-        state.world.title = `Рубеж «${r.name}» открыт`;
-        state.world.body = `Новый этап истории наступил после освоения «${r.name}». Пространство мира стало шире.`;
-        state.vault.keepsakes.push({ id: 'kr_' + Date.now(), title: 'Реликвия «' + r.name + '»', grade: 'Редкий' });
-        addStory(`Освоен рубеж «${r.name}» и открыта глава ${state.world.chapter}.`);
-      } else {
-        addStory(`Укреплён рубеж «${r.name}» (${r.progress}/${r.goal}).`);
+      const rg = state.world.regions.find(x => x.id === id);
+      if (!rg || !rg.unlocked || rg.done) return;
+      if (state.account.shards < rg.cost) {
+        showToast(`Нужно ${rg.cost} осколков, сейчас ${state.account.shards}.`);
+        return;
       }
-      recalcLevel();
+      state.account.shards -= rg.cost;
+      rg.progress = Math.min(rg.goal, rg.progress + 1);
+      if (rg.progress >= rg.goal) {
+        rg.done = true;
+        state.account.xp += rg.xp;
+        state.stats.totalXpEarned += rg.xp;
+        state.world.chapter += 1;
+        state.world.title = `Рубеж «${rg.name}» освоен`;
+        state.world.body = `Открыта глава ${state.world.chapter}. Пространство зимнего мира расширяется вместе с твоими шагами.`;
+        state.vault.inventory.push({
+          id: 'inv_rg_' + Date.now(),
+          itemId: null,
+          name: 'Реликвия «' + rg.name + '»',
+          kind: 'collectible',
+          collection: 'Рубежи мира',
+          source: rg.name,
+          equipped: false
+        });
+        logChronicle(`Освоен рубеж «${rg.name}» (+${rg.xp} XP, глава ${state.world.chapter}).`);
+      } else {
+        logChronicle(`Укреплён рубеж «${rg.name}» (${rg.progress}/${rg.goal}).`);
+      }
+      recalcAccountLevel();
+      render();
+    }
+
+    function claimWorldEvent() {
+      if (!state.world.event || state.world.event.claimed) return;
+      state.world.event.claimed = true;
+      state.account.shards += 25;
+      logChronicle(`Событие «${state.world.event.title}»: получено +25 осколков.`);
+      render();
+    }
+
+    function archiveCurrentSeason() {
+      const doneCamps = state.campaigns.filter(c => c.done).map(c => c.title);
+      state.world.seasonsArchive.unshift({
+        season: state.world.seasonNum,
+        date: shortDayLabel(),
+        level: state.account.level,
+        completed: state.stats.totalDone,
+        campaignsDone: doneCamps.length
+      });
+      state.world.seasonNum += 1;
+      state.world.chapter = 1;
+      state.world.title = `Сезон ${state.world.seasonNum}: новый виток`;
+      state.world.body = 'Предыдущий сезон сохранён в архиве. Прогресс аккаунта, навыки и коллекции остаются с тобой.';
+      state.world.event = {
+        id: 'ev_' + Date.now(),
+        title: `Начало Сезона ${state.world.seasonNum}`,
+        desc: 'Новый этап открыт. Выбери главный фокус и закрой первый шаг дня.',
+        claimed: false
+      };
+      logChronicle(`Заархивирован Сезон ${state.world.seasonNum - 1}. Начат Сезон ${state.world.seasonNum}.`);
       render();
     }
 
@@ -1078,7 +1363,7 @@
       state.world.chars.push({
         id: 'ch_' + Date.now(),
         name,
-        role: document.getElementById('chRoleInput').value.trim() || 'Персонаж',
+        role: document.getElementById('chRoleInput').value.trim() || 'Герой мира',
         detail: document.getElementById('chNoteInput').value.trim() || 'Запись в каноне'
       });
       document.getElementById('chNameInput').value = '';
@@ -1093,27 +1378,24 @@
       render();
     }
 
-    function craftKeepake() {
-      if (state.account.shards < 90) { alert('Нужно 90 осколков.'); return; }
-      state.account.shards -= 90;
-      state.account.xp += 150;
-      state.vault.keepsakes.push({
-        id: 'ks_' + Date.now(),
-        title: 'Зимний предмет #' + (state.vault.keepsakes.length + 1),
-        grade: 'Особый'
-      });
-      addStory('В коллекцию добавлен новый памятный предмет (+150 опыта).');
-      recalcLevel();
-      render();
+    function buyShopItem(itemId) {
+      const item = SHOP_ITEMS.find(x => x.id === itemId);
+      if (!item) return;
+      if (state.account.shards < item.cost) {
+        showToast(`Недостаточно осколков для «${item.name}» (${item.cost} нужно).`);
+        return;
+      }
+      dispatchSystemEvent('ITEM_PURCHASED', { item });
     }
 
     function acceptReturnStep() {
       state.day.tasks.unshift({
-        id: 'rt_' + Date.now(),
+        id: 'ret_' + Date.now(),
         title: 'Спокойный возврат: 15 минут без спешки',
-        area: 'Характер',
-        pillar: 'discipline',
-        kind: 'core',
+        area: 'Опора и быт',
+        skillId: 'sk_study',
+        campaignId: null,
+        kind: 'side',
         xp: 140,
         done: false
       });
@@ -1130,64 +1412,73 @@
       const box = document.getElementById('backupArea');
       box.select();
       navigator.clipboard?.writeText(box.value);
-      alert('JSON скопирован.');
+      showToast('JSON-бэкап скопирован.');
     }
 
     function resetState() {
-      if (!confirm('Очистить локальные данные и начать заново?')) return;
-      state = initialData();
+      if (!confirm('Сбросить данные к начальному состоянию?')) return;
+      state = makeInitialState();
       render();
     }
 
-    /* Фокус-сессия */
-    let secLeft = 25 * 60;
-    let timerRef = null;
-
+    /* ФОКУС-ТАЙМЕР */
+    let secRem = 25 * 60;
+    let focusInterval = null;
     function fmtClock(s) {
       return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
     }
-
     function toggleFocus() {
-      if (timerRef) {
-        clearInterval(timerRef);
-        timerRef = null;
+      if (focusInterval) {
+        clearInterval(focusInterval);
+        focusInterval = null;
         document.getElementById('focusBtn').textContent = 'Фокус-старт';
       } else {
         document.getElementById('focusBtn').textContent = 'Пауза';
-        timerRef = setInterval(() => {
-          if (secLeft > 1) {
-            secLeft--;
-            document.getElementById('focusClock').textContent = fmtClock(secLeft);
+        focusInterval = setInterval(() => {
+          if (secRem > 1) {
+            secRem--;
+            document.getElementById('focusClock').textContent = fmtClock(secRem);
           } else {
             completeFocusSession();
           }
         }, 1000);
       }
     }
-
     function completeFocusSession() {
-      clearInterval(timerRef);
-      timerRef = null;
-      secLeft = 25 * 60;
-      document.getElementById('focusClock').textContent = fmtClock(secLeft);
+      clearInterval(focusInterval);
+      focusInterval = null;
+      secRem = 25 * 60;
+      document.getElementById('focusClock').textContent = fmtClock(secRem);
       document.getElementById('focusBtn').textContent = 'Фокус-старт';
+      const tk = isoDay();
+      if (!state.stats.byDay[tk]) state.stats.byDay[tk] = { done: 0, xp: 0 };
       state.account.xp += 140;
       state.account.shards += 25;
       state.account.pillars.focus += 1;
-      state.summary.completed += 1;
-      addStory('Завершена сосредоточенная сессия (+140 опыта, +1 к фокусу).');
-      recalcLevel();
-      refreshAchievements();
+      state.stats.totalDone += 1;
+      state.stats.totalXpEarned += 140;
+      state.stats.byDay[tk].done += 1;
+      state.stats.byDay[tk].xp += 140;
+      syncSkillProgress('sk_study', 140);
+      logChronicle('Завершён фокус-блок 25 мин (+140 XP, +25 осколков).');
+      unlockRegionsByProgress();
+      evaluateAchievements();
+      recalcAccountLevel();
       render();
     }
 
-    function renderTaskElement(t) {
+    function renderTaskRow(t) {
+      const sk = state.skills.find(s => s.id === t.skillId);
+      const cp = state.campaigns.find(c => c.id === t.campaignId);
+      const subParts = [t.area];
+      if (sk) subParts.push(sk.name);
+      if (cp) subParts.push(`Цель: ${cp.title}`);
       return `
         <div class="task-line ${t.done ? 'done' : ''}">
           <button class="tick-btn" onclick="toggleTask('${t.id}')">${t.done ? '✓' : ''}</button>
           <div class="task-info" onclick="toggleTask('${t.id}')">
             <div class="task-label">${t.title}</div>
-            <div class="task-sub">${t.area} · ${t.kind === 'core' ? 'Основная' : 'Дополнительная'}</div>
+            <div class="task-sub">${subParts.join(' · ')}</div>
           </div>
           <div class="task-right">
             <span class="pts">+${t.xp}</span>
@@ -1203,26 +1494,28 @@
       const palBtn = document.getElementById('pal-' + pal);
       if (palBtn) palBtn.classList.add('on');
 
-      const dayNum = Math.max(1, Math.floor((new Date(isoDay() + 'T00:00:00') - new Date((state.meta.start || '2026-11-22') + 'T00:00:00')) / 86400000) + 1);
+      const tk = isoDay();
+      const dayNum = Math.max(1, Math.floor((new Date(tk + 'T00:00:00') - new Date((state.meta.start || '2026-11-22') + 'T00:00:00')) / 86400000) + 1);
       document.getElementById('topDay').textContent = dayNum;
       document.getElementById('topShards').textContent = state.account.shards;
-      document.getElementById('issueTag').textContent = `Выпуск ${dayNum} · Глава ${state.world.chapter}`;
+      document.getElementById('headerEquipped').textContent = `Титул: ${state.account.equippedTitle || state.account.rank}`;
+      document.getElementById('issueTag').textContent = `Сезон ${state.world.seasonNum} · Глава ${state.world.chapter}`;
       document.getElementById('heroHeadline').textContent = state.world.title;
 
       if (state.day.recovery?.active) {
         document.getElementById('recoveryBanner').style.display = 'block';
-        document.getElementById('recoveryText').textContent = `Пропущено дней: ${state.day.recovery.days}. Весь прогресс сохранён — вернёмся мягко.`;
+        document.getElementById('recoveryText').textContent = `Пропущено дней: ${state.day.recovery.days}. Уровень, навыки и коллекции сохранены — начнём с короткого шага.`;
       } else {
         document.getElementById('recoveryBanner').style.display = 'none';
       }
 
-      const need = xpForNext(state.account.level);
+      const need = xpForLevel(state.account.level);
       let rem = state.account.xp;
-      for (let i = 1; i < state.account.level; i++) rem -= xpForNext(i);
+      for (let i = 1; i < state.account.level; i++) rem -= xpForLevel(i);
       rem = Math.max(0, rem);
 
       document.getElementById('lvlNum').textContent = state.account.level;
-      document.getElementById('rankLabel').textContent = state.account.rank;
+      document.getElementById('rankLabel').textContent = state.account.equippedTitle || state.account.rank;
       document.getElementById('xpCur').textContent = rem;
       document.getElementById('xpNeed').textContent = need;
       document.getElementById('xpBar').style.width = Math.min(100, (rem / need) * 100) + '%';
@@ -1240,21 +1533,23 @@
         document.getElementById('mainGoalBar').style.width = pct + '%';
       }
 
-      document.getElementById('tAreaSelect').innerHTML = state.areas
-        .filter(a => a.enabled)
-        .map(a => `<option>${a.name}</option>`)
-        .join('');
+      document.getElementById('tAreaSelect').innerHTML = state.areas.filter(a => a.enabled).map(a => `<option>${a.name}</option>`).join('');
+      document.getElementById('gAreaInput').innerHTML = state.areas.filter(a => a.enabled).map(a => `<option>${a.name}</option>`).join('');
+      document.getElementById('tSkillSelect').innerHTML = `<option value="">Без навыка</option>` + state.skills.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      document.getElementById('gSkillInput').innerHTML = state.skills.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      document.getElementById('tCampaignSelect').innerHTML = `<option value="">Без кампании</option>` + state.campaigns.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
 
-      document.getElementById('taskList').innerHTML = state.day.tasks.map(renderTaskElement).join('') ||
-        '<p class="muted" style="font-size:13px;padding:8px 0">На сегодня задач нет. Добавьте свою или нажмите «Идея шага».</p>';
+      document.getElementById('taskList').innerHTML = state.day.tasks.map(renderTaskRow).join('') ||
+        '<p class="muted" style="font-size:13px;padding:8px 0">Задач на сегодня нет — создайте свою или нажмите «AI-план».</p>';
 
-      const doneCount = state.day.tasks.filter(t => t.done).length;
-      document.getElementById('dayProgressText').textContent = `${doneCount} из ${state.day.tasks.length}`;
+      const doneToday = state.day.tasks.filter(t => t.done).length;
+      document.getElementById('dayProgressText').textContent = `${doneToday} из ${state.day.tasks.length}`;
 
-      const coreLeft = state.day.tasks.filter(t => t.kind === 'core' && !t.done).length;
-      document.getElementById('dailyGuidance').textContent = coreLeft > 0
-        ? `Впереди ${coreLeft} основных шага. Закройте их первыми, чтобы спокойно выдохнуть.`
-        : `Основные шаги на сегодня закрыты — можно перейти к кампании или отдохнуть.`;
+      const topSkill = [...state.skills].sort((a, b) => b.xp - a.xp)[0];
+      const openMain = state.day.tasks.filter(t => t.kind === 'main' && !t.done).length;
+      document.getElementById('directorInsight').textContent = openMain > 0
+        ? `Факт: открыто ${openMain} задач по целям. Ведущий навык сейчас — «${topSkill.name}» (ур. ${topSkill.level}). Закрой основной шаг, чтобы продвинуть кампанию.`
+        : `Факт: главные задачи закрыты, выполнено шагов всего: ${state.stats.totalDone}. Можно укрепить локацию в «Мире» или добавить шаг по цели.`;
 
       document.getElementById('chronicleFeed').innerHTML = state.world.story.slice(0, 6).map(item => `
         <div class="story-item"><span class="story-date">${item.date}</span>${item.text}</div>
@@ -1262,6 +1557,9 @@
 
       document.getElementById('campaignsWrap').innerHTML = state.campaigns.map(c => {
         const pct = Math.min(100, Math.round((c.current / c.target) * 100));
+        const msHtml = (c.milestones || []).map(m => `
+          <span class="ms-pill ${m.reached ? 'done' : ''}">${m.reached ? '✓ ' : ''}${m.label}</span>
+        `).join('');
         return `
           <div class="camp-card ${c.done ? 'done-camp' : ''}">
             <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
@@ -1270,37 +1568,68 @@
             </div>
             <div class="muted" style="font-size:12.5px;margin-top:3px">${c.note}</div>
             <div class="progress-bar"><i style="width:${pct}%"></i></div>
+            <div class="milestone-strip">${msHtml}</div>
             <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
               ${!c.done
-                ? `<button class="btn terracotta sm" onclick="stepCampaign('${c.id}')">+1 шаг</button>`
-                : `<span class="mono" style="font-size:11px;color:var(--pine);font-weight:700">Кампания завершена</span>`}
-              <span class="mono muted" style="font-size:11px;margin-left:auto">+${c.reward} опыта</span>
+                ? `<button class="btn terracotta sm" onclick="dispatchSystemEvent('CAMPAIGN_STEPPED', { campaignId: '${c.id}' })">+1 этап</button>`
+                : `<span class="mono" style="font-size:11px;color:var(--pine);font-weight:700">Завершена</span>`}
+              <span class="mono muted" style="font-size:11px;margin-left:auto">+${c.reward} XP</span>
               <button class="del-x" onclick="deleteCampaign('${c.id}')">×</button>
             </div>
           </div>`;
       }).join('');
 
+      document.getElementById('skillsWrap').innerHTML = state.skills.map(sk => `
+        <div class="task-line">
+          <div class="task-info">
+            <div class="task-label">${sk.name} · <span class="pts">Ур. ${sk.level}</span></div>
+            <div class="task-sub">${sk.area} · Опыт навыка: ${sk.xp} XP · Рубеж: ${sk.milestone}</div>
+          </div>
+        </div>`).join('');
+
       document.getElementById('areasWrap').innerHTML = state.areas.map(a => `
         <button class="chip-btn ${a.enabled ? 'on' : ''}" onclick="toggleArea('${a.id}')">${a.name}</button>
       `).join('');
 
-      document.getElementById('chapterEyebrow').textContent = `Глава ${state.world.chapter}`;
+      document.getElementById('chapterEyebrow').textContent = `Глава ${state.world.chapter} · Сезон ${state.world.seasonNum}`;
       document.getElementById('chapterTitle').textContent = state.world.title;
       document.getElementById('chapterBody').textContent = state.world.body;
       document.getElementById('worldShardsLbl').textContent = `${state.account.shards} осколков`;
 
-      document.getElementById('regionsWrap').innerHTML = state.world.regions.map(r => `
-        <div class="task-line">
-          <div class="task-info">
-            <div class="task-label">${r.name} (${r.progress}/${r.goal})</div>
-            <div class="task-sub">${r.note} · Награда: +${r.xp} опыта</div>
-          </div>
-          <div class="task-right">
-            ${!r.done
-              ? `<button class="btn outline sm" onclick="reinforceRegion('${r.id}')">${r.cost} оск.</button>`
-              : `<span class="mono" style="font-size:11px;color:var(--pine);font-weight:700">Освоен</span>`}
-          </div>
-        </div>`).join('');
+      const ev = state.world.event;
+      document.getElementById('wEventTitle').textContent = ev.title;
+      document.getElementById('wEventDesc').textContent = ev.desc;
+      document.getElementById('wEventAction').innerHTML = ev.claimed
+        ? `<span class="mono muted" style="font-size:11px">Сигнал принят</span>`
+        : `<button class="btn pine sm" onclick="claimWorldEvent()">Забрать +25 осколков</button>`;
+
+      document.getElementById('regionsWrap').innerHTML = state.world.regions.map(rg => {
+        const reqText = rg.id === 'rg_archive'
+          ? 'Условие: 3 выполненных задачи'
+          : rg.id === 'rg_beacon'
+            ? 'Условие: 6 задач или 1 кампания'
+            : 'Доступна с начала сезона';
+        return `
+          <div class="task-line" style="opacity:${rg.unlocked ? 1 : 0.55}">
+            <div class="task-info">
+              <div class="task-label">${rg.name} (${rg.progress}/${rg.goal})</div>
+              <div class="task-sub">${rg.note} · ${reqText} · +${rg.xp} XP</div>
+            </div>
+            <div class="task-right">
+              ${!rg.unlocked
+                ? `<span class="mono muted" style="font-size:11px">Закрыта</span>`
+                : !rg.done
+                  ? `<button class="btn outline sm" onclick="reinforceRegion('${rg.id}')">${rg.cost} оск.</button>`
+                  : `<span class="mono" style="font-size:11px;color:var(--pine);font-weight:700">Освоен</span>`}
+            </div>
+          </div>`;
+      }).join('');
+
+      document.getElementById('seasonsArchiveWrap').innerHTML = state.world.seasonsArchive.length
+        ? state.world.seasonsArchive.map(sa => `
+            <div class="story-item"><span class="story-date">Сезон ${sa.season} (${sa.date})</span>Уровень ${sa.level}, задач: ${sa.completed}, кампаний: ${sa.campaignsDone}.</div>
+          `).join('')
+        : `<p class="muted" style="font-size:12.5px">Завершённых сезонов в архиве пока нет.</p>`;
 
       document.getElementById('charsWrap').innerHTML = state.world.chars.map(ch => `
         <div class="task-line">
@@ -1311,10 +1640,63 @@
           <button class="del-x" onclick="deleteChar('${ch.id}')">×</button>
         </div>`).join('');
 
-      document.getElementById('profileRankHeading').textContent = state.account.rank;
+      document.getElementById('shopShardsLbl').textContent = `${state.account.shards} осколков`;
+      document.getElementById('shopCatalogWrap').innerHTML = SHOP_ITEMS.map(it => {
+        const alreadyOwned = it.kind === 'title' && state.vault.inventory.some(v => v.itemId === it.id);
+        return `
+          <div class="task-line">
+            <div class="task-info">
+              <div class="task-label">${it.name}</div>
+              <div class="task-sub">${it.desc}</div>
+            </div>
+            <div class="task-right">
+              ${alreadyOwned
+                ? `<span class="mono muted" style="font-size:11px">В инвентаре</span>`
+                : `<button class="btn terracotta sm" onclick="buyShopItem('${it.id}')">${it.cost} оск.</button>`}
+            </div>
+          </div>`;
+      }).join('');
+
+      document.getElementById('achievementsWrap').innerHTML = state.vault.achievements.map(ac => `
+        <div class="ach-card ${ac.unlocked ? '' : 'locked'}">
+          <div>
+            <div style="font-size:13.5px;font-weight:700">${ac.title}</div>
+            <div class="muted" style="font-size:12px;margin-top:2px">${ac.note} (+${ac.rewardShards} оск.)</div>
+          </div>
+          <span class="mono" style="font-size:11px;color:${ac.unlocked ? 'var(--pine)' : 'var(--ink-2)'}">${ac.unlocked ? 'Открыто' : 'В пути'}</span>
+        </div>`).join('');
+
+      document.getElementById('inventoryWrap').innerHTML = state.vault.inventory.map(inv => {
+        const canEquip = inv.kind === 'title';
+        return `
+          <div class="task-line">
+            <div class="task-info">
+              <div class="task-label">${inv.name} ${inv.equipped ? '<span class="pts">· Экипировано</span>' : ''}</div>
+              <div class="task-sub">Источник: ${inv.source} · Коллекция: ${inv.collection}</div>
+            </div>
+            <div class="task-right">
+              ${canEquip
+                ? `<button class="btn outline sm" onclick="dispatchSystemEvent('ITEM_EQUIPPED', { invId: '${inv.id}' })">${inv.equipped ? 'Снять' : 'Надеть'}</button>`
+                : `<span class="pts">${inv.collection}</span>`}
+            </div>
+          </div>`;
+      }).join('');
+
+      const colGroups = {};
+      state.vault.inventory.forEach(item => {
+        const col = item.collection || 'Общее';
+        colGroups[col] = (colGroups[col] || 0) + 1;
+      });
+      document.getElementById('collectionsWrap').innerHTML = Object.entries(colGroups).map(([col, cnt]) => `
+        <div class="task-line">
+          <div class="task-info"><div class="task-label">${col}</div></div>
+          <span class="pts">${cnt} шт.</span>
+        </div>`).join('');
+
+      document.getElementById('profileRankHeading').textContent = state.account.equippedTitle || state.account.rank;
       document.getElementById('profileLvl').textContent = state.account.level;
-      document.getElementById('profileStatsSummary').textContent =
-        `Выполнено шагов: ${state.summary.completed} · Предметов в коллекции: ${state.vault.keepsakes.length}`;
+      document.getElementById('profileIdentitySub').textContent =
+        `Сезон ${state.world.seasonNum} · Предметов: ${state.vault.inventory.length} · Завершено кампаний: ${state.stats.campaignsDone}`;
 
       const { discipline, focus, independence } = state.account.pillars;
       document.getElementById('barDiscVal').textContent = discipline;
@@ -1324,20 +1706,30 @@
       document.getElementById('barFocFill').style.width = Math.min(100, Math.round((focus / 30) * 100)) + '%';
       document.getElementById('barIndFill').style.width = Math.min(100, Math.round((independence / 30) * 100)) + '%';
 
-      document.getElementById('achievementsWrap').innerHTML = state.vault.achievements.map(a => `
-        <div class="ach-card ${a.unlocked ? '' : 'locked'}">
-          <div>
-            <div style="font-size:13.5px;font-weight:700">${a.title}</div>
-            <div class="muted" style="font-size:12px;margin-top:2px">${a.note}</div>
-          </div>
-          <span class="mono" style="font-size:11px;color:${a.unlocked ? 'var(--pine)' : 'var(--ink-2)'}">${a.unlocked ? 'Открыто' : 'В пути'}</span>
-        </div>`).join('');
+      let pDone = state.stats.totalDone;
+      let pXp = state.stats.totalXpEarned;
+      let pNote = 'Показатели за всё время существования профиля.';
 
-      document.getElementById('keepsakesWrap').innerHTML = state.vault.keepsakes.map(k => `
-        <div class="task-line">
-          <div class="task-info"><div class="task-label">${k.title}</div></div>
-          <span class="pts">${k.grade}</span>
-        </div>`).join('');
+      if (statPeriod === 'day') {
+        const dRec = state.stats.byDay[tk] || { done: 0, xp: 0 };
+        pDone = dRec.done;
+        pXp = dRec.xp;
+        pNote = `Данные за сегодняшний день (${tk}).`;
+      } else if (statPeriod === 'week') {
+        pDone = 0; pXp = 0;
+        for (let i = 0; i < 7; i++) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const rec = state.stats.byDay[isoDay(d)];
+          if (rec) { pDone += rec.done; pXp += rec.xp; }
+        }
+        pNote = 'Данные за последние 7 дней.';
+      }
+
+      document.getElementById('stDone').textContent = pDone;
+      document.getElementById('stXp').textContent = pXp;
+      document.getElementById('stCamps').textContent = state.stats.campaignsDone;
+      document.getElementById('stPeriodNote').textContent = pNote;
 
       document.getElementById('keyCaption').textContent = `Профиль: ${PROFILE_ID}`;
       document.getElementById('backupArea').value = JSON.stringify(state);
@@ -1346,8 +1738,8 @@
     }
 
     checkDayRollover();
-    recalcLevel();
-    refreshAchievements();
+    recalcAccountLevel();
+    evaluateAchievements();
     render(false);
     pullFromServer(true);
   </script>
