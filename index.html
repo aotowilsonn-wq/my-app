@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VIPERR OS v5.0</title>
+  <title>VIPERR OS v6.0</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root { --bg:#030304; --s1:#0a0a0d; --s2:#131319; --bd:#1e1e26; --red:#ff002b; --txt:#f4f4f6; --mut:#636370; }
@@ -25,6 +25,8 @@
     .p-lbl { display:flex; justify-content:space-between; font-size:10px; color:var(--mut); font-family:monospace; margin:12px 0 5px; }
     .p-bar { height:6px; background:#15151b; border-radius:99px; overflow:hidden; }
     .p-fill { height:100%; background:var(--red); box-shadow:0 0 10px var(--red); width:0%; transition:width .35s; }
+    .penalty-box { background:rgba(255,0,43,.14); border:1px solid var(--red); border-radius:14px; padding:13px; margin-bottom:14px; display:none; }
+    .penalty-box.on { display:block; }
     .drop-btn { width:100%; background:linear-gradient(90deg,#ff002b 0%,#9e001b 100%); color:#fff; border:none; border-radius:13px; padding:13px; font-size:12px; font-weight:900; letter-spacing:1.2px; margin-bottom:14px; cursor:pointer; box-shadow:0 6px 20px rgba(255,0,43,.25); display:flex; justify-content:space-between; align-items:center; }
     .drop-btn.claimed { background:var(--s1); border:1px solid var(--bd); color:var(--mut); box-shadow:none; }
     .box { background:var(--s1); border:1px solid var(--bd); border-radius:15px; padding:13px; margin-bottom:14px; }
@@ -81,7 +83,7 @@
   </style>
 </head>
 <body>
-  <div class="ticker"><span>SOLO SOVEREIGN v5.0 // CLOUD SYNC ACTIVE // VIPERR PROTOCOL // NO NPC MOVES // SILENCE IS POWER // SOLO SOVEREIGN v5.0 //&nbsp;</span></div>
+  <div class="ticker"><span>TOTAL AUTONOMY v6.0 // PENALTY LOCK SYSTEM // VIPERR PROTOCOL // NO NPC MOVES // SILENCE IS POWER //&nbsp;</span></div>
 
   <div class="wrap">
     <!-- TAB 1: TERMINAL -->
@@ -97,11 +99,32 @@
         </div>
         <div class="aura" id="auraVal">1 000 000</div>
         <div class="sub">
-          <span id="dateSub">SYNC // TODAY</span>
+          <span id="dateSub">CYCLE // TODAY</span>
           <span id="cloudStatus" style="color:var(--red)">☁️ CLOUD</span>
         </div>
         <div class="p-lbl"><span id="pPct">0.0%</span><span id="pNext">NEXT: 2 500 000</span></div>
         <div class="p-bar"><div class="p-fill" id="pFill"></div></div>
+      </div>
+
+      <!-- Penalty Lock Box -->
+      <div class="penalty-box" id="penaltyBox">
+        <div class="row">
+          <div>
+            <div style="font-size:12px;font-weight:900;color:var(--red);letter-spacing:1px">⚠️ PENALTY LOCK (МНОЖИТЕЛЬ x0.5)</div>
+            <div style="font-size:11px;color:#ddd;margin-top:3px">Искупление: 100 отжиманий + 45 мин без телефона</div>
+          </div>
+          <button class="btn red sm" onclick="clearPenalty()">ИСКУПИТЬ</button>
+        </div>
+      </div>
+
+      <!-- Energy Calibration -->
+      <div class="box row" id="energyBox" style="padding:10px 13px">
+        <span style="font-size:11px;font-weight:800;color:var(--mut)">ЭНЕРГИЯ ДНЯ:</span>
+        <div style="display:flex;gap:5px">
+          <button class="t-opt" onclick="setEnergy('LOW',this)">LOW</button>
+          <button class="t-opt" onclick="setEnergy('MID',this)">MID</button>
+          <button class="t-opt" onclick="setEnergy('PEAK',this)">PEAK</button>
+        </div>
       </div>
 
       <button class="drop-btn" id="dropBtn" onclick="claimDrop()">
@@ -160,7 +183,7 @@
         <p id="qText">Сброс контрактов идёт автоматически в 00:00. Твоя задача — закрывать день без пустых клеток.</p>
       </div>
 
-      <button class="btn" style="width:100%;margin-top:14px;background:rgba(255,0,43,.1);border:1px solid rgba(255,0,43,.35);color:var(--red);padding:13px" onclick="relapse()">ЗАФИКСИРОВАТЬ СРЫВ (-500K / ЩИТ)</button>
+      <button class="btn" style="width:100%;margin-top:14px;background:rgba(255,0,43,.1);border:1px solid rgba(255,0,43,.35);color:var(--red);padding:13px" onclick="relapse()">ЗАФИКСИРОВАТЬ СРЫВ (-500K / PENALTY)</button>
     </div>
 
     <!-- TAB 2: BOSSES & STATS -->
@@ -205,9 +228,22 @@
     <!-- TAB 3: BLACK MARKET -->
     <div id="t-mkt" class="tab">
       <div class="card">
-        <div class="badge" style="display:inline-block;margin-bottom:6px">BLACK MARKET</div>
-        <div style="font-size:12px;color:var(--mut)">Трать заработанную Ауру на защиту стрика и легальные награды.</div>
+        <div class="row">
+          <div>
+            <div class="badge" style="display:inline-block;margin-bottom:6px">BLACK MARKET</div>
+            <div style="font-size:12px;color:var(--mut)">Покупай защиту стрика и свои награды.</div>
+          </div>
+          <button class="btn ghost sm" onclick="toggleForm('mktForm')">+ НАГРАДА</button>
+        </div>
       </div>
+
+      <div class="form" id="mktForm">
+        <input id="mTitle" placeholder="Твоя награда (напр. Купить скин / Выходной)">
+        <input id="mDesc" placeholder="Условие или описание">
+        <input id="mCost" type="number" placeholder="Цена в Ауре (напр. 1500000)">
+        <button class="btn red" onclick="addMarket()">ДОБАВИТЬ В МАГАЗИН</button>
+      </div>
+
       <div class="list" id="mList"></div>
     </div>
 
@@ -304,6 +340,7 @@
 
     const DEF = {
       aura: 1000000, streak: 1, shields: 0, totalDone: 0, updatedAt: 0,
+      penalty: false, energy: '',
       lastDate: todayKey(), dropClaimed: false,
       stats: { STR: 14, CRF: 12, MND: 16 },
       calLog: {},
@@ -319,23 +356,23 @@
         { id:4, stat:'STR', t:"РЕЖИМ ХИЩНИКА", d:"Отбой до 00:30, подъём без перестановки будильника", p:150000, done:false }
       ],
       market: [
-        { id:201, t:"🛡 ЩИТ ЗАМОРОЗКИ СТРИКА", d:"Автоматически спасёт стрик при пропуске дня или срыве", c:1200000 },
-        { id:202, t:"🎮 2 ЧАСА КАТКИ В CS2", d:"Легальный чит-тайм без угрызений совести", c:750000 },
-        { id:203, t:"🍔 ЧИТ-МИЛ / ЭНЕРГЕТИК", d:"Награда за закрытую серию контрактов", c:500000 },
-        { id:204, t:"⚡ БУСТ СТАТОВ (+5 ALL)", d:"Мгновенная прокачка всех трёх атрибутов на +5", c:2000000 }
+        { id:201, t:"🛡 ЩИТ ЗАМОРОЗКИ СТРИКА", d:"Автоматически спасёт стрик при пропуске дня или срыве", c:1200000, sys:true },
+        { id:202, t:"🎮 2 ЧАСА КАТКИ В CS2", d:"Легальный чит-тайм без угрызений совести", c:750000, sys:false },
+        { id:203, t:"🍔 ЧИТ-МИЛ / ЭНЕРГЕТИК", d:"Награда за закрытую серию контрактов", c:500000, sys:false },
+        { id:204, t:"⚡ БУСТ СТАТОВ (+5 ALL)", d:"Мгновенная прокачка всех трёх атрибутов на +5", c:2000000, sys:true }
       ]
     };
 
-    let st = JSON.parse(localStorage.getItem('viperr_v5')) || DEF;
+    let st = JSON.parse(localStorage.getItem('viperr_v6')) || JSON.parse(localStorage.getItem('viperr_v5')) || DEF;
     if (!st.bosses) st.bosses = DEF.bosses;
 
     function saveState() {
       st.updatedAt = Date.now();
       const raw = JSON.stringify(st);
-      localStorage.setItem('viperr_v5', raw);
+      localStorage.setItem('viperr_v6', raw);
       document.getElementById('bkArea').value = raw;
       if (tg?.CloudStorage) {
-        tg.CloudStorage.setItem('viperr_save_v5', raw, (err) => {
+        tg.CloudStorage.setItem('viperr_save_v6', raw, (err) => {
           document.getElementById('cloudStatus').innerText = err ? '⚠️ LOCAL' : '☁️ SYNCED';
         });
       }
@@ -343,7 +380,7 @@
 
     function forceCloudLoad(silent = false) {
       if (!tg?.CloudStorage) { if (!silent) alert('CloudStorage доступен внутри Telegram.'); return; }
-      tg.CloudStorage.getItem('viperr_save_v5', (err, val) => {
+      tg.CloudStorage.getItem('viperr_save_v6', (err, val) => {
         if (!err && val) {
           try {
             const cloud = JSON.parse(val);
@@ -366,12 +403,13 @@
           st.streak += 1;
         } else {
           if (st.shields > 0) st.shields -= 1;
-          else { st.streak = 0; st.calLog[st.lastDate] = -1; }
+          else { st.streak = 0; st.calLog[st.lastDate] = -1; st.penalty = true; }
         }
         st.quests.forEach(q => q.done = false);
         const rnd = DAILY_POOL[Math.floor(Math.random() * DAILY_POOL.length)];
         st.dailySpec = { ...rnd, done: false };
         st.dropClaimed = false;
+        st.energy = '';
         st.lastDate = tk;
       }
       updateTodayCal();
@@ -388,6 +426,7 @@
     }
 
     function mult() {
+      if (st.penalty) return 0.5;
       if (st.streak >= 30) return 2.0;
       if (st.streak >= 14) return 1.5;
       if (st.streak >= 7) return 1.3;
@@ -412,6 +451,16 @@
       document.getElementById('multVal').innerText = 'x' + m.toFixed(1);
       document.getElementById('shCnt').innerText = st.shields;
       document.getElementById('dateSub').innerText = 'CYCLE // ' + st.lastDate;
+
+      // Penalty UI
+      const pb = document.getElementById('penaltyBox');
+      if (st.penalty) pb.classList.add('on');
+      else pb.classList.remove('on');
+
+      // Energy UI
+      document.querySelectorAll('#energyBox .t-opt').forEach(b => {
+        b.classList.toggle('on', b.innerText === st.energy);
+      });
 
       let rk = RANKS[0];
       for (let r of RANKS) if (st.aura >= r.min) rk = r;
@@ -449,7 +498,6 @@
         ql.appendChild(d);
       });
 
-      // Bosses
       const bl = document.getElementById('bossList'); bl.innerHTML = '';
       st.bosses.forEach((b, i) => {
         const bpct = Math.min(100, (b.cur / b.max) * 100);
@@ -469,7 +517,6 @@
           </div>`;
       });
 
-      // Stats
       const { STR, CRF, MND } = st.stats;
       document.getElementById('sSTR').innerText = STR;
       document.getElementById('sCRF').innerText = CRF;
@@ -493,7 +540,7 @@
       st.market.forEach((it, i) => {
         const d = document.createElement('div');
         d.className = 'item';
-        d.innerHTML = `<div class="it-main"><div class="it-t">${it.t}</div><div class="it-d">${it.d}</div></div><button class="btn" onclick="buy(${i})">${Math.round(it.c/1000)}K</button>`;
+        d.innerHTML = `<div class="it-main"><div class="it-t">${it.t}</div><div class="it-d">${it.d}</div></div><div style="display:flex;align-items:center"><button class="btn" onclick="buy(${i})">${Math.round(it.c/1000)}K</button>${!it.sys?`<button class="del" onclick="delMkt(${i})">×</button>`:''}</div>`;
         ml.appendChild(d);
       });
 
@@ -523,6 +570,26 @@
         cg.innerHTML += `<div class="${cls}">${d}</div>`;
       }
       document.getElementById('calStats').innerText = `ИДЕАЛЬНЫХ ДНЕЙ: ${perfectCount}`;
+    }
+
+    function setEnergy(lvl) {
+      if (st.energy === lvl) return;
+      const firstTime = !st.energy;
+      st.energy = lvl;
+      if (firstTime) st.aura += 50000;
+      beep('click');
+      if (lvl === 'LOW') document.getElementById('qText').innerText = 'Низкий заряд — не повод сливать день. Сделай хотя бы базу на минималках.';
+      if (lvl === 'MID') document.getElementById('qText').innerText = 'Рабочий режим. Закрывай контракты по очереди без лишнего шума.';
+      if (lvl === 'PEAK') document.getElementById('qText').innerText = 'Пиковая форма. Сегодня идеальный день, чтобы пробить полоску Босса.';
+      render();
+    }
+
+    function clearPenalty() {
+      if (!confirm('Подтверждаешь, что выполнил 100 отжиманий и отработал 45 минут без телефона?')) return;
+      st.penalty = false;
+      beep('ok');
+      alert('🔓 PENALTY LOCK СНЯТ. Множитель восстановлен.');
+      render();
     }
 
     function claimDrop() {
@@ -576,6 +643,18 @@
     }
     function delBoss(i) { beep('click'); st.bosses.splice(i, 1); render(); }
 
+    function addMarket() {
+      const t = document.getElementById('mTitle').value.trim().toUpperCase();
+      const c = parseInt(document.getElementById('mCost').value);
+      if (!t || !c || c <= 0) return;
+      const d = document.getElementById('mDesc').value.trim() || 'Личная награда';
+      st.market.push({ id:Date.now(), t, d, c, sys:false });
+      document.getElementById('mTitle').value = ''; document.getElementById('mDesc').value = ''; document.getElementById('mCost').value = '';
+      document.getElementById('mktForm').classList.remove('open');
+      beep('click'); render();
+    }
+    function delMkt(i) { beep('click'); st.market.splice(i, 1); render(); }
+
     function buy(i) {
       const it = st.market[i];
       if (st.aura < it.c) { alert('Недостаточно Ауры.'); return; }
@@ -600,11 +679,11 @@
     function delQ(i) { beep('click'); st.quests.splice(i, 1); render(); }
 
     function relapse() {
-      if (st.shields > 0) { st.shields -= 1; beep('ok'); alert('🛡 ЩИТ ЗАМОРОЗКИ СРАБОТАЛ! Стрик и Аура спасены.'); render(); return; }
+      if (st.shields > 0) { st.shields -= 1; beep('ok'); alert('🛡 ЩИТ ЗАМОРОЗКИ СРАБОТАЛ! Стрик, Аура и множитель спасены.'); render(); return; }
       beep('bad');
       document.body.classList.add('red-flash'); setTimeout(() => document.body.classList.remove('red-flash'), 400);
-      st.aura = Math.max(0, st.aura - 500000); st.streak = 0; st.calLog[todayKey()] = -1;
-      document.getElementById('qText').innerText = 'СРЫВ ЗАФИКСИРОВАН. -500K АУРЫ. Стрик обнулён.';
+      st.aura = Math.max(0, st.aura - 500000); st.streak = 0; st.calLog[todayKey()] = -1; st.penalty = true;
+      document.getElementById('qText').innerText = 'СРЫВ ЗАФИКСИРОВАН. Активирован PENALTY LOCK (x0.5). Пройди искупление.';
       render();
     }
 
