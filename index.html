@@ -3,108 +3,283 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AURA OVERDRIVE ∞</title>
+  <title>VIPERR // AURA OVERDRIVE ∞</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #070709;
-      --card: #111116;
-      --accent: #00ff88;
-      --accent-glow: rgba(0, 255, 136, 0.25);
-      --text: #f0f0f5;
-      --muted: #6e6e80;
+      --bg: #030304;
+      --surface: #0a0a0d;
+      --surface-2: #121217;
+      --border: #1f1f26;
+      --crimson: #ff002b;
+      --crimson-glow: rgba(255, 0, 43, 0.35);
+      --chrome: linear-gradient(135deg, #ffffff 0%, #8e8e98 50%, #ffffff 100%);
+      --text: #f5f5f7;
+      --muted: #5e5e6b;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
-    body { background: var(--bg); color: var(--text); padding: 20px 16px 40px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
-    .header { text-align: center; margin-bottom: 24px; width: 100%; }
-    .rank-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--accent); color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
-    .aura-score { font-size: 42px; font-weight: 900; letter-spacing: -1px; text-shadow: 0 0 25px var(--accent-glow); }
-    .aura-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
-    .streak-box { margin-top: 14px; font-size: 14px; color: #ffaa00; font-weight: 600; }
-    .section-title { width: 100%; max-width: 420px; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; font-weight: 700; }
-    .quest-list { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; }
-    .quest-card { background: var(--card); border: 1px solid #1e1e26; border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s ease; cursor: pointer; }
-    .quest-card.done { border-color: var(--accent); background: rgba(0, 255, 136, 0.05); opacity: 0.75; }
-    .quest-info h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-    .quest-info p { font-size: 13px; color: var(--muted); }
-    .quest-reward { font-size: 13px; font-weight: 800; color: var(--accent); background: rgba(0, 255, 136, 0.1); padding: 6px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
-    .quest-card.done .quest-reward { text-decoration: line-through; color: var(--muted); background: transparent; }
-    .verdict-box { width: 100%; max-width: 420px; margin-top: 28px; background: var(--card); border-left: 3px solid var(--accent); border-radius: 12px; padding: 16px; font-size: 14px; line-height: 1.5; color: #d0d0dc; }
-    .verdict-title { font-size: 11px; text-transform: uppercase; color: var(--accent); font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; }
-    .reset-btn { margin-top: 30px; background: transparent; border: 1px solid #2a2a35; color: var(--muted); padding: 10px 18px; border-radius: 10px; font-size: 12px; cursor: pointer; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 50px; min-height: 100vh; overflow-x: hidden; transition: background 0.3s; }
+    body.glitch-red { background: #2a0007; }
+
+    /* Бегущая строка сверху */
+    .ticker { width: 100%; background: var(--crimson); color: #000; font-size: 10px; font-weight: 900; letter-spacing: 2px; padding: 5px 0; text-transform: uppercase; overflow: hidden; white-space: nowrap; }
+    .ticker-inner { display: inline-block; animation: marquee 18s linear infinite; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    .container { max-width: 440px; margin: 0 auto; padding: 18px 16px; }
+
+    /* Карточка статуса (Chrome & Obsidian) */
+    .hero-card { background: radial-gradient(circle at top right, #1a0509 0%, var(--surface) 65%); border: 1px solid var(--border); border-radius: 20px; padding: 22px 18px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.8); margin-bottom: 20px; }
+    .top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .rank-tag { font-size: 11px; font-weight: 900; letter-spacing: 1.5px; color: var(--crimson); text-transform: uppercase; border: 1px solid rgba(255,0,43,0.4); padding: 4px 10px; border-radius: 6px; background: rgba(255,0,43,0.08); }
+    .streak-tag { font-size: 12px; font-weight: 800; color: #d4d4dc; font-family: monospace; }
+
+    .aura-val { font-size: 44px; font-weight: 900; letter-spacing: -1.5px; background: var(--chrome); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.05; }
+    .aura-sub { font-size: 10px; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; margin-top: 6px; font-weight: 700; }
+
+    /* Прогресс бар до следующего ранга */
+    .progress-wrap { margin-top: 18px; }
+    .progress-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); font-family: monospace; margin-bottom: 6px; text-transform: uppercase; }
+    .progress-bar { width: 100%; height: 6px; background: #16161c; border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--crimson); box-shadow: 0 0 12px var(--crimson); width: 0%; transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+
+    /* Таймер Deep Focus */
+    .focus-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .focus-left h4 { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+    .focus-left span { font-size: 11px; color: var(--muted); }
+    .focus-timer { font-family: monospace; font-size: 20px; font-weight: 900; color: var(--text); margin-right: 10px; }
+    .btn-focus { background: var(--text); color: #000; border: none; padding: 8px 14px; border-radius: 8px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
+    .btn-focus.active { background: var(--crimson); color: #fff; box-shadow: 0 0 15px var(--crimson-glow); }
+
+    /* Заголовки секций */
+    .sec-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .sec-title { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+    .btn-add-toggle { background: transparent; border: 1px solid var(--border); color: var(--text); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+
+    /* Форма добавления квеста */
+    .add-box { display: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 14px; gap: 8px; flex-direction: column; }
+    .add-box.open { display: flex; }
+    .add-box input, .add-box select { background: #070709; border: 1px solid #262630; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; outline: none; }
+    .btn-save-q { background: var(--crimson); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
+
+    /* Список квестов */
+    .quest-list { display: flex; flex-direction: column; gap: 10px; }
+    .q-item { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; }
+    .q-item.done { border-color: rgba(255,0,43,0.5); background: linear-gradient(90deg, rgba(255,0,43,0.08) 0%, var(--surface) 100%); }
+    .q-main { flex: 1; cursor: pointer; padding-right: 10px; }
+    .q-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .q-item.done .q-title { color: var(--muted); text-decoration: line-through; }
+    .q-desc { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .q-right { display: flex; align-items: center; gap: 8px; }
+    .q-pts { font-family: monospace; font-size: 12px; font-weight: 900; color: var(--crimson); background: rgba(255,0,43,0.1); padding: 5px 8px; border-radius: 6px; }
+    .q-item.done .q-pts { color: var(--muted); background: transparent; }
+    .q-del { background: transparent; border: none; color: #3a3a45; font-size: 16px; padding: 4px; cursor: pointer; }
+
+    /* Блок Вердикта / Оракула */
+    .oracle-box { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--crimson); border-radius: 12px; padding: 14px 16px; }
+    .oracle-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .oracle-lbl { font-size: 10px; font-weight: 900; color: var(--crimson); letter-spacing: 1.5px; text-transform: uppercase; }
+    .btn-oracle { background: transparent; border: none; color: var(--muted); font-size: 11px; text-decoration: underline; cursor: pointer; }
+    .oracle-text { font-size: 13px; line-height: 1.45; color: #d8d8e0; font-weight: 500; }
+
+    /* Нижняя панель управления */
+    .bottom-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+    .btn-next-day { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
+    .btn-relapse { background: rgba(255,0,43,0.08); border: 1px solid rgba(255,0,43,0.3); color: var(--crimson); padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="rank-badge" id="rank">УРОВЕНЬ 1: ПРОБУЖДЁННЫЙ</div>
-    <div class="aura-score" id="aura">1 000 000</div>
-    <div class="aura-label">ЕДИНИЦ ПАССИВНОЙ АУРЫ</div>
-    <div class="streak-box" id="streak">🔥 Стрик без срывов: 1 дн.</div>
+  <div class="ticker">
+    <div class="ticker-inner">
+      VIPERR PROTOCOL // NO VALIDATION // SILENCE IS POWER // HEAVY METAL DISCIPLINE // NO NPC MOVES // VIPERR PROTOCOL // NO VALIDATION // SILENCE IS POWER // HEAVY METAL DISCIPLINE // NO NPC MOVES //&nbsp;
+    </div>
   </div>
 
-  <div class="section-title">Протокол Анти-Ноль (Сегодня)</div>
-  <div class="quest-list" id="quests"></div>
+  <div class="container">
+    <!-- Главный статус -->
+    <div class="hero-card">
+      <div class="top-meta">
+        <div class="rank-tag" id="rankName">LVL 1 // NPC</div>
+        <div class="streak-tag" id="streakVal">STREAK: 1D</div>
+      </div>
+      <div class="aura-val" id="auraVal">1 000 000</div>
+      <div class="aura-sub">AURA OVERDRIVE RATING</div>
 
-  <div class="verdict-box">
-    <div class="verdict-title">Вердикт Тру Адама</div>
-    <div id="quote">Ты — главный сервер, а не бесплатный Wi-Fi на вокзале. Закрыл квесты — забрал ауру.</div>
+      <div class="progress-wrap">
+        <div class="progress-labels">
+          <span id="progCur">PROGRESS</span>
+          <span id="progNext">NEXT: 2 500 000</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Таймер глубокого фокуса -->
+    <div class="focus-panel">
+      <div class="focus-left">
+        <h4>DEEP ISOLATION</h4>
+        <span>25 мин без телефона (+350K)</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <div class="focus-timer" id="timerDisplay">25:00</div>
+        <button class="btn-focus" id="focusBtn" onclick="toggleFocus()">START</button>
+      </div>
+    </div>
+
+    <!-- Секция квестов -->
+    <div class="sec-head">
+      <div class="sec-title">ЕЖЕДНЕВНЫЙ ПРОТОКОЛ</div>
+      <button class="btn-add-toggle" onclick="toggleAddForm()">+ ДОБАВИТЬ</button>
+    </div>
+
+    <div class="add-box" id="addBox">
+      <input type="text" id="newTitle" placeholder="Название (напр. 50 подтягиваний)">
+      <input type="text" id="newDesc" placeholder="Короткое описание">
+      <select id="newReward">
+        <option value="100000">+100 000 (Лёгкий квест)</option>
+        <option value="200000" selected>+200 000 (База титана)</option>
+        <option value="350000">+350 000 (Хардкор)</option>
+      </select>
+      <button class="btn-save-q" onclick="addQuest()">ВШИТЬ В ПРОТОКОЛ</button>
+    </div>
+
+    <div class="quest-list" id="questList"></div>
+
+    <!-- Оракул -->
+    <div class="oracle-box">
+      <div class="oracle-top">
+        <div class="oracle-lbl">CODEX // ТРУ АДАМ</div>
+        <button class="btn-oracle" onclick="nextQuote()">Новый сигнал</button>
+      </div>
+      <div class="oracle-text" id="oracleText">Твоё молчание стоит дороже, чем их оправдания. Закрой квесты и забери своё.</div>
+    </div>
+
+    <!-- Кнопки цикла -->
+    <div class="bottom-actions">
+      <button class="btn-next-day" onclick="completeDay()">ЗАКРЫТЬ ДЕНЬ (+1 СТРИК)</button>
+      <button class="btn-relapse" onclick="triggerRelapse()">Я СОРВАЛСЯ (-500K)</button>
+    </div>
   </div>
-
-  <button class="reset-btn" onclick="newDay()">Начать новый день (сброс галочек)</button>
 
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) { tg.ready(); tg.expand(); }
+    if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#030304'); }
+
+    // Синтезатор тяжёлого звука (808 Bass / Metal Click / Relapse Siren)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'quest') {
+        // Тяжёлый саб-удар 808
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(38, now + 0.35);
+        gain.gain.setValueAtTime(0.7, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } else if (type === 'relapse') {
+        // Мрачный гул провала
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(95, now);
+        osc.frequency.linearRampToValueAtTime(45, now + 0.6);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+        osc.start(now);
+        osc.stop(now + 0.65);
+      } else {
+        // Металлический клик
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+    }
+
+    // Хардкорные ранги на месяцы гринда
+    const RANKS = [
+      { min: 0, max: 2500000, title: "LVL 1 // SLEEPER (NPC)" },
+      { min: 2500000, max: 6000000, title: "LVL 2 // COLD BLOODED" },
+      { min: 6000000, max: 14000000, title: "LVL 3 // SHADOW PHANTOM" },
+      { min: 14000000, max: 28000000, title: "LVL 4 // HEAVY METAL" },
+      { min: 28000000, max: 50000000, title: "LVL 5 // TRUE ADAM" },
+      { min: 50000000, max: 100000000, title: "LVL ∞ // VIPERR OVERLORD" }
+    ];
+
+    const QUOTES = [
+      "Ты не бесплатный Wi-Fi на вокзале. Отзываем лицензию на доступ к твоей голове.",
+      "Слабость — это когда эмоция садится за руль, а ты отдаёшь ей ключи и документы.",
+      "Пока толпа ищет одобрение в чужих глазах, ты строишь бункер, который не пробить.",
+      "Иногда самый жёсткий ход — вообще не делать ход. Закрывай сервер для цирка.",
+      "Не ищи скрытый смысл там, где человек просто слился. Уважай своё время.",
+      "Сегодня ты не обязан побеждать весь мир. Просто не слей катку против своей лени."
+    ];
 
     const defaultQuests = [
-      { id: 1, title: "Железный каркас", desc: "Подтягивания или отжимания до жжения (5 мин)", reward: 150000, done: false },
-      { id: 2, title: "Прокачка скилла", desc: "20 мин в FL Studio / код / учёба без телефона", reward: 250000, done: false },
-      { id: 3, title: "Информационный бункер", desc: "Ноль заходов в токсичные чаты и ноль оправданий", reward: 300000, done: false },
-      { id: 4, title: "Режим титана", desc: "Отбой вовремя, чтобы не вставать с лицом сбитого лётчика", reward: 200000, done: false }
+      { id: 1, title: "ЖЕЛЕЗНЫЙ КАРКАС", desc: "Турник / отжимания до отказа (минимум 10 мин)", reward: 200000, done: false },
+      { id: 2, title: "HEAVY CRAFT", desc: "30 мин в FL Studio, коде или учёбе без соцсетей", reward: 250000, done: false },
+      { id: 3, title: "ТИШИНА В ЭФИРЕ", desc: "Ноль заходов в старые чаты и ноль оправданий", reward: 200000, done: false },
+      { id: 4, title: "РЕЖИМ ХИЩНИКА", desc: "Отбой до 00:30, подъём без скроллинга в кровати", reward: 150000, done: false }
     ];
 
-    const quotes = [
-      "Слабость — это когда эмоция садится за руль, а ты отдаёшь ей ключи.",
-      "Тру Адам не бегает за подтверждением своей ценности. Он её не выставляет на аукцион.",
-      "Сегодня ты не обязан побеждать весь мир. Достаточно не слить катку против собственной лени.",
-      "Иногда самый мощный ход — вообще не делать ход. Закрывай сервер для цирка."
-    ];
-
-    let state = JSON.parse(localStorage.getItem('aura_state')) || {
+    let state = JSON.parse(localStorage.getItem('viperr_aura_v2')) || {
       aura: 1000000,
       streak: 1,
       quests: defaultQuests
     };
 
-    function getRank(aura) {
-      if (aura < 1500000) return "УРОВЕНЬ 1: ПРОБУЖДЁННЫЙ";
-      if (aura < 3000000) return "УРОВЕНЬ 2: ХЛАДНОКРОВНЫЙ";
-      if (aura < 6000000) return "УРОВЕНЬ 3: ТРУ АДАМ";
-      return "УРОВЕНЬ ∞: ФИНАЛЬНЫЙ БОСС";
+    function save() {
+      localStorage.setItem('viperr_aura_v2', JSON.stringify(state));
     }
 
     function render() {
-      document.getElementById('aura').innerText = state.aura.toLocaleString('ru-RU');
-      document.getElementById('rank').innerText = getRank(state.aura);
-      document.getElementById('streak').innerText = `🔥 Стрик без срывов: ${state.streak} дн.`;
+      document.getElementById('auraVal').innerText = state.aura.toLocaleString('ru-RU');
+      document.getElementById('streakVal').innerText = `STREAK: ${state.streak}D`;
 
-      const list = document.getElementById('quests');
+      // Расчёт ранга и прогресс-бара
+      let currentRank = RANKS[0];
+      for (let r of RANKS) {
+        if (state.aura >= r.min) currentRank = r;
+      }
+      document.getElementById('rankName').innerText = currentRank.title;
+      document.getElementById('progNext').innerText = `NEXT: ${currentRank.max.toLocaleString('ru-RU')}`;
+      
+      let pct = ((state.aura - currentRank.min) / (currentRank.max - currentRank.min)) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      document.getElementById('progFill').style.width = pct + '%';
+      document.getElementById('progCur').innerText = `PROGRESS: ${pct.toFixed(1)}%`;
+
+      // Рендер квестов
+      const list = document.getElementById('questList');
       list.innerHTML = '';
       state.quests.forEach((q, idx) => {
-        const div = document.createElement('div');
-        div.className = `quest-card ${q.done ? 'done' : ''}`;
-        div.onclick = () => toggleQuest(idx);
-        div.innerHTML = `
-          <div class="quest-info">
-            <h3>${q.done ? '✅ ' : ''}${q.title}</h3>
-            <p>${q.desc}</p>
+        const el = document.createElement('div');
+        el.className = `q-item ${q.done ? 'done' : ''}`;
+        el.innerHTML = `
+          <div class="q-main" onclick="toggleQuest(${idx})">
+            <div class="q-title">${q.done ? '◼' : '◻'} ${q.title}</div>
+            <div class="q-desc">${q.desc}</div>
           </div>
-          <div class="quest-reward">+${(q.reward / 1000)}K</div>
+          <div class="q-right">
+            <div class="q-pts">+${q.reward / 1000}K</div>
+            <button class="q-del" onclick="deleteQuest(${idx})">×</button>
+          </div>
         `;
-        list.appendChild(div);
+        list.appendChild(el);
       });
-      localStorage.setItem('aura_state', JSON.stringify(state));
+      save();
     }
 
     function toggleQuest(idx) {
@@ -112,20 +287,116 @@
       if (!q.done) {
         q.done = true;
         state.aura += q.reward;
-        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        document.getElementById('quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        playSound('quest');
+        if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+        nextQuote();
       } else {
         q.done = false;
-        state.aura -= q.reward;
+        state.aura = Math.max(0, state.aura - q.reward);
+        playSound('click');
       }
       render();
     }
 
-    function newDay() {
-      const allDone = state.quests.some(q => q.done);
-      if (allDone) state.streak += 1;
-      state.quests.forEach(q => q.done = false);
+    function toggleAddForm() {
+      playSound('click');
+      document.getElementById('addBox').classList.toggle('open');
+    }
+
+    function addQuest() {
+      const title = document.getElementById('newTitle').value.trim().toUpperCase();
+      const desc = document.getElementById('newDesc').value.trim() || "Личный контракт без оправданий";
+      const reward = parseInt(document.getElementById('newReward').value);
+      if (!title) return;
+
+      state.quests.push({ id: Date.now(), title, desc, reward, done: false });
+      document.getElementById('newTitle').value = '';
+      document.getElementById('newDesc').value = '';
+      document.getElementById('addBox').classList.remove('open');
+      playSound('click');
       render();
+    }
+
+    function deleteQuest(idx) {
+      playSound('click');
+      state.quests.splice(idx, 1);
+      render();
+    }
+
+    function completeDay() {
+      const completedCount = state.quests.filter(q => q.done).length;
+      if (completedCount === 0) {
+        alert("Ты не закрыл ни одного квеста. Пустой день в стрик не идёт.");
+        return;
+      }
+      state.streak += 1;
+      // Бонус если закрыты ВСЕ квесты дня
+      if (completedCount === state.quests.length) {
+        state.aura += 250000;
+      }
+      state.quests.forEach(q => q.done = false);
+      playSound('quest');
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      render();
+    }
+
+    function triggerRelapse() {
+      playSound('relapse');
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+      document.body.classList.add('glitch-red');
+      setTimeout(() => document.body.classList.remove('glitch-red'), 400);
+
+      state.aura = Math.max(0, state.aura - 500000);
+      state.streak = 0;
+      document.getElementById('oracleText').innerText = "СРЫВ ЗАФИКСИРОВАН. -500 000 АУРЫ. Стрик обнулён. Не ной — вставай и начинай заново.";
+      render();
+    }
+
+    function nextQuote() {
+      const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      document.getElementById('oracleText').innerText = q;
+    }
+
+    // Таймер Deep Isolation (25 минут)
+    let focusInterval = null;
+    let timeLeft = 25 * 60;
+    function toggleFocus() {
+      const btn = document.getElementById('focusBtn');
+      if (focusInterval) {
+        clearInterval(focusInterval);
+        focusInterval = null;
+        timeLeft = 25 * 60;
+        btn.innerText = "START";
+        btn.classList.remove('active');
+        updateTimerText();
+        playSound('click');
+      } else {
+        playSound('quest');
+        btn.innerText = "ABORT";
+        btn.classList.add('active');
+        focusInterval = setInterval(() => {
+          timeLeft--;
+          updateTimerText();
+          if (timeLeft <= 0) {
+            clearInterval(focusInterval);
+            focusInterval = null;
+            timeLeft = 25 * 60;
+            btn.innerText = "START";
+            btn.classList.remove('active');
+            state.aura += 350000;
+            playSound('quest');
+            if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            document.getElementById('oracleText').innerText = "25 МИНУТ ЧИСТОЙ ИЗОЛЯЦИИ ПРОЙДЕНЫ. +350 000 АУРЫ В КОПИЛКУ.";
+            render();
+          }
+        }, 1000);
+      }
+    }
+
+    function updateTimerText() {
+      const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const s = (timeLeft % 60).toString().padStart(2, '0');
+      document.getElementById('timerDisplay').innerText = `${m}:${s}`;
     }
 
     render();
