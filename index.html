@@ -153,6 +153,7 @@
       width: 0%;
       transition: width 0.3s ease;
     }
+    .bar-fill.ok { background: var(--ok); }
 
     .mini-stats {
       display: flex;
@@ -184,8 +185,11 @@
       cursor: pointer;
     }
     .btn.primary { background: var(--accent); color: #fff; }
+    .btn.ok { background: var(--ok); color: #fff; }
+    .btn.danger { background: transparent; color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.35); }
     .btn.ghost { background: var(--surface-alt); color: var(--ink); border: 1px solid var(--line); }
     .btn.sm { padding: 5px 9px; font-size: 10px; }
+    .btn.xs { padding: 3px 7px; font-size: 10px; line-height: 1.2; }
 
     .chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
     .chip {
@@ -214,11 +218,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
     }
     .task.done {
       background: var(--surface-alt);
-      opacity: 0.72;
+      opacity: 0.75;
     }
     .task.done .t-title { text-decoration: line-through; color: var(--ink-soft); }
     .t-check {
@@ -236,9 +240,10 @@
       cursor: pointer;
     }
     .task.done .t-check { background: var(--accent); color: #fff; }
-    .t-body { flex: 1; cursor: pointer; }
-    .t-title { font-size: 13px; font-weight: 700; line-height: 1.25; }
+    .t-body { flex: 1; cursor: pointer; min-width: 0; }
+    .t-title { font-size: 13px; font-weight: 700; line-height: 1.25; word-break: break-word; }
     .t-meta { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+    .t-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
     .xp-tag {
       font-family: var(--font-mono);
       font-size: 10.5px;
@@ -286,6 +291,30 @@
     .camp-sub { font-size: 11.5px; color: var(--ink-soft); margin-top: 3px; }
     .camp-actions { display: flex; gap: 6px; align-items: center; margin-top: 10px; }
 
+    .sector-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .sector-card.secured { border-color: var(--ok); }
+    .log-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      font-size: 11.5px;
+      padding: 7px 9px;
+      border-radius: var(--r-sm);
+      background: var(--surface-alt);
+      line-height: 1.35;
+    }
+    .log-entry b { font-family: var(--font-mono); font-size: 10px; color: var(--accent); margin-right: 5px; }
+
     .tel-bars {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -324,6 +353,14 @@
       margin-top: 12px;
     }
     .ai-line { font-size: 12px; line-height: 1.4; margin-top: 4px; }
+
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--accent);
+    }
 
     .nav {
       position: fixed;
@@ -441,6 +478,26 @@
         <div class="task-list" id="extList"></div>
       </div>
 
+      <div class="sec-head"><span class="kicker">FOCUS SPRINT // СЕССИЯ КОНЦЕНТРАЦИИ</span></div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div style="font-size:11px;color:var(--ink-soft)" id="timerHint">Заверши сессию — получишь +120 XP и +1 FOCUS</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn primary sm" id="timerStartBtn" onclick="toggleTimer()">СТАРТ</button>
+            <button class="btn ghost sm" onclick="resetTimer()">СБРОС</button>
+          </div>
+        </div>
+        <div class="chip-row" style="margin-top:8px">
+          <button class="chip on" id="preset25" onclick="setTimerPreset(25, this)">25 мин</button>
+          <button class="chip" id="preset40" onclick="setTimerPreset(40, this)">40 мин</button>
+          <button class="chip" id="preset60" onclick="setTimerPreset(60, this)">60 мин</button>
+          <button class="chip" onclick="completeSprintNow()">Зачесть сессию</button>
+        </div>
+      </div>
+
       <div class="sec-head"><span class="kicker">РЕЖИМ СНА И БУФЕР ВРЕМЕНИ</span></div>
       <div class="panel">
         <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end">
@@ -536,6 +593,19 @@
         <div style="margin-top:8px;display:flex;gap:8px" id="evActions"></div>
       </div>
 
+      <div class="sec-head" style="margin-top:12px">
+        <span class="kicker">СЕКТОРЫ СЕВЕРНОГО КОНТУРА</span>
+        <span class="xp-tag" id="sectorSummary">0/4 SECURED</span>
+      </div>
+      <div id="sectorList"></div>
+
+      <div class="sec-head">
+        <span class="kicker">ХРОНИКА СОБЫТИЙ (WORLD LOG)</span>
+      </div>
+      <div class="panel">
+        <div class="log-feed" id="worldLogList"></div>
+      </div>
+
       <div class="sec-head">
         <span class="kicker">КАНОН И ПЕРСОНАЖИ</span>
         <button class="btn ghost sm" onclick="toggleDrawer('charDrawer')">+ ПЕРСОНАЖ</button>
@@ -586,6 +656,17 @@
         </div>
       </div>
 
+      <div class="sec-head"><span class="kicker">КУЗНИЦА ШАРДОВ // СНАРЯЖЕНИЕ</span></div>
+      <div class="panel" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div>
+            <div style="font-size:13px;font-weight:800">Ледяной хронометр</div>
+            <div style="font-size:11px;color:var(--ink-soft)">Даёт +150 XP и добавляет редкий артефакт в коллекцию (120 SHARDS)</div>
+          </div>
+          <button class="btn primary sm" onclick="craftChronometer()">КОВКА (120)</button>
+        </div>
+      </div>
+
       <div class="sec-head"><span class="kicker">ДОСТИЖЕНИЯ (PERMANENT)</span></div>
       <div class="grid-2" id="achList"></div>
 
@@ -620,7 +701,6 @@
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
-    /* PROFILE KEY FOR SUPABASE */
     function resolveProfileKey() {
       const tgUserId = tg?.initDataUnsafe?.user?.id;
       if (tgUserId) return `tg_${tgUserId}`;
@@ -633,7 +713,6 @@
     }
     const PROFILE_KEY = resolveProfileKey();
 
-    /* AUDIO & HAPTICS */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playTone(type) {
       if (!state?.meta?.settings?.sound) return;
@@ -669,7 +748,6 @@
       } catch (e) {}
     }
 
-    /* SNOW ATMOSPHERE */
     const snowCanvas = document.getElementById('snowLayer');
     const sctx = snowCanvas.getContext('2d');
     let flakes = [];
@@ -703,9 +781,12 @@
     window.addEventListener('resize', resizeSnow);
     resizeSnow(); tickSnow();
 
-    /* DATE HELPERS */
     function getDateKey(d = new Date()) {
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+    function getTimeShort() {
+      const now = new Date();
+      return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     }
     function daysBetween(k1, k2) {
       const a = new Date(k1 + 'T00:00:00');
@@ -801,6 +882,15 @@
           mood: 'CALM FROST',
           title: 'Глава I — Тишина перед первым шагом',
           text: 'Внешний шум приглушён. В мире WINTER ARC прогресс движется только от подтверждённых действий в реальности.',
+          sectors: [
+            { id: 'sec_pier', name: 'Северный Пирс', threat: 'Холодный прибой', progress: 0, target: 3, costShards: 60, rewardXp: 160, loot: 'Фрагмент Пирса', secured: false },
+            { id: 'sec_archive', name: 'Ледяной Архив', threat: 'Шум данных', progress: 0, target: 3, costShards: 80, rewardXp: 200, loot: 'Печать Архивариуса', secured: false },
+            { id: 'sec_iron', name: 'Железный Хребет', threat: 'Усталость контура', progress: 0, target: 4, costShards: 100, rewardXp: 250, loot: 'Сердцевина Хребта', secured: false },
+            { id: 'sec_citadel', name: 'Цитадель Зимней Арки', threat: 'Финальный рубеж', progress: 0, target: 5, costShards: 140, rewardXp: 350, loot: 'Корона Контура', secured: false }
+          ],
+          logs: [
+            { time: getTimeShort(), text: 'Система WINTER ARC инициализирована. Контур готов к работе.' }
+          ],
           characters: [
             { id: 'ch_archivist', name: 'Архивариус Снега', role: 'Хранитель телеметрии', trait: 'Фиксирует только факты и следит за реальным ритмом.' },
             { id: 'ch_courier', name: 'Ледовый Курьер', role: 'Связной кампаний', trait: 'Напоминает о дедлайнах и приносит печати за этапы.' }
@@ -819,12 +909,24 @@
       };
     }
 
+    function normalizeState(parsed) {
+      const def = buildDefaultState();
+      if (!parsed || parsed?.meta?.schemaVersion !== 2) return def;
+      parsed.world = parsed.world || def.world;
+      if (!Array.isArray(parsed.world.sectors) || !parsed.world.sectors.length) {
+        parsed.world.sectors = def.world.sectors;
+      }
+      if (!Array.isArray(parsed.world.logs) || !parsed.world.logs.length) {
+        parsed.world.logs = def.world.logs;
+      }
+      return parsed;
+    }
+
     function loadInitialLocal() {
       const raw = localStorage.getItem('winter_arc_v2');
       if (raw) {
         try {
-          const parsed = JSON.parse(raw);
-          if (parsed?.meta?.schemaVersion === 2) return parsed;
+          return normalizeState(JSON.parse(raw));
         } catch (e) {}
       }
       return buildDefaultState();
@@ -833,6 +935,36 @@
     let state = loadInitialLocal();
     let telRange = 'week';
     let dbSaveTimer = null;
+
+    /* FOCUS TIMER STATE */
+    let timerPresetMin = 25;
+    let timerSecLeft = 25 * 60;
+    let timerInterval = null;
+
+    function addWorldLog(text) {
+      state.world.logs.unshift({ time: getTimeShort(), text });
+      if (state.world.logs.length > 25) state.world.logs.length = 25;
+    }
+
+    function updateChapterProgress() {
+      const securedCount = state.world.sectors.filter(s => s.secured).length;
+      if (securedCount >= 4) {
+        state.world.chapter = 4;
+        state.world.mood = 'SOVEREIGN ICE';
+        state.world.title = 'Глава IV — Хозяин зимнего контура';
+        state.world.text = 'Все четыре сектора укреплены. Ритм держится не на эмоциях, а на выверенной системе.';
+      } else if (securedCount >= 2) {
+        state.world.chapter = 3;
+        state.world.mood = 'IRON FROST';
+        state.world.title = 'Глава III — Прорыв сквозь метель';
+        state.world.text = 'Ключевые рубежи зачищены. Внешние отвлечения теряют вес перед личной опорой.';
+      } else if (securedCount >= 1 || state.history.totalCompleted >= 3) {
+        state.world.chapter = 2;
+        state.world.mood = 'ACTIVE PULSE';
+        state.world.title = 'Глава II — Следы на свежем снегу';
+        state.world.text = 'Первые шаги закреплены в телеметрии. Сектора контура постепенно переходят под контроль.';
+      }
+    }
 
     function setSyncBadge(text) {
       const el = document.getElementById('hudSync');
@@ -874,12 +1006,17 @@
     async function pushToDb(showAlert = false) {
       setSyncBadge('DB SYNC...');
       try {
-        const res = await fetch('/api/state', {
+        let res = await fetch('/api/state', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ key: PROFILE_KEY, state })
         });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
+        if (res.status === 405) {
+          const packed = encodeURIComponent(JSON.stringify({ key: PROFILE_KEY, state }));
+          res = await fetch(`/api/state?action=save&payload=${packed}`);
+        }
+        const rawText = await res.text();
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${rawText}`);
         setSyncBadge('DB OK');
         if (showAlert) alert('Состояние сохранено в Supabase.');
       } catch (e) {
@@ -899,7 +1036,7 @@
           const remoteTs = remote.meta.updatedAt || 0;
           const localTs = state.meta?.updatedAt || 0;
           if (!silent || remoteTs >= localTs) {
-            state = remote;
+            state = normalizeState(remote);
             handleDayTransition();
             renderAll(false);
             localStorage.setItem('winter_arc_v2', JSON.stringify(state));
@@ -907,7 +1044,6 @@
           setSyncBadge('DB OK');
           if (!silent) alert('Данные синхронизированы с Supabase.');
         } else {
-          // Если в базе ещё нет записи для этого ключа — создаём стартовую
           await pushToDb(false);
           if (!silent) alert('Создан новый профиль в Supabase.');
         }
@@ -933,6 +1069,7 @@
           state.daily.recovery = { active: true, missedDays: gap - 1 };
         }
         state.daily.dateKey = tk;
+        addWorldLog(`Наступил новый день контура (${tk}).`);
       }
       recordTodayHistory();
     }
@@ -975,6 +1112,7 @@
         state.identity.stats[q.stat] += 1;
         state.identity.economy.shards += Math.round(q.xp / 10);
         state.history.totalCompleted += 1;
+        addWorldLog(`Закрыт шаг: «${q.title}» (+${q.xp} XP).`);
         playTone('done'); buzz('success');
       } else {
         q.done = false;
@@ -985,7 +1123,26 @@
         playTone('click'); buzz('light');
       }
       recalcLevel();
+      updateChapterProgress();
       evaluateAchievements();
+      renderAll();
+    }
+
+    function deleteTask(id, event) {
+      if (event) event.stopPropagation();
+      const idx = state.daily.quests.findIndex(x => x.id === id);
+      if (idx === -1) return;
+      const q = state.daily.quests[idx];
+      if (q.done) {
+        state.identity.xp = Math.max(0, state.identity.xp - q.xp);
+        state.identity.stats[q.stat] = Math.max(1, state.identity.stats[q.stat] - 1);
+        state.identity.economy.shards = Math.max(0, state.identity.economy.shards - Math.round(q.xp / 10));
+        state.history.totalCompleted = Math.max(0, state.history.totalCompleted - 1);
+      }
+      state.daily.quests.splice(idx, 1);
+      addWorldLog(`Удалён шаг из плана: «${q.title}».`);
+      playTone('click'); buzz('light');
+      recalcLevel();
       renderAll();
     }
 
@@ -999,6 +1156,7 @@
       state.daily.quests.push({ id: 'q_' + Date.now(), vectorId, title, tier, stat, xp, done: false });
       document.getElementById('inTaskTitle').value = '';
       document.getElementById('taskDrawer').classList.remove('open');
+      addWorldLog(`Добавлен новый шаг: «${title}».`);
       playTone('click');
       renderAll();
     }
@@ -1007,6 +1165,80 @@
       state.daily.showExtended = !state.daily.showExtended;
       playTone('click');
       renderAll(false);
+    }
+
+    /* FOCUS TIMER */
+    function formatSec(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function renderTimerDisplay() {
+      const el = document.getElementById('timerDisplay');
+      if (el) el.innerText = formatSec(timerSecLeft);
+      const btn = document.getElementById('timerStartBtn');
+      if (btn) btn.innerText = timerInterval ? 'ПАУЗА' : 'СТАРТ';
+    }
+
+    function setTimerPreset(mins, btn) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerPresetMin = mins;
+      timerSecLeft = mins * 60;
+      document.querySelectorAll('#preset25, #preset40, #preset60').forEach(c => c.classList.remove('on'));
+      if (btn) btn.classList.add('on');
+      renderTimerDisplay();
+      playTone('click');
+    }
+
+    function toggleTimer() {
+      playTone('click');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        renderTimerDisplay();
+        return;
+      }
+      timerInterval = setInterval(() => {
+        if (timerSecLeft > 1) {
+          timerSecLeft -= 1;
+          renderTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          timerSecLeft = timerPresetMin * 60;
+          renderTimerDisplay();
+          completeSprintNow();
+        }
+      }, 1000);
+      renderTimerDisplay();
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerSecLeft = timerPresetMin * 60;
+      renderTimerDisplay();
+      playTone('click');
+    }
+
+    function completeSprintNow() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerSecLeft = timerPresetMin * 60;
+      const gainXp = 120 + Math.round(timerPresetMin * 2);
+      state.identity.xp += gainXp;
+      state.identity.stats.focus += 1;
+      state.identity.economy.shards += 25;
+      state.history.totalCompleted += 1;
+      addWorldLog(`Завершён фокус-спринт (${timerPresetMin} мин): +${gainXp} XP, +1 FOCUS.`);
+      recalcLevel();
+      updateChapterProgress();
+      evaluateAchievements();
+      renderTimerDisplay();
+      playTone('done'); buzz('success');
+      renderAll();
     }
 
     function recalcSleep() {
@@ -1073,6 +1305,7 @@
       c.current = Math.min(c.target, c.current + delta);
       state.identity.xp += 70;
       state.identity.stats.discipline += 1;
+      addWorldLog(`Продвинута кампания «${c.title}» (${c.current}/${c.target}).`);
       if (c.current >= c.target) {
         c.completed = true;
         state.identity.xp += c.xpReward;
@@ -1084,11 +1317,13 @@
           source: 'Завершение кампании',
           obtainedAt: getDateKey()
         });
+        addWorldLog(`Кампания «${c.title}» полностью завершена! +${c.xpReward} XP.`);
         playTone('done'); buzz('success');
       } else {
         playTone('click'); buzz('light');
       }
       recalcLevel();
+      updateChapterProgress();
       evaluateAchievements();
       renderAll();
     }
@@ -1109,6 +1344,7 @@
       document.getElementById('inCampDesc').value = '';
       document.getElementById('inCampTarget').value = '';
       document.getElementById('campDrawer').classList.remove('open');
+      addWorldLog(`Запущена кампания: «${title}» (цель ${target}).`);
       playTone('click');
       renderAll();
     }
@@ -1142,7 +1378,42 @@
       if (!state.world.activeEvent || state.world.activeEvent.claimed) return;
       state.world.activeEvent.claimed = true;
       state.identity.economy.shards += 40;
+      addWorldLog(`Принят сигнал: «${state.world.activeEvent.title}» (+40 SHARDS).`);
       playTone('done'); buzz('success');
+      renderAll();
+    }
+
+    function reinforceSector(sectorId) {
+      const sec = state.world.sectors.find(s => s.id === sectorId);
+      if (!sec || sec.secured) return;
+      if (state.identity.economy.shards < sec.costShards) {
+        alert(`Недостаточно SHARDS: нужно ${sec.costShards}, сейчас ${state.identity.economy.shards}.`);
+        return;
+      }
+      state.identity.economy.shards -= sec.costShards;
+      sec.progress = Math.min(sec.target, sec.progress + 1);
+      state.identity.xp += 60;
+      addWorldLog(`Укреплён сектор «${sec.name}» (${sec.progress}/${sec.target}).`);
+
+      if (sec.progress >= sec.target) {
+        sec.secured = true;
+        state.identity.xp += sec.rewardXp;
+        state.identity.economy.relics += 1;
+        state.collection.inventory.push({
+          id: 'loot_' + Date.now(),
+          name: sec.loot,
+          rarity: 'Epic',
+          source: `Сектор ${sec.name}`,
+          obtainedAt: getDateKey()
+        });
+        addWorldLog(`Сектор «${sec.name}» зачищен! Получен артефакт «${sec.loot}» и +${sec.rewardXp} XP.`);
+        playTone('done'); buzz('success');
+      } else {
+        playTone('click'); buzz('light');
+      }
+      recalcLevel();
+      updateChapterProgress();
+      evaluateAchievements();
       renderAll();
     }
 
@@ -1156,7 +1427,38 @@
       document.getElementById('inCharRole').value = '';
       document.getElementById('inCharTrait').value = '';
       document.getElementById('charDrawer').classList.remove('open');
+      addWorldLog(`В канон добавлен персонаж: ${name} (${role}).`);
       playTone('click');
+      renderAll();
+    }
+
+    function deleteCharacter(id) {
+      const idx = state.world.characters.findIndex(c => c.id === id);
+      if (idx === -1) return;
+      state.world.characters.splice(idx, 1);
+      playTone('click');
+      renderAll();
+    }
+
+    function craftChronometer() {
+      const cost = 120;
+      if (state.identity.economy.shards < cost) {
+        alert(`Нужно ${cost} SHARDS. Сейчас доступно: ${state.identity.economy.shards}.`);
+        return;
+      }
+      state.identity.economy.shards -= cost;
+      state.identity.xp += 150;
+      state.identity.economy.relics += 1;
+      state.collection.inventory.push({
+        id: 'chrono_' + Date.now(),
+        name: 'Ледяной хронометр #' + (state.collection.inventory.length + 1),
+        rarity: 'Legendary',
+        source: 'Кузница Шардов',
+        obtainedAt: getDateKey()
+      });
+      addWorldLog('Выкован артефакт «Ледяной хронометр» (+150 XP).');
+      recalcLevel();
+      playTone('done'); buzz('success');
       renderAll();
     }
 
@@ -1190,8 +1492,9 @@
       const doneToday = state.daily.quests.filter(q => q.done).length;
       const totalToday = state.daily.quests.length;
       const pool = state.campaigns.find(c => c.id === 'camp_pool_8');
+      const secured = state.world.sectors.filter(s => s.secured).length;
       if (mode === 'plan') {
-        out.innerHTML = `<b>Факт:</b> закрыто ${doneToday} из ${totalToday} пунктов дня.<br><b>Рекомендация:</b> сначала закрой Core-контур (2–3 ключевых шага), а резерв оставь на свободное окно.`;
+        out.innerHTML = `<b>Факт:</b> закрыто ${doneToday} из ${totalToday} пунктов дня, укреплено секторов: ${secured}/4.<br><b>Рекомендация:</b> сначала закрой Core-контур (2–3 ключевых шага), а резерв оставь на свободное окно.`;
       } else if (mode === 'analyze') {
         out.innerHTML = `<b>Факт:</b> уровень ${state.identity.level}, всего выполнено ${state.history.totalCompleted} действий. Сон настроен на ${state.daily.sleep.hours}ч.<br><b>Оценка:</b> ровный темп без перегруза; при сне ниже 6.5ч приоритет — восстановление.`;
       } else {
@@ -1229,7 +1532,7 @@
       try {
         const parsed = JSON.parse(raw);
         if (parsed?.meta?.schemaVersion === 2) {
-          state = parsed;
+          state = normalizeState(parsed);
           renderAll();
           alert('Сейв восстановлен.');
         } else {
@@ -1265,6 +1568,7 @@
     function renderAll(doSave = true) {
       document.body.setAttribute('data-theme', state.meta.activeTheme || 'frost-brutal');
       recordTodayHistory();
+      updateChapterProgress();
 
       const arcDays = Math.max(1, daysBetween(state.meta.arcStartDate, getDateKey()) + 1);
       const poolLeft = Math.max(0, daysBetween(getDateKey(), '2026-12-16'));
@@ -1315,7 +1619,10 @@
               <div class="t-title">${q.title}</div>
               <div class="t-meta">${vec ? vec.name : 'General'} · +1 ${q.stat.toUpperCase()}</div>
             </div>
-            <span class="xp-tag">+${q.xp} XP</span>
+            <div class="t-right">
+              <span class="xp-tag">+${q.xp} XP</span>
+              <button class="btn danger xs" title="Удалить шаг" onclick="deleteTask('${q.id}', event)">×</button>
+            </div>
           </div>`;
       };
       document.getElementById('coreList').innerHTML = coreTasks.map(renderTaskItem).join('');
@@ -1323,6 +1630,8 @@
       document.getElementById('extList').innerHTML = extTasks.map(renderTaskItem).join('');
       document.getElementById('extWrap').style.display = state.daily.showExtended ? 'block' : 'none';
       document.getElementById('extToggleBtn').innerText = state.daily.showExtended ? 'СКРЫТЬ' : 'ПОКАЗАТЬ';
+
+      renderTimerDisplay();
 
       document.getElementById('bedInput').value = state.daily.sleep.bedTime;
       document.getElementById('wakeInput').value = state.daily.sleep.wakeTime;
@@ -1377,12 +1686,39 @@
         document.getElementById('eventPanel').style.display = 'none';
       }
 
+      const securedTotal = state.world.sectors.filter(s => s.secured).length;
+      document.getElementById('sectorSummary').innerText = `${securedTotal}/${state.world.sectors.length} SECURED`;
+      document.getElementById('sectorList').innerHTML = state.world.sectors.map(sec => {
+        const pct = Math.min(100, Math.round((sec.progress / sec.target) * 100));
+        return `
+          <div class="sector-card ${sec.secured ? 'secured' : ''}">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:13px;font-weight:800">${sec.secured ? '🛡️ ' : '❄️ '}${sec.name}</div>
+              <span class="xp-tag">${sec.progress}/${sec.target}</span>
+            </div>
+            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px">Угроза: ${sec.threat} · Трофей: ${sec.loot} (+${sec.rewardXp} XP)</div>
+            <div class="bar-track"><div class="bar-fill ${sec.secured ? 'ok' : ''}" style="width:${pct}%"></div></div>
+            <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+              ${!sec.secured
+                ? `<button class="btn primary sm" onclick="reinforceSector('${sec.id}')">УКРЕПИТЬ (${sec.costShards} SHARDS)</button>`
+                : `<span style="font-family:var(--font-mono);font-size:10.5px;font-weight:800;color:var(--ok)">РУБЕЖ ЗАКРЕПЛЁН</span>`
+              }
+              <span style="font-family:var(--font-mono);font-size:10px;color:var(--ink-soft)">ШАРДОВ: ${state.identity.economy.shards}</span>
+            </div>
+          </div>`;
+      }).join('');
+
+      document.getElementById('worldLogList').innerHTML = state.world.logs.map(l => `
+        <div class="log-entry"><b>${l.time}</b>${l.text}</div>
+      `).join('');
+
       document.getElementById('charList').innerHTML = state.world.characters.map(ch => `
         <div class="task">
           <div class="t-body">
             <div class="t-title">${ch.name} <span style="font-weight:500;color:var(--ink-soft)">· ${ch.role}</span></div>
             <div class="t-meta">${ch.trait}</div>
           </div>
+          <button class="btn danger xs" onclick="deleteCharacter('${ch.id}')">×</button>
         </div>`).join('');
 
       if (!document.getElementById('aiConsoleOut').innerText) {
