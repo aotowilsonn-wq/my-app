@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AURA OVERDRIVE ∞</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #070709;
+      --card: #111116;
+      --accent: #00ff88;
+      --accent-glow: rgba(0, 255, 136, 0.25);
+      --text: #f0f0f5;
+      --muted: #6e6e80;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
+    body { background: var(--bg); color: var(--text); padding: 20px 16px 40px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    .header { text-align: center; margin-bottom: 24px; width: 100%; }
+    .rank-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--accent); color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+    .aura-score { font-size: 42px; font-weight: 900; letter-spacing: -1px; text-shadow: 0 0 25px var(--accent-glow); }
+    .aura-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+    .streak-box { margin-top: 14px; font-size: 14px; color: #ffaa00; font-weight: 600; }
+    .section-title { width: 100%; max-width: 420px; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; font-weight: 700; }
+    .quest-list { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; }
+    .quest-card { background: var(--card); border: 1px solid #1e1e26; border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s ease; cursor: pointer; }
+    .quest-card.done { border-color: var(--accent); background: rgba(0, 255, 136, 0.05); opacity: 0.75; }
+    .quest-info h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .quest-info p { font-size: 13px; color: var(--muted); }
+    .quest-reward { font-size: 13px; font-weight: 800; color: var(--accent); background: rgba(0, 255, 136, 0.1); padding: 6px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
+    .quest-card.done .quest-reward { text-decoration: line-through; color: var(--muted); background: transparent; }
+    .verdict-box { width: 100%; max-width: 420px; margin-top: 28px; background: var(--card); border-left: 3px solid var(--accent); border-radius: 12px; padding: 16px; font-size: 14px; line-height: 1.5; color: #d0d0dc; }
+    .verdict-title { font-size: 11px; text-transform: uppercase; color: var(--accent); font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; }
+    .reset-btn { margin-top: 30px; background: transparent; border: 1px solid #2a2a35; color: var(--muted); padding: 10px 18px; border-radius: 10px; font-size: 12px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="rank-badge" id="rank">УРОВЕНЬ 1: ПРОБУЖДЁННЫЙ</div>
+    <div class="aura-score" id="aura">1 000 000</div>
+    <div class="aura-label">ЕДИНИЦ ПАССИВНОЙ АУРЫ</div>
+    <div class="streak-box" id="streak">🔥 Стрик без срывов: 1 дн.</div>
+  </div>
+
+  <div class="section-title">Протокол Анти-Ноль (Сегодня)</div>
+  <div class="quest-list" id="quests"></div>
+
+  <div class="verdict-box">
+    <div class="verdict-title">Вердикт Тру Адама</div>
+    <div id="quote">Ты — главный сервер, а не бесплатный Wi-Fi на вокзале. Закрыл квесты — забрал ауру.</div>
+  </div>
+
+  <button class="reset-btn" onclick="newDay()">Начать новый день (сброс галочек)</button>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
+
+    const defaultQuests = [
+      { id: 1, title: "Железный каркас", desc: "Подтягивания или отжимания до жжения (5 мин)", reward: 150000, done: false },
+      { id: 2, title: "Прокачка скилла", desc: "20 мин в FL Studio / код / учёба без телефона", reward: 250000, done: false },
+      { id: 3, title: "Информационный бункер", desc: "Ноль заходов в токсичные чаты и ноль оправданий", reward: 300000, done: false },
+      { id: 4, title: "Режим титана", desc: "Отбой вовремя, чтобы не вставать с лицом сбитого лётчика", reward: 200000, done: false }
+    ];
+
+    const quotes = [
+      "Слабость — это когда эмоция садится за руль, а ты отдаёшь ей ключи.",
+      "Тру Адам не бегает за подтверждением своей ценности. Он её не выставляет на аукцион.",
+      "Сегодня ты не обязан побеждать весь мир. Достаточно не слить катку против собственной лени.",
+      "Иногда самый мощный ход — вообще не делать ход. Закрывай сервер для цирка."
+    ];
+
+    let state = JSON.parse(localStorage.getItem('aura_state')) || {
+      aura: 1000000,
+      streak: 1,
+      quests: defaultQuests
+    };
+
+    function getRank(aura) {
+      if (aura < 1500000) return "УРОВЕНЬ 1: ПРОБУЖДЁННЫЙ";
+      if (aura < 3000000) return "УРОВЕНЬ 2: ХЛАДНОКРОВНЫЙ";
+      if (aura < 6000000) return "УРОВЕНЬ 3: ТРУ АДАМ";
+      return "УРОВЕНЬ ∞: ФИНАЛЬНЫЙ БОСС";
+    }
+
+    function render() {
+      document.getElementById('aura').innerText = state.aura.toLocaleString('ru-RU');
+      document.getElementById('rank').innerText = getRank(state.aura);
+      document.getElementById('streak').innerText = `🔥 Стрик без срывов: ${state.streak} дн.`;
+
+      const list = document.getElementById('quests');
+      list.innerHTML = '';
+      state.quests.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = `quest-card ${q.done ? 'done' : ''}`;
+        div.onclick = () => toggleQuest(idx);
+        div.innerHTML = `
+          <div class="quest-info">
+            <h3>${q.done ? '✅ ' : ''}${q.title}</h3>
+            <p>${q.desc}</p>
+          </div>
+          <div class="quest-reward">+${(q.reward / 1000)}K</div>
+        `;
+        list.appendChild(div);
+      });
+      localStorage.setItem('aura_state', JSON.stringify(state));
+    }
+
+    function toggleQuest(idx) {
+      const q = state.quests[idx];
+      if (!q.done) {
+        q.done = true;
+        state.aura += q.reward;
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        document.getElementById('quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+      } else {
+        q.done = false;
+        state.aura -= q.reward;
+      }
+      render();
+    }
+
+    function newDay() {
+      const allDone = state.quests.some(q => q.done);
+      if (allDone) state.streak += 1;
+      state.quests.forEach(q => q.done = false);
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
