@@ -68,7 +68,6 @@
       opacity: 0.75;
     }
 
-    /* TOP TELEMETRY BAR */
     .hud {
       position: sticky;
       top: 0;
@@ -101,7 +100,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* TYPOGRAPHY & MODULES */
     .kicker {
       font-family: var(--font-mono);
       font-size: 10px;
@@ -123,7 +121,6 @@
       margin: 18px 0 9px;
     }
 
-    /* ASYMMETRIC HERO MODULE */
     .hero-grid {
       display: grid;
       grid-template-columns: 1.35fr 1fr;
@@ -175,7 +172,6 @@
     }
     .stat-row b { color: var(--accent); font-size: 12px; }
 
-    /* BUTTONS & CHIPS */
     .btn {
       background: var(--ink);
       color: var(--surface);
@@ -209,7 +205,6 @@
       color: var(--accent);
     }
 
-    /* TASK ITEMS */
     .task-list { display: flex; flex-direction: column; gap: 7px; }
     .task {
       background: var(--surface);
@@ -255,7 +250,6 @@
       white-space: nowrap;
     }
 
-    /* COLLAPSIBLE FORM & DRAWER */
     .drawer {
       display: none;
       background: var(--surface);
@@ -279,7 +273,6 @@
       outline: none;
     }
 
-    /* CAMPAIGN CARDS */
     .camp {
       background: var(--surface);
       border: 1px solid var(--line);
@@ -293,7 +286,6 @@
     .camp-sub { font-size: 11.5px; color: var(--ink-soft); margin-top: 3px; }
     .camp-actions { display: flex; gap: 6px; align-items: center; margin-top: 10px; }
 
-    /* TELEMETRY BARS */
     .tel-bars {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -307,13 +299,12 @@
     .tel-fill { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s ease; }
     .tel-lbl { font-family: var(--font-mono); font-size: 9.5px; color: var(--ink-soft); }
 
-    /* RARITY & INVENTORY */
-    .rarity-Common { color: #64748b; border-color: #94a3b8; }
-    .rarity-Uncommon { color: #0d9488; border-color: #0d9488; }
-    .rarity-Rare { color: #0284c7; border-color: #0284c7; }
-    .rarity-Epic { color: #7c3aed; border-color: #7c3aed; }
-    .rarity-Legendary { color: #d97706; border-color: #d97706; }
-    .rarity-Unique { color: #e11d48; border-color: #e11d48; }
+    .rarity-Common { color: #64748b; }
+    .rarity-Uncommon { color: #0d9488; }
+    .rarity-Rare { color: #0284c7; }
+    .rarity-Epic { color: #7c3aed; }
+    .rarity-Legendary { color: #d97706; }
+    .rarity-Unique { color: #e11d48; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .item-card {
@@ -324,7 +315,6 @@
     }
     .item-card.locked { opacity: 0.45; }
 
-    /* AI BRIEF BOX */
     .ai-box {
       background: var(--surface);
       border: 1px solid var(--line);
@@ -335,7 +325,6 @@
     }
     .ai-line { font-size: 12px; line-height: 1.4; margin-top: 4px; }
 
-    /* BOTTOM NAVIGATION (4 CORE SPACES) */
     .nav {
       position: fixed;
       bottom: 0;
@@ -371,12 +360,12 @@
 
   <header class="hud">
     <span class="hud-tag">WINTER ARC // <b>D<span id="hudDay">1</span></b></span>
-    <span class="hud-tag">POOL DEADLINE: <b><span id="hudDeadline">--</span>D</b></span>
+    <span class="hud-tag">POOL: <b><span id="hudDeadline">--</span>D</b></span>
     <span class="hud-tag" id="hudSync">LOCAL</span>
   </header>
 
   <main class="shell">
-    <!-- ==================== 1. TODAY ==================== -->
+    <!-- 1. TODAY -->
     <section id="v-today" class="view active">
       <div id="recoveryBanner" class="panel recovery-panel" style="display:none">
         <div class="kicker" style="color:var(--warn)">RECOVERY PROTOCOL // ВОЗВРАЩЕНИЕ</div>
@@ -392,7 +381,7 @@
           <div class="kicker" id="heroTitle">LVL 1 // INITIATE</div>
           <div class="display-num" style="margin-top:4px"><span id="heroLvl">1</span> <span style="font-size:13px;font-weight:700;color:var(--ink-soft)">LVL</span></div>
           <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-top:4px">
-            <span id="heroXp">0</span> / <span id="heroNextXp">1000</span> XP
+            <span id="heroXp">0</span> / <span id="heroNextXp">800</span> XP
           </div>
           <div class="bar-track"><div class="bar-fill" id="heroBar"></div></div>
         </div>
@@ -404,17 +393,15 @@
         </div>
       </div>
 
-      <!-- PRIMARY DIRECTIVE -->
       <div class="panel" style="margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span class="kicker">ГЛАВНЫЙ ВЕКТОР ДНЯ</span>
-          <span class="xp-tag" id="primaryBadge">КАМПАНИЯ</span>
+          <span class="xp-tag">КАМПАНИЯ</span>
         </div>
-        <div style="font-size:14px;font-weight:800;margin-top:5px" id="primaryTitle">Бассейн: закрыть следующий сеанс (0/8)</div>
-        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px" id="primarySub">Абонемент активен до 16.12.2026</div>
+        <div style="font-size:14px;font-weight:800;margin-top:5px" id="primaryTitle">Абонемент в бассейн: 8 сеансов (0/8)</div>
+        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px" id="primarySub">Дедлайн: 2026-12-16</div>
       </div>
 
-      <!-- CORE DAILY QUEUE -->
       <div class="sec-head">
         <span class="kicker">БАЗОВЫЙ КОНТУР (CORE)</span>
         <button class="btn ghost sm" onclick="toggleDrawer('taskDrawer')">+ ШАГ</button>
@@ -446,7 +433,6 @@
 
       <div class="task-list" id="coreList"></div>
 
-      <!-- EXTENDED QUEUE (COLLAPSIBLE) -->
       <div class="sec-head">
         <span class="kicker">РЕЗЕРВ ВРЕМЕНИ (<span id="extCount">0</span>)</span>
         <button class="btn ghost sm" id="extToggleBtn" onclick="toggleExtended()">ПОКАЗАТЬ</button>
@@ -455,7 +441,6 @@
         <div class="task-list" id="extList"></div>
       </div>
 
-      <!-- RHYTHM: SLEEP GATE & FREE-TIME BUFFER -->
       <div class="sec-head"><span class="kicker">РЕЖИМ СНА И БУФЕР ВРЕМЕНИ</span></div>
       <div class="panel">
         <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end">
@@ -476,7 +461,6 @@
         </div>
       </div>
 
-      <!-- AI BRIEF -->
       <div class="ai-box">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span class="kicker" style="color:var(--accent)">AI BRIEF // РЕКОМЕНДАЦИЯ</span>
@@ -486,7 +470,7 @@
       </div>
     </section>
 
-    <!-- ==================== 2. CAMPAIGNS & TELEMETRY ==================== -->
+    <!-- 2. CAMPAIGNS -->
     <section id="v-campaigns" class="view">
       <div class="sec-head" style="margin-top:0">
         <span class="kicker">АКТИВНЫЕ КАМПАНИИ (BOSSES)</span>
@@ -534,14 +518,14 @@
       </div>
     </section>
 
-    <!-- ==================== 3. WORLD & AI ==================== -->
+    <!-- 3. WORLD & AI -->
     <section id="v-world" class="view">
       <div class="panel accent-border" style="margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span class="kicker">CHRONICLE // ГЛАВА <span id="worldChap">1</span></span>
           <span class="xp-tag" id="worldMoodTag">CALM FROST</span>
         </div>
-        <div style="font-size:14px;font-weight:800;margin-top:5px" id="chapTitle">Северный Контур</div>
+        <div style="font-size:14px;font-weight:800;margin-top:5px" id="chapTitle">Глава I — Тишина перед первым шагом</div>
         <div style="font-size:12px;color:var(--ink-soft);margin-top:4px;line-height:1.4" id="chapText"></div>
       </div>
 
@@ -580,15 +564,18 @@
       </div>
     </section>
 
-    <!-- ==================== 4. IDENTITY & VAULT ==================== -->
+    <!-- 4. IDENTITY & DB -->
     <section id="v-identity" class="view">
       <div class="panel accent-border" style="margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <span class="kicker">DIGITAL IDENTITY // WINTER ARC</span>
+          <span class="kicker">DIGITAL IDENTITY // SUPABASE</span>
           <span class="xp-tag" id="idCurrency">0 SHARDS · 0 RELICS</span>
         </div>
         <div style="font-size:20px;font-weight:900;margin-top:6px" id="idActiveTitle">WINTER INITIATE</div>
-        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px" id="idSummaryLine">Уровень 1 · 0 выполненных действий</div>
+        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px" id="idSummaryLine">Уровень 1 · 0 подтверждённых действий</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-soft);margin-top:6px">
+          KEY: <span id="profileKeyLbl">-</span>
+        </div>
         <div style="margin-top:10px">
           <div class="kicker" style="margin-bottom:5px">АТМОСФЕРА ИНТЕРФЕЙСА</div>
           <div class="chip-row">
@@ -605,12 +592,13 @@
       <div class="sec-head"><span class="kicker">ИНВЕНТАРЬ И КОЛЛЕКЦИЯ</span></div>
       <div class="grid-2" id="invList"></div>
 
-      <div class="sec-head"><span class="kicker">СИСТЕМА И РЕЗЕРВНЫЙ СЕЙВ</span></div>
+      <div class="sec-head"><span class="kicker">БАЗА SUPABASE И РЕЗЕРВНЫЙ СЕЙВ</span></div>
       <div class="panel">
         <div class="chip-row" style="margin-bottom:8px">
           <button class="chip" id="sndChip" onclick="toggleSetting('sound')">Звук: ВКЛ</button>
           <button class="chip" id="hapChip" onclick="toggleSetting('haptics')">Вибрация: ВКЛ</button>
-          <button class="chip" onclick="syncCloud(false)">Обновить Cloud</button>
+          <button class="chip" onclick="pullFromDb(false)">Загрузить из DB</button>
+          <button class="chip" onclick="pushToDb(true)">Сохранить в DB</button>
         </div>
         <textarea id="snapshotBox" rows="3" readonly></textarea>
         <div class="grid-2" style="margin-top:8px">
@@ -631,6 +619,19 @@
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
+
+    /* PROFILE KEY FOR SUPABASE */
+    function resolveProfileKey() {
+      const tgUserId = tg?.initDataUnsafe?.user?.id;
+      if (tgUserId) return `tg_${tgUserId}`;
+      let localKey = localStorage.getItem('winter_arc_profile_key');
+      if (!localKey) {
+        localKey = 'user_' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem('winter_arc_profile_key', localKey);
+      }
+      return localKey;
+    }
+    const PROFILE_KEY = resolveProfileKey();
 
     /* AUDIO & HAPTICS */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -668,7 +669,7 @@
       } catch (e) {}
     }
 
-    /* SUBTLE SNOW ATMOSPHERE */
+    /* SNOW ATMOSPHERE */
     const snowCanvas = document.getElementById('snowLayer');
     const sctx = snowCanvas.getContext('2d');
     let flakes = [];
@@ -712,7 +713,6 @@
       return Math.round((b - a) / 86400000);
     }
 
-    /* DEFAULT SCHEMA v2 */
     const DEFAULT_VECTORS = [
       { id: 'pool', name: 'Pool / Плавание', active: true },
       { id: 'fitness', name: 'Fitness / Турник', active: true },
@@ -755,7 +755,7 @@
             { id: 'q5', vectorId: 'music', title: 'Поработать над битом или текстом в FL Studio (30 мин)', tier: 'extended', stat: 'focus', xp: 140, done: false },
             { id: 'q6', vectorId: 'independence', title: 'Навести порядок на столе и в рабочих файлах', tier: 'extended', stat: 'independence', xp: 100, done: false }
           ],
-          sleep: { bedTime: '00:15', wakeTime: '07:00', hours: 6.75, confirmed: false },
+          sleep: { bedTime: '00:15', wakeTime: '07:00', hours: 6.8, confirmed: false },
           buffer: { baseClosed: false, consciousRest: false, cutoffSet: false },
           recovery: { active: false, missedDays: 0 }
         },
@@ -800,15 +800,15 @@
           chapter: 1,
           mood: 'CALM FROST',
           title: 'Глава I — Тишина перед первым шагом',
-          text: 'Внешний шум приглушён. В мире WINTER ARC прогресс движется только от подтверждённых действий в реальности — каждая закрытая тренировка или учебный блок укрепляет контур.',
+          text: 'Внешний шум приглушён. В мире WINTER ARC прогресс движется только от подтверждённых действий в реальности.',
           characters: [
-            { id: 'ch_archivist', name: 'Архивариус Снега', role: 'Хранитель телеметрии', trait: 'Фиксирует только факты, не терпит самообмана, иногда шутит про ночные катки.' },
-            { id: 'ch_courier', name: 'Ледовый Курьер', role: 'Связной кампаний', trait: 'Напоминает о дедлайнах и приносит редкие жетоны за закрытые этапы.' }
+            { id: 'ch_archivist', name: 'Архивариус Снега', role: 'Хранитель телеметрии', trait: 'Фиксирует только факты и следит за реальным ритмом.' },
+            { id: 'ch_courier', name: 'Ледовый Курьер', role: 'Связной кампаний', trait: 'Напоминает о дедлайнах и приносит печати за этапы.' }
           ],
           activeEvent: {
             id: 'ev_1',
             title: 'Сигнал с северного пирса',
-            desc: 'Архивариус заметил старт цикла бассейна. Подтверди готовность к первому заплыву, чтобы получить +40 Shards.',
+            desc: 'Подтверди готовность к циклу бассейна 8/8, чтобы получить +40 Shards.',
             claimed: false
           }
         },
@@ -819,37 +819,25 @@
       };
     }
 
-    /* MIGRATION & STORAGE */
-    function loadAndMigrate() {
-      const v2Raw = localStorage.getItem('winter_arc_v2');
-      if (v2Raw) {
+    function loadInitialLocal() {
+      const raw = localStorage.getItem('winter_arc_v2');
+      if (raw) {
         try {
-          const parsed = JSON.parse(v2Raw);
+          const parsed = JSON.parse(raw);
           if (parsed?.meta?.schemaVersion === 2) return parsed;
         } catch (e) {}
       }
-      const base = buildDefaultState();
-      // Мягкая миграция из старого прототипа, если он был
-      const oldRaw = localStorage.getItem('viperr_winter_v1') || localStorage.getItem('viperr_v6');
-      if (oldRaw) {
-        try {
-          const old = JSON.parse(oldRaw);
-          if (typeof old.totalDone === 'number') {
-            base.history.totalCompleted = old.totalDone;
-            base.identity.xp = old.totalDone * 110;
-            recalcLevel(base);
-          }
-          if (Array.isArray(old.bosses)) {
-            const oldPool = old.bosses.find(b => b.t && b.t.includes('БАССЕЙН'));
-            if (oldPool) base.campaigns[0].current = Math.min(8, oldPool.cur || 0);
-          }
-        } catch (e) {}
-      }
-      return base;
+      return buildDefaultState();
     }
 
-    let state = loadAndMigrate();
+    let state = loadInitialLocal();
     let telRange = 'week';
+    let dbSaveTimer = null;
+
+    function setSyncBadge(text) {
+      const el = document.getElementById('hudSync');
+      if (el) el.innerText = text;
+    }
 
     function xpForLevel(lvl) {
       return 800 + (lvl - 1) * 350;
@@ -869,51 +857,75 @@
       else stObj.identity.activeTitle = 'WINTER INITIATE';
     }
 
-    function saveAll() {
+    function saveLocalAndQueueDb() {
       state.meta.updatedAt = Date.now();
       const raw = JSON.stringify(state);
       localStorage.setItem('winter_arc_v2', raw);
       const snap = document.getElementById('snapshotBox');
       if (snap) snap.value = raw;
-      if (tg?.CloudStorage) {
-        tg.CloudStorage.setItem('winter_arc_v2_cloud', raw, (err) => {
-          document.getElementById('hudSync').innerText = err ? 'LOCAL' : 'CLOUD OK';
+
+      clearTimeout(dbSaveTimer);
+      setSyncBadge('DB QUEUE');
+      dbSaveTimer = setTimeout(() => {
+        pushToDb(false);
+      }, 550);
+    }
+
+    async function pushToDb(showAlert = false) {
+      setSyncBadge('DB SYNC...');
+      try {
+        const res = await fetch('/api/state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: PROFILE_KEY, state })
         });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        setSyncBadge('DB OK');
+        if (showAlert) alert('Состояние сохранено в Supabase.');
+      } catch (e) {
+        setSyncBadge('DB OFFLINE');
+        if (showAlert) alert('Не удалось сохранить в БД: ' + e.message);
       }
     }
 
-    function syncCloud(silent = false) {
-      if (!tg?.CloudStorage) {
-        if (!silent) alert('Облачная синхронизация работает внутри Telegram.');
-        return;
-      }
-      tg.CloudStorage.getItem('winter_arc_v2_cloud', (err, val) => {
-        if (!err && val) {
-          try {
-            const remote = JSON.parse(val);
-            if (remote?.meta?.schemaVersion === 2 && (!silent || remote.meta.updatedAt > state.meta.updatedAt)) {
-              state = remote;
-              handleDayTransition();
-              renderAll(false);
-              if (!silent) alert('Данные обновлены из Telegram Cloud.');
-            }
-          } catch (e) {}
+    async function pullFromDb(silent = true) {
+      setSyncBadge('DB LOAD...');
+      try {
+        const res = await fetch(`/api/state?key=${encodeURIComponent(PROFILE_KEY)}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const remote = data?.record?.state_json;
+        if (remote?.meta?.schemaVersion === 2) {
+          const remoteTs = remote.meta.updatedAt || 0;
+          const localTs = state.meta?.updatedAt || 0;
+          if (!silent || remoteTs >= localTs) {
+            state = remote;
+            handleDayTransition();
+            renderAll(false);
+            localStorage.setItem('winter_arc_v2', JSON.stringify(state));
+          }
+          setSyncBadge('DB OK');
+          if (!silent) alert('Данные синхронизированы с Supabase.');
+        } else {
+          // Если в базе ещё нет записи для этого ключа — создаём стартовую
+          await pushToDb(false);
+          if (!silent) alert('Создан новый профиль в Supabase.');
         }
-      });
+      } catch (e) {
+        setSyncBadge('LOCAL ONLY');
+        if (!silent) alert('Ошибка загрузки из БД: ' + e.message);
+      }
     }
 
-    /* DAY TRANSITION & RECOVERY SYSTEM */
     function handleDayTransition() {
       const tk = getDateKey();
       if (state.daily.dateKey !== tk) {
         const gap = daysBetween(state.daily.dateKey, tk);
-        // Сохраняем сводку прошлого дня
         const prevDone = state.daily.quests.filter(q => q.done).length;
         state.history.days[state.daily.dateKey] = {
           completed: prevDone,
           total: state.daily.quests.length
         };
-        // Перезагрузка дневного контура без обнуления уровня или достижений
         state.daily.quests.forEach(q => { q.done = false; });
         state.daily.sleep.confirmed = false;
         state.daily.buffer = { baseClosed: false, consciousRest: false, cutoffSet: false };
@@ -933,7 +945,6 @@
       };
     }
 
-    /* NAVIGATION & THEME */
     function switchView(id, btn) {
       playTone('click'); buzz('light');
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -955,7 +966,6 @@
       document.getElementById(id).classList.toggle('open');
     }
 
-    /* TASKS & PROGRESSION */
     function toggleTask(id) {
       const q = state.daily.quests.find(x => x.id === id);
       if (!q) return;
@@ -986,10 +996,7 @@
       const tier = document.getElementById('inTaskTier').value;
       const stat = document.getElementById('inTaskStat').value;
       const xp = parseInt(document.getElementById('inTaskXp').value, 10) || 150;
-      state.daily.quests.push({
-        id: 'q_' + Date.now(),
-        vectorId, title, tier, stat, xp, done: false
-      });
+      state.daily.quests.push({ id: 'q_' + Date.now(), vectorId, title, tier, stat, xp, done: false });
       document.getElementById('inTaskTitle').value = '';
       document.getElementById('taskDrawer').classList.remove('open');
       playTone('click');
@@ -1002,7 +1009,6 @@
       renderAll(false);
     }
 
-    /* SLEEP & BUFFER */
     function recalcSleep() {
       const bed = document.getElementById('bedInput').value || '00:15';
       const wake = document.getElementById('wakeInput').value || '07:00';
@@ -1016,7 +1022,7 @@
       state.daily.sleep.wakeTime = wake;
       state.daily.sleep.hours = hrs;
       document.getElementById('sleepHrsLbl').innerText = hrs + 'ч';
-      saveAll();
+      saveLocalAndQueueDb();
     }
 
     function confirmSleepWindow() {
@@ -1041,7 +1047,6 @@
       renderAll();
     }
 
-    /* RECOVERY */
     function acceptReturnQuest() {
       state.daily.quests.unshift({
         id: 'ret_' + Date.now(),
@@ -1062,7 +1067,6 @@
       renderAll();
     }
 
-    /* CAMPAIGNS & VECTORS */
     function advanceCampaign(id, delta) {
       const c = state.campaigns.find(x => x.id === id);
       if (!c || c.completed) return;
@@ -1134,7 +1138,6 @@
       renderTelemetry();
     }
 
-    /* WORLD, CHARACTERS & AI ENGINE */
     function claimWorldEvent() {
       if (!state.world.activeEvent || state.world.activeEvent.claimed) return;
       state.world.activeEvent.claimed = true;
@@ -1158,7 +1161,6 @@
     }
 
     function aiSuggestTasks() {
-      const activeVecs = state.vectors.filter(v => v.active);
       const poolCamp = state.campaigns.find(c => c.id === 'camp_pool_8' && !c.completed);
       const ideas = [
         { vectorId: 'books', title: 'Прочитать 15 страниц книги без телефона рядом', stat: 'focus', xp: 120 },
@@ -1171,7 +1173,7 @@
       const pick = ideas.find(i => !state.daily.quests.some(q => q.title === i.title)) || ideas[0];
       state.daily.quests.push({
         id: 'ai_' + Date.now(),
-        vectorId: activeVecs.some(v => v.id === pick.vectorId) ? pick.vectorId : 'character',
+        vectorId: pick.vectorId,
         title: pick.title,
         tier: 'extended',
         stat: pick.stat,
@@ -1189,17 +1191,16 @@
       const totalToday = state.daily.quests.length;
       const pool = state.campaigns.find(c => c.id === 'camp_pool_8');
       if (mode === 'plan') {
-        out.innerHTML = `<b>Факт:</b> закрыто ${doneToday} из ${totalToday} пунктов дня.<br><b>Рекомендация:</b> сначала закрой Core-контур (2–3 ключевых шага), а резерв оставь на свободное окно перед игровым вечером.`;
+        out.innerHTML = `<b>Факт:</b> закрыто ${doneToday} из ${totalToday} пунктов дня.<br><b>Рекомендация:</b> сначала закрой Core-контур (2–3 ключевых шага), а резерв оставь на свободное окно.`;
       } else if (mode === 'analyze') {
-        out.innerHTML = `<b>Факт:</b> уровень ${state.identity.level}, всего выполнено ${state.history.totalCompleted} действий. Сон настроен на ${state.daily.sleep.hours}ч.<br><b>Оценка:</b> устойчивый темп без перегруза; при длительности сна ниже 6.5ч приоритет лучше отдавать восстановлению.`;
+        out.innerHTML = `<b>Факт:</b> уровень ${state.identity.level}, всего выполнено ${state.history.totalCompleted} действий. Сон настроен на ${state.daily.sleep.hours}ч.<br><b>Оценка:</b> ровный темп без перегруза; при сне ниже 6.5ч приоритет — восстановление.`;
       } else {
         const cur = pool ? pool.current : 0;
-        out.innerHTML = `<b>Факт:</b> прогресс бассейна ${cur}/8 до 16.12.2026.<br><b>Рекомендация:</b> придерживайся ритма Пн/Чт (2 раза в неделю) — это закрывает все 8 посещений ровно в срок без сгорания.`;
+        out.innerHTML = `<b>Факт:</b> прогресс бассейна ${cur}/8 до 16.12.2026.<br><b>Рекомендация:</b> ритм Пн/Чт закрывает 8 сеансов ровно в срок.`;
       }
       playTone('click');
     }
 
-    /* ACHIEVEMENTS & SNAPSHOT */
     function evaluateAchievements() {
       const list = state.collection.achievements;
       const pool = state.campaigns.find(c => c.id === 'camp_pool_8');
@@ -1230,7 +1231,7 @@
         if (parsed?.meta?.schemaVersion === 2) {
           state = parsed;
           renderAll();
-          alert('Сейв успешно восстановлен.');
+          alert('Сейв восстановлен.');
         } else {
           alert('Несовместимый формат сейва.');
         }
@@ -1239,11 +1240,9 @@
       }
     }
 
-    /* RENDER PIPELINE */
     function renderTelemetry() {
       const barsEl = document.getElementById('telBars');
-      const keys = Object.keys(state.history.days).sort();
-      const sliceCount = telRange === 'week' ? 7 : telRange === 'month' ? 14 : Math.max(7, keys.length);
+      const sliceCount = telRange === 'week' ? 7 : telRange === 'month' ? 14 : 21;
       const recent = [];
       for (let i = sliceCount - 1; i >= 0; i--) {
         const d = new Date();
@@ -1252,8 +1251,7 @@
         const rec = state.history.days[k] || { completed: 0, total: 3 };
         recent.push({ label: k.slice(8), pct: rec.total ? Math.round((rec.completed / rec.total) * 100) : 0 });
       }
-      const displaySlice = recent.slice(-7);
-      barsEl.innerHTML = displaySlice.map(item => `
+      barsEl.innerHTML = recent.slice(-7).map(item => `
         <div class="tel-col">
           <div class="tel-fill" style="height:${Math.max(6, item.pct)}%"></div>
           <span class="tel-lbl">${item.label}</span>
@@ -1268,22 +1266,19 @@
       document.body.setAttribute('data-theme', state.meta.activeTheme || 'frost-brutal');
       recordTodayHistory();
 
-      // HUD
       const arcDays = Math.max(1, daysBetween(state.meta.arcStartDate, getDateKey()) + 1);
       const poolLeft = Math.max(0, daysBetween(getDateKey(), '2026-12-16'));
       document.getElementById('hudDay').innerText = arcDays;
       document.getElementById('hudDeadline').innerText = poolLeft;
 
-      // Recovery
       const recBanner = document.getElementById('recoveryBanner');
       if (state.daily.recovery.active) {
         recBanner.style.display = 'block';
-        document.getElementById('recoveryText').innerText = `Пауза составила ${state.daily.recovery.missedDays} дн. Весь твой уровень, характеристики и кампании сохранены. Начни с одного спокойного шага.`;
+        document.getElementById('recoveryText').innerText = `Пауза составила ${state.daily.recovery.missedDays} дн. Уровень, характеристики и кампании сохранены.`;
       } else {
         recBanner.style.display = 'none';
       }
 
-      // Hero & Stats
       const needXp = xpForLevel(state.identity.level);
       let remXp = state.identity.xp;
       for (let l = 1; l < state.identity.level; l++) remXp -= xpForLevel(l);
@@ -1298,18 +1293,17 @@
       document.getElementById('stFoc').innerText = state.identity.stats.focus;
       document.getElementById('stInd').innerText = state.identity.stats.independence;
 
-      // Primary Directive
       const activeCamp = state.campaigns.find(c => !c.completed) || state.campaigns[0];
       if (activeCamp) {
         document.getElementById('primaryTitle').innerText = `${activeCamp.title} (${activeCamp.current}/${activeCamp.target})`;
         document.getElementById('primarySub').innerText = `Дедлайн: ${activeCamp.deadline} · Награда: +${activeCamp.xpReward} XP`;
       }
 
-      // Vector Select
-      const vecSel = document.getElementById('inTaskVector');
-      vecSel.innerHTML = state.vectors.filter(v => v.active).map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+      document.getElementById('inTaskVector').innerHTML = state.vectors
+        .filter(v => v.active)
+        .map(v => `<option value="${v.id}">${v.name}</option>`)
+        .join('');
 
-      // Tasks (Core & Extended)
       const coreTasks = state.daily.quests.filter(q => q.tier === 'core');
       const extTasks = state.daily.quests.filter(q => q.tier !== 'core');
       const renderTaskItem = (q) => {
@@ -1330,7 +1324,6 @@
       document.getElementById('extWrap').style.display = state.daily.showExtended ? 'block' : 'none';
       document.getElementById('extToggleBtn').innerText = state.daily.showExtended ? 'СКРЫТЬ' : 'ПОКАЗАТЬ';
 
-      // Sleep & Buffer
       document.getElementById('bedInput').value = state.daily.sleep.bedTime;
       document.getElementById('wakeInput').value = state.daily.sleep.wakeTime;
       document.getElementById('sleepHrsLbl').innerText = state.daily.sleep.hours + 'ч';
@@ -1338,13 +1331,11 @@
       document.getElementById('chipRest').classList.toggle('on', state.daily.buffer.consciousRest);
       document.getElementById('chipCutoff').classList.toggle('on', state.daily.buffer.cutoffSet);
 
-      // AI Brief
       const coreLeft = coreTasks.filter(q => !q.done).length;
       document.getElementById('aiBriefText').innerText = coreLeft > 0
-        ? `В базовом контуре осталось ${coreLeft} шаг(а). Закрой их до вечера, чтобы освободить чистый буфер под отдых.`
-        : `Базовый контур дня закрыт. Можешь добрать 1 шаг из резерва или спокойно зафиксировать вечерний отдых.`;
+        ? `В базовом контуре осталось ${coreLeft} шаг(а). Закрой их, чтобы освободить чистый буфер под отдых.`
+        : `Базовый контур закрыт. Можно добрать шаг из резерва или спокойно уйти в вечерний буфер.`;
 
-      // Campaigns
       document.getElementById('campaignList').innerHTML = state.campaigns.map(c => {
         const pct = Math.min(100, Math.round((c.current / c.target) * 100));
         return `
@@ -1365,14 +1356,12 @@
           </div>`;
       }).join('');
 
-      // Vectors
       document.getElementById('vectorChips').innerHTML = state.vectors.map(v => `
         <button class="chip ${v.active ? 'on' : ''}" onclick="toggleVector('${v.id}')">${v.name}</button>
       `).join('');
 
       renderTelemetry();
 
-      // World
       document.getElementById('worldChap').innerText = state.world.chapter;
       document.getElementById('worldMoodTag').innerText = state.world.mood;
       document.getElementById('chapTitle').innerText = state.world.title;
@@ -1400,7 +1389,7 @@
         runAiAction('plan');
       }
 
-      // Identity
+      document.getElementById('profileKeyLbl').innerText = PROFILE_KEY;
       document.getElementById('idActiveTitle').innerText = state.identity.activeTitle;
       document.getElementById('idCurrency').innerText = `${state.identity.economy.shards} SHARDS · ${state.identity.economy.relics} RELICS`;
       document.getElementById('idSummaryLine').innerText = `Уровень ${state.identity.level} · ${state.history.totalCompleted} подтверждённых действий`;
@@ -1421,15 +1410,15 @@
           <div style="font-size:10.5px;color:var(--ink-soft);margin-top:2px">${it.source} · ${it.obtainedAt}</div>
         </div>`).join('');
 
-      if (doSave) saveAll();
+      if (doSave) saveLocalAndQueueDb();
       else document.getElementById('snapshotBox').value = JSON.stringify(state);
     }
 
     recalcLevel();
     evaluateAchievements();
     handleDayTransition();
-    renderAll();
-    syncCloud(true);
+    renderAll(false);
+    pullFromDb(true);
   </script>
 </body>
 </html>
